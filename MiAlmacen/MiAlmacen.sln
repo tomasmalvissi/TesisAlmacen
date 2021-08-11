@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiAlmacen.Model", "MiAlmacen.Model\MiAlmacen.Model.csproj", "{E9F2E094-E281-4702-9D1D-F7629216C07A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiAlmacen.Model", "MiAlmacen.Model\MiAlmacen.Model.csproj", "{E9F2E094-E281-4702-9D1D-F7629216C07A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiAlmacen.Data", "MiAlmacen.Data\MiAlmacen.Data.csproj", "{7D156213-AAB8-453E-BA5D-39110C8F0B6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiAlmacen.Data", "MiAlmacen.Data\MiAlmacen.Data.csproj", "{7D156213-AAB8-453E-BA5D-39110C8F0B6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiAlmacen.LogicTier", "MiAlmacen.LogicTier\MiAlmacen.LogicTier.csproj", "{50F0E65B-6D17-4007-93AE-9D9D3CAC808D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiAlmacen.Services", "MiAlmacen.LogicTier\MiAlmacen.Services.csproj", "{50F0E65B-6D17-4007-93AE-9D9D3CAC808D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiAlmacen.API", "MiAlmacen.API\MiAlmacen.API.csproj", "{83CC375B-4552-468D-8C5F-0C7F8B8AD57C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiAlmacen.API", "MiAlmacen.API\MiAlmacen.API.csproj", "{83CC375B-4552-468D-8C5F-0C7F8B8AD57C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
