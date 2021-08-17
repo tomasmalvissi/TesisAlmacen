@@ -8,4 +8,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MiAlmacen.Data\MiAlmacen.Data.csproj" />
+    <ProjectReference Include="..\MiAlmacen.Model\MiAlmacen.Model.csproj" />
+  </ItemGroup>
+
 </Project>
