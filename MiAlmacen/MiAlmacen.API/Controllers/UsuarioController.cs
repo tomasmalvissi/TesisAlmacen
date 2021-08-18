@@ -16,38 +16,40 @@ namespace MiAlmacen.API.Controllers
         private readonly UsuarioRepository _repository;
         public UsuarioController(UsuarioRepository repository)
         {
-            repository = _repository;
+            _repository = repository;
         }
 
         [HttpGet]
-        public Task<IEnumerable<UsuarioModel>> Get()
+        public async Task<IEnumerable<UsuarioModel>> Get()
         {
-            _repository.Get();
-            throw new InvalidOperationException();
+            int? comodin = null;
+            var user = _repository.Get(comodin);
+            return user; 
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok();
+            var user = _repository.Get(id);
+            return Ok(user);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(UsuarioModel model)
         {
-            return Ok();
+            return Ok(_repository.Post(model));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromBody] UsuarioModel model)
         {
-            return Ok();
+            return Ok(_repository.Put(id, model));
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            return Ok();
+            return Ok(_repository.Delete(id));
         }
     }
 }
