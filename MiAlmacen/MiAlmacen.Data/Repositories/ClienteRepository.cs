@@ -3,7 +3,6 @@ using MiAlmacen.Data.Entities;
 using MiAlmacen.Model.Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MiAlmacen.Data.Repositories
 {
-    public class UsuarioRepository : DBConex
+    public class ClienteRepository : DBConex 
     {
         int resultado;
         string orden;
@@ -35,24 +34,23 @@ namespace MiAlmacen.Data.Repositories
             }
             return resultado;
         }
-        private Usuarios IniciarObjeto(UsuarioModel model)   
+        private Clientes IniciarObjeto(ClienteModel model)
         {
-            Usuarios user = new();
-            user.Id = model.Id;
-            user.Nombre = model.Nombre;
-            user.Usuario = model.Usuario;
-            user.Email = model.Email;
-            user.Contraseña = model.Contraseña;
-            return user;
+            Clientes cli = new();
+            cli.Id = model.Id;
+            cli.Nombre = model.Nombre;
+            cli.Direccion = model.Direccion;
+            cli.Telefono = model.Telefono;
+            return cli;
         }
-        public List<Usuarios> Get(int? id)
+        public List<Clientes> Get(int? id)
         {
             if (id == null)
-                orden = "SELECT * FROM Usuarios";
+                orden = "SELECT * FROM Clientes";
             else
-                orden = "SELECT * FROM Usuarios WHERE Id = '" + id + "';";
+                orden = "SELECT * FROM Clientes WHERE Id = '" + id + "';";
 
-            List<Usuarios> usuarios = new();
+            List<Clientes> clientes = new();
 
             SqlCommand sqlcmd = new SqlCommand(orden, conexion);
             try
@@ -63,13 +61,12 @@ namespace MiAlmacen.Data.Repositories
 
                 while (reader.Read())
                 {
-                    Usuarios user = new();
-                    user.Id = Convert.ToInt32(reader["Id"].ToString());
-                    user.Nombre = reader["Nombre"].ToString();
-                    user.Email = reader["Email"].ToString();
-                    user.Usuario = reader["Usuario"].ToString();
-                    user.Contraseña = reader["Contraseña"].ToString();
-                    usuarios.Add(user);
+                    Clientes cli = new();
+                    cli.Id = Convert.ToInt32(reader["Id"].ToString());
+                    cli.Nombre = reader["Nombre"].ToString();
+                    cli.Direccion = reader["Direccion"].ToString();
+                    cli.Telefono = reader["Telefono"].ToString();
+                    clientes.Add(cli);
                 }
 
             }
@@ -82,45 +79,42 @@ namespace MiAlmacen.Data.Repositories
                 CerrarConex();
                 sqlcmd.Dispose();
             }
-            return usuarios;
+            return clientes;
         }
-        public Usuarios Post(UsuarioModel model)
+        public Clientes Post(ClienteModel model)
         {
             if (model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = "INSERT INTO Usuarios values (" + "'" + model.Nombre + "',"
-                                                    + "'" + model.Email + "',"
-                                                    + "'" + model.Usuario + "',"
-                                                    + "'" + model.Contraseña + "'" + ");";
+            orden = "INSERT INTO Clientes values (" + "'" + model.Nombre + "',"
+                                                    + "'" + model.Direccion + "',"
+                                                    + "'" + model.Telefono + "'" + ");";
             AccionSQL(orden);
             return IniciarObjeto(model);
         }
 
-        public Usuarios Put(int id, UsuarioModel model)
+        public Clientes Put(int id, ClienteModel model)
         {
-            var valoruser = Get(id);
-            if (valoruser == null || model == null)
+            var valorcli = Get(id);
+            if (valorcli == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = "UPDATE Usuarios SET "
+            orden = "UPDATE Clientes SET "
                             + "Nombre= '" + model.Nombre + "',"
-                            + "Email= '" + model.Email + "',"
-                            + "Usuario= '" + model.Usuario + "',"
-                            + "Contraseña= '" + model.Contraseña + "'"
+                            + "Direccion= '" + model.Direccion + "',"
+                            + "Telefono= '" + model.Telefono + "'"
                             + "where Id= " + id;
             AccionSQL(orden);
             return IniciarObjeto(model);
         }
-        public List<Usuarios> Delete(int id)
+        public List<Clientes> Delete(int id)
         {
-            var valoruser = Get(id);
-            orden = "DELETE FROM Usuarios WHERE Id = " + id;
+            var valorcli = Get(id);
+            orden = "DELETE FROM Clientes WHERE Id = " + id;
             AccionSQL(orden);
-            return valoruser;
+            return valorcli;
         }
     }
 }
-
