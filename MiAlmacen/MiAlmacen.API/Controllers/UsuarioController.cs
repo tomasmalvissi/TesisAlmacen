@@ -24,7 +24,18 @@ namespace MiAlmacen.API.Controllers
         {
             int? comodin = null;
             var user = _repository.Get(comodin);
-            return user; 
+            List<UsuarioModel> usuarios = new();
+            foreach (var item in user)
+            {
+                UsuarioModel model = new();
+                model.Id = item.Id;
+                model.Nombre = item.Nombre;
+                model.Usuario = item.Usuario;
+                model.Email = item.Email;
+                model.Contraseña = item.Contraseña;
+                usuarios.Add(model);
+            }
+            return usuarios;
         }
 
         [HttpGet("{id}")]

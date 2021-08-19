@@ -35,15 +35,24 @@ namespace MiAlmacen.Data.Repositories
             }
             return resultado;
         }
-
-        public List<UsuarioModel> Get(int? id)
+        public Usuarios IniciarObjeto(UsuarioModel model)   
+        {
+            Usuarios user = new();
+            user.Id = model.Id;
+            user.Nombre = model.Nombre;
+            user.Usuario = model.Usuario;
+            user.Email = model.Email;
+            user.Contraseña = model.Contraseña;
+            return user;
+        }
+        public List<Usuarios> Get(int? id)
         {
             if (id == null)
                 orden = "SELECT * FROM Usuarios";
             else
                 orden = "SELECT * FROM Usuarios WHERE Id = '" + id + "';";
 
-            List<UsuarioModel> usuarios = new();
+            List<Usuarios> usuarios = new();
 
             SqlCommand sqlcmd = new SqlCommand(orden, conexion);
             try
@@ -54,7 +63,7 @@ namespace MiAlmacen.Data.Repositories
 
                 while (reader.Read())
                 {
-                    UsuarioModel user = new();
+                    Usuarios user = new();
                     user.Id = Convert.ToInt32(reader["Id"].ToString());
                     user.Nombre = reader["Nombre"].ToString();
                     user.Email = reader["Email"].ToString();
@@ -75,37 +84,37 @@ namespace MiAlmacen.Data.Repositories
             }
             return usuarios;
         }
-        public UsuarioModel Post(UsuarioModel usuario)
+        public Usuarios Post(UsuarioModel model)
         {
-            if (usuario == null)
+            if (model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = "INSERT INTO Usuarios values (" + "'" + usuario.Nombre + "',"
-                                                    + "'" + usuario.Email + "',"
-                                                    + "'" + usuario.Usuario + "',"
-                                                    + "'" + usuario.Contraseña + "'" + ");";
+            orden = "INSERT INTO Usuarios values (" + "'" + model.Nombre + "',"
+                                                    + "'" + model.Email + "',"
+                                                    + "'" + model.Usuario + "',"
+                                                    + "'" + model.Contraseña + "'" + ");";
             AccionSQL(orden);
-            return usuario;
+            return IniciarObjeto(model);
         }
 
-        public UsuarioModel Put(int id, UsuarioModel usuario)
+        public Usuarios Put(int id, UsuarioModel model)
         {
             var valoruser = Get(id);
-            if (valoruser == null || usuario == null)
+            if (valoruser == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
             orden = "UPDATE Usuarios SET "
-                            + "Nombre= '" + usuario.Nombre + "',"
-                            + "Email= '" + usuario.Email + "',"
-                            + "Usuario= '" + usuario.Usuario + "',"
-                            + "Contraseña= '" + usuario.Contraseña + "'"
+                            + "Nombre= '" + model.Nombre + "',"
+                            + "Email= '" + model.Email + "',"
+                            + "Usuario= '" + model.Usuario + "',"
+                            + "Contraseña= '" + model.Contraseña + "'"
                             + "where Id= " + id;
             AccionSQL(orden);
-            return usuario;
+            return IniciarObjeto(model);
         }
-        public List<UsuarioModel> Delete(int id)
+        public List<Usuarios> Delete(int id)
         {
             var valoruser = Get(id);
             orden = "DELETE FROM Usuarios WHERE Id = " + id;
