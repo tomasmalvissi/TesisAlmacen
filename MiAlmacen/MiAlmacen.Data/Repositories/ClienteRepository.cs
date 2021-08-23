@@ -79,6 +79,10 @@ namespace MiAlmacen.Data.Repositories
                 CerrarConex();
                 sqlcmd.Dispose();
             }
+            if (clientes.Count == 0)
+            {
+                throw new Exception("No se encontraron resultados.");
+            }
             return clientes;
         }
         public Clientes Post(ClienteModel model)

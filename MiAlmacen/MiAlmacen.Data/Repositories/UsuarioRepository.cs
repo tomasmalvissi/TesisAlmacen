@@ -82,6 +82,10 @@ namespace MiAlmacen.Data.Repositories
                 CerrarConex();
                 sqlcmd.Dispose();
             }
+            if (usuarios.Count == 0)
+            {
+                throw new Exception("No se encontraron resultados.");
+            }
             return usuarios;
         }
         public Usuarios Post(UsuarioModel model)

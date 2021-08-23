@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiAlmacen.Data", "MiAlmacen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiAlmacen.API", "MiAlmacen.API\MiAlmacen.API.csproj", "{83CC375B-4552-468D-8C5F-0C7F8B8AD57C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiAlmacen.Blazor", "MiAlmacen.Blazor\MiAlmacen.Blazor.csproj", "{9F4C6516-E194-4FBA-A879-4B9D9846A255}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{83CC375B-4552-468D-8C5F-0C7F8B8AD57C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83CC375B-4552-468D-8C5F-0C7F8B8AD57C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83CC375B-4552-468D-8C5F-0C7F8B8AD57C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F4C6516-E194-4FBA-A879-4B9D9846A255}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F4C6516-E194-4FBA-A879-4B9D9846A255}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F4C6516-E194-4FBA-A879-4B9D9846A255}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F4C6516-E194-4FBA-A879-4B9D9846A255}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
