@@ -1,0 +1,157 @@
+CREATE DATABASE Almacen
+GO
+
+USE Almacen
+GO
+
+CREATE TABLE Usuarios
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Nombre VARCHAR(20) NOT NULL,
+	Usuario VARCHAR(20) NOT NULL,
+	Email VARCHAR(20) NOT NULL,
+	Contraseña VARCHAR(20) NOT NULL
+)
+GO
+
+CREATE TABLE Proveedores
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Nombre VARCHAR(20) NOT NULL,
+	CUIL VARCHAR(20) NOT NULL,
+	Direccion VARCHAR(20) NOT NULL,
+	Telefono VARCHAR(20) NOT NULL
+)
+GO
+
+CREATE TABLE Clientes
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Nombre VARCHAR(20) NOT NULL,
+	CUIL VARCHAR(20) NOT NULL,
+	Direccion VARCHAR(20) NOT NULL,
+	Telefono VARCHAR(20) NOT NULL
+)
+GO
+
+CREATE TABLE Ventas
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Fecha DATETIME NOT NULL,
+	FormaPago VARCHAR(20) NOT NULL,
+	Cliente_Id INT NOT NULL,
+	Empleado_Id INT NOT NULL,
+	Total FLOAT NOT NULL,
+	Saldo FLOAT,
+	FOREIGN KEY (Cliente_Id) REFERENCES Clientes(Id),
+	FOREIGN KEY (Empleado_Id) REFERENCES Usuarios(Id)
+)
+GO
+
+
+CREATE TABLE Articulos
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Nombre VARCHAR(20) NOT NULL,
+	Codigo_Art INT NOT NULL,
+	Precio_Unit FLOAT NOT NULL,
+	Precio_Mayor FLOAT NOT NULL,
+	Stock_Act INT NOT NULL,
+	Ultima_Modif DATETIME NOT NULL
+)
+GO
+
+CREATE TABLE DetalleVentas
+(
+	Id INT PRIMARY KEY IDENTITY, 
+	Articulo_Id INT NOT NULL,
+	Precio INT NOT NULL,
+	Cantidad INT NOT NULL,
+	Venta_Id INT NOT NULL,
+	FOREIGN KEY (Venta_Id) REFERENCES Ventas(Id),
+	FOREIGN KEY (Articulo_Id) REFERENCES Articulos(Id)
+)
+GO
+
+CREATE TABLE Compras
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Fecha DATETIME NOT NULL,
+	Proveedor_Id INT NOT NULL,
+	NroRecibo VARCHAR(13) NOT NULL,
+	Empleado_Id INT NOT NULL,
+	Total FLOAT NOT NULL,
+	FOREIGN KEY (Proveedor_Id) REFERENCES Proveedores(Id),
+	FOREIGN KEY (Empleado_Id) REFERENCES Usuarios(Id)
+)
+GO
+
+CREATE TABLE DetalleCompras
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Articulo_Id INT NOT NULL,
+	Cantidad INT NOT NULL,
+	Precio_Mayor FLOAT NOT NULL,
+	Precio_Unit FLOAT NOT NULL,
+	Compra_Id INT NOT NULL,
+	FOREIGN KEY (Compra_Id) REFERENCES Compras(Id),
+	FOREIGN KEY (Articulo_Id) REFERENCES Articulos(Id)
+)
+GO
+
+CREATE TABLE Caja
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Fecha DATETIME NOT NULL,
+	Empleado_Id INT NOT NULL,
+	Apertura FLOAT NOT NULL,
+	Cierre FLOAT NOT NULL
+)
+GO
+
+CREATE TABLE MovimientosCaja
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Caja_Id INT NOT NULL,
+	Operacion VARCHAR(20) NOT NULL,
+	FormaPago VARCHAR(20) NOT NULL,
+	Ingreso FLOAT NOT NULL,
+	Egreso FLOAT NOT NULL,
+	Total FLOAT NOT NULL,
+	FOREIGN KEY (Caja_Id) REFERENCES Caja(Id)
+)
+GO
+
+ALTER TABLE Caja
+ADD FOREIGN KEY (Empleado_Id) REFERENCES Usuarios(Id); 
+GO
+
+ALTER TABLE Compras
+ADD Saldo FLOAT;
+GO
+
+ALTER TABLE MovimientosCaja
+DROP COLUMN Operacion;
+GO
+
+ALTER TABLE MovimientosCaja
+ADD Venta_Id INT, Compra_Id INT;
+GO
+
+ALTER TABLE MovimientosCaja
+ADD FOREIGN KEY (Venta_Id) REFERENCES Ventas(Id),
+FOREIGN KEY (Compra_Id) REFERENCES Compras(Id);
+GO
+
+CREATE TABLE SalidasDinero
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Operacion VARCHAR(20) NOT NULL,
+	MovimientosCaja_Id INT NOT NULL,
+	FOREIGN KEY (MovimientosCaja_Id) REFERENCES MovimientosCaja(Id)
+)
+GO
+
+ALTER TABLE Clientes
+DROP COLUMN CUIL;
+GO
