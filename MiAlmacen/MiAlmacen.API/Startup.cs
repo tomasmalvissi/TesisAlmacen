@@ -35,6 +35,14 @@ namespace MiAlmacen.API
             });
             services.AddTransient<UsuarioRepository>();
             services.AddTransient<ClienteRepository>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "Cors", builder =>
+                {
+                    builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost").AllowAnyHeader().AllowAnyMethod();
+                });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +60,8 @@ namespace MiAlmacen.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors("Cors");
 
             app.UseEndpoints(endpoints =>
             {
