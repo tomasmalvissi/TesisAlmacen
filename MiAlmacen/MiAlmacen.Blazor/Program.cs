@@ -17,12 +17,7 @@ namespace MiAlmacen.Blazor
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
-            //TODO: antes de ejecutar chequear que service llame a nuestro localhost
 
-            /*MAURI*/
-            //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44368/") });
-
-            /*TOMY*/
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44330/") });
 
             builder.Services.AddScoped<IClienteService, ClienteService>();

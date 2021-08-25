@@ -109,12 +109,16 @@ namespace MiAlmacen.Data.Repositories
             AccionSQL(orden);
             return IniciarObjeto(model);
         }
-        public List<Clientes> Delete(int id)
+        public int Delete(int id)
         {
             var valorcli = Get(id);
-            orden = "DELETE FROM Clientes WHERE Id = " + id;
-            AccionSQL(orden);
-            return valorcli;
+            if (valorcli.Count == 1)
+            {
+                orden = "DELETE FROM Clientes WHERE Id = " + id;
+                AccionSQL(orden);
+                return id;
+            }
+            return 0;
         }
     }
 }

@@ -54,7 +54,7 @@ namespace MiAlmacen.API.Controllers
             return Ok(_repository.Put(id, model));
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             return Ok(_repository.Delete(id));
