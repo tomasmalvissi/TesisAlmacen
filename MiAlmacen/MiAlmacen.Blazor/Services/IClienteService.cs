@@ -1,4 +1,4 @@
-﻿using MiAlmacen.Data.Entities;
+﻿using MiAlmacen.Model.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +8,6 @@ namespace MiAlmacen.Blazor.Services
 {
     public interface IClienteService
     {
-        Task<IEnumerable<Clientes>> GetAllClientes();
+        Task<IEnumerable<ClienteModel>> GetAllClientes();
     }
 }

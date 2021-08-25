@@ -1,8 +1,6 @@
-﻿using MiAlmacen.Data.Entities;
+﻿using MiAlmacen.Model.Models;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -15,9 +13,11 @@ namespace MiAlmacen.Blazor.Services
         {
             _httpClient = httpClient;  
         }
-        public async Task<IEnumerable<Clientes>> GetAllClientes()
+        public async Task<IEnumerable<ClienteModel>> GetAllClientes()
         {
-            return JsonConvert.DeserializeObject<IEnumerable<Clientes>>(await _httpClient.GetStringAsync($"api/clientes"));
+            return JsonConvert.DeserializeObject<IEnumerable<ClienteModel>>(await _httpClient.GetStringAsync($"api/clientes"));
         }
+
+        //TODO: no va a poder buscar sincronicamente jaja por ende definir que campo buscará
     }
 }
