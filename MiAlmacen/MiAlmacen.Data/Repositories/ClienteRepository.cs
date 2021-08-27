@@ -12,28 +12,7 @@ namespace MiAlmacen.Data.Repositories
 {
     public class ClienteRepository : DBConex 
     {
-        int resultado;
         string orden;
-        private int AccionSQL(string orden)
-        {
-            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
-            try
-            {
-                AbrirConex();
-                resultado = sqlcmd.ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-
-                throw new Exception("Error al tratar de ejecutar la operación", e);
-            }
-            finally
-            {
-                CerrarConex();
-                sqlcmd.Dispose();
-            }
-            return resultado;
-        }
         private Clientes IniciarObjeto(ClienteModel model)
         {
             Clientes cli = new();
@@ -116,9 +95,12 @@ namespace MiAlmacen.Data.Repositories
             {
                 orden = "DELETE FROM Clientes WHERE Id = " + id;
                 AccionSQL(orden);
-                return id;
             }
-            return 0;
+            else
+            {
+                id = 0;
+            }
+            return id;
         }
     }
 }

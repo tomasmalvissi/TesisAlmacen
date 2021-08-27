@@ -21,14 +21,11 @@ namespace MiAlmacen.Blazor.Services
         public async Task<int> Eliminar(int id)
         {
             var respuesta = await _httpClient.DeleteAsync($"api/clientes/{id}");
-            if (respuesta.IsSuccessStatusCode)
+            if (!respuesta.IsSuccessStatusCode)
             {
-                return id;
+                id = 0;
             }
-            else
-            {
-                return 0;
-            }
+            return id;
         }
     }
 }

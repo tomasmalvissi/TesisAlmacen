@@ -13,28 +13,7 @@ namespace MiAlmacen.Data.Repositories
 {
     public class UsuarioRepository : DBConex
     {
-        int resultado;
         string orden;
-        private int AccionSQL(string orden)
-        {
-            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
-            try
-            {
-                AbrirConex();
-                resultado = sqlcmd.ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-
-                throw new Exception("Error al tratar de ejecutar la operación", e);
-            }
-            finally
-            {
-                CerrarConex();
-                sqlcmd.Dispose();
-            }
-            return resultado;
-        }
         private Usuarios IniciarObjeto(UsuarioModel model)   
         {
             Usuarios user = new();
