@@ -26,23 +26,24 @@ else
             </tr>
         </thead>
         <tbody>
+        @foreach (var cliente in clientes)
+        {
             <tr>
-                @foreach (var cliente in clientes)
-                {
-                    <td>@cliente.Id</td>
 
-                    <td>@cliente.Nombre</td>
+                <td>@cliente.Id</td>
 
-                    <td>@cliente.Direccion</td>
+                <td>@cliente.Nombre</td>
 
-                    <td>@cliente.Telefono</td>
-                    <td>
-                        <button @onclick="@(() => BorrarCliente(cliente.Id))" class="btn btn-sm btn-danger">
-                            <i class="oi oi-trash"></i> Eliminar cliente
-                        </button>
-                    </td>
-                }
+                <td>@cliente.Direccion</td>
+
+                <td>@cliente.Telefono</td>
+                <td>
+                      <button @onclick="@(() => BorrarCliente(cliente.Id))" class="btn btn-sm btn-danger">
+                           <i class="oi oi-trash"></i> Eliminar cliente
+                       </button>
+                 </td>
             </tr>
+        }
         </tbody>
     </table>
 }
