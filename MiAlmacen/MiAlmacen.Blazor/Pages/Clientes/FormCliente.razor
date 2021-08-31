@@ -1,0 +1,39 @@
+﻿@using MiAlmacen.Model.Models>
+<EditForm>
+    <div class="form-field mt-2 mb-2">
+        <div class="form-group row">
+            <label class="col-3 col-form-label">Nombre Completo</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputText @bind-Value="@cliente.Nombre" class="form-control" placeholder="Nombre" />
+                </div>
+                <ValidationMessage For="@(() => cliente.Nombre)" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-3 col-form-label">Dirección</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputText @bind-Value="@cliente.Direccion" class="form-control" placeholder="Direccion" />
+                </div>
+                <ValidationMessage For="@(() => cliente.Direccion)" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-3 col-form-label">Teléfono</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputText @bind-Value="@cliente.Telefono" class="form-control" placeholder="Telefono" />
+                </div>
+                <ValidationMessage For="@(() => cliente.Telefono)" />
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    public ClienteModel cliente { get; set; } = new ClienteModel();
+}

@@ -18,6 +18,23 @@ namespace MiAlmacen.Blazor.Services
             return JsonConvert.DeserializeObject<IEnumerable<ClienteModel>>(await _httpClient.GetStringAsync($"api/clientes"));
         }
 
+        public async Task<ClienteModel> GetUnCliente(int id)
+        {
+            return JsonConvert.DeserializeObject<ClienteModel>(await _httpClient.GetStringAsync($"api/clientes/{id}"));
+        }
+
+        public async Task<ClienteModel> Alta(ClienteModel cliente)
+        {
+            var respuesta = await _httpClient.PostAsync("api/clientes/crear", cliente);
+            return respuesta;
+        }
+
+        public async Task<ClienteModel> Editar(ClienteModel cliente)
+        {
+            var respuesta = await _httpClient.PutAsync("api/clientes", cliente);
+            return respuesta;
+        }
+
         public async Task<int> Eliminar(int id)
         {
             var respuesta = await _httpClient.DeleteAsync($"api/clientes/{id}");

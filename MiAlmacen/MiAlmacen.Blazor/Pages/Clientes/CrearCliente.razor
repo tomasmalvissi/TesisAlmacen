@@ -1,0 +1,34 @@
+﻿@page "/crear"
+@using MiAlmacen.Blazor.Services
+@using MiAlmacen.Model.Models
+@inject NavigationManager NavigationManager
+@inject IClienteService ClienteService
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Volver al listado
+        </button>
+    </div>
+    <div>
+        <h3><b>Nuevo cliente</b></h3>
+    </div>
+</div>
+
+<FormCliente cliente="cliente" TextBotonSubmit="Guardar cliente"
+             OnValidSubmit="@CrearClient" />
+
+@code {
+    public ClienteModel cliente = new ClienteModel();
+
+    async Task CrearClient()
+    {
+        await ClienteService.Alta(cliente);
+        NavigationManager.NavigateTo("/clientes");
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/clientes");
+    }
+}
