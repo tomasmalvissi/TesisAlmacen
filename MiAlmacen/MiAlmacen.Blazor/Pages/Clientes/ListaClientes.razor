@@ -15,7 +15,11 @@
 
 @if (clientes == null)
 {
-    <p>Cargando...</p>
+    <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="sr-only">Cargando...</span>
+        </div>
+    </div>
 }
 else if (clientes.Count() == 0)
 {
@@ -34,25 +38,25 @@ else
             </tr>
         </thead>
         <tbody>
-        @foreach (var cliente in clientes)
-        {
-            <tr>
+            @foreach (var cliente in clientes)
+            {
+                <tr>
 
-                <td>@cliente.Id</td>
+                    <td>@cliente.Id</td>
 
-                <td>@cliente.Nombre</td>
+                    <td>@cliente.Nombre</td>
 
-                <td>@cliente.Direccion</td>
+                    <td>@cliente.Direccion</td>
 
-                <td>@cliente.Telefono</td>
-                <td>
-                      <button @onclick="@(() => BorrarCliente(cliente.Id))" class="btn btn-sm btn-danger">
-                           <i class="oi oi-trash"></i> 
-                       </button>
-                       <a class="btn btn-sm btn-warning" href="clientes/editar/@cliente.Id"><i class="oi oi-pencil"></i></a>
-                 </td>
-            </tr>
-        }
+                    <td>@cliente.Telefono</td>
+                    <td>
+                        <button @onclick="@(() => BorrarCliente(cliente.Id))" class="btn btn-sm btn-danger">
+                            <i class="oi oi-trash"></i>
+                        </button>
+                        <a class="btn btn-sm btn-warning" href="clientes/editar/@cliente.Id"><i class="oi oi-pencil"></i></a>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 }
