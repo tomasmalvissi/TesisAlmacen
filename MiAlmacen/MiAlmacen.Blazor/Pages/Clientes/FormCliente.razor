@@ -1,5 +1,5 @@
 ﻿@using MiAlmacen.Model.Models>
-<EditForm>
+<EditForm Model="@cliente" OnValidSubmit="@OnValidSubmit">
     <div class="form-field mt-2 mb-2">
         <div class="form-group row">
             <label class="col-3 col-form-label">Nombre Completo</label>
@@ -30,10 +30,17 @@
                 <ValidationMessage For="@(() => cliente.Telefono)" />
             </div>
         </div>
+
+        <button type="submit" class="btn btn-block btn-success">
+            <i class="oi oi-check "></i>
+            <text style="color:white"> @TextBotonSubmit</text>
+        </button>
     </div>
 </EditForm>
 
 
 @code {
-    public ClienteModel cliente { get; set; } = new ClienteModel();
+    [Parameter] public ClienteModel cliente { get; set; } = new ClienteModel();
+    [Parameter] public string TextBotonSubmit { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
 }

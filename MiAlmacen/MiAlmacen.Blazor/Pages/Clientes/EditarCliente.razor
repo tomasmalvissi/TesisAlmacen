@@ -1,4 +1,4 @@
-﻿@page "/editar/{idcliente:int}"
+﻿@page "/clientes/editar/{idCliente:int}"
 @using MiAlmacen.Blazor.Services
 @using MiAlmacen.Model.Models
 @inject NavigationManager NavigationManager
@@ -7,8 +7,6 @@
 <button @onclick="@Volver" class="btn btn-sm btn-secondary">
     <i class="oi oi-arrow-circle-left"></i> Volver al listado
 </button>
-
-<hr />
 
 <div class="d-flex justify-content-between mb-3">
     <h3><b>Editar cliente</b></h3>
@@ -22,11 +20,11 @@
 
 @code {
     public ClienteModel cliente = new ClienteModel();
-    [Parameter] public int idcliente { get; set; }
+    [Parameter] public int idCliente { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        cliente = await ClienteService.GetUnCliente(idcliente);
+        cliente = await ClienteService.GetUnCliente(idCliente);
     }
 
     async Task EditarClient()

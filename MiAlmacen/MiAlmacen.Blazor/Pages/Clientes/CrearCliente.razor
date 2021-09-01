@@ -1,4 +1,4 @@
-﻿@page "/crear"
+﻿@page "/clientes/crear"
 @using MiAlmacen.Blazor.Services
 @using MiAlmacen.Model.Models
 @inject NavigationManager NavigationManager
@@ -15,7 +15,7 @@
     </div>
 </div>
 
-<FormCliente cliente="cliente" TextBotonSubmit="Guardar cliente"
+<FormCliente cliente="@cliente" TextBotonSubmit="Crear cliente"
              OnValidSubmit="@CrearClient" />
 
 @code {

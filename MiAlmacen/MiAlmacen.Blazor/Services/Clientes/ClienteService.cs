@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace MiAlmacen.Blazor.Services
@@ -20,19 +21,21 @@ namespace MiAlmacen.Blazor.Services
 
         public async Task<ClienteModel> GetUnCliente(int id)
         {
-            return JsonConvert.DeserializeObject<ClienteModel>(await _httpClient.GetStringAsync($"api/clientes/{id}"));
+            return await _httpClient.GetFromJsonAsync<ClienteModel>($"api/clientes/{id}");
         }
 
         public async Task<ClienteModel> Alta(ClienteModel cliente)
         {
-            var respuesta = await _httpClient.PostAsync("api/clientes/crear", cliente);
-            return respuesta;
+            var respuesta = await _httpClient.PostAsJsonAsync("api/clientes/", cliente);
+            var obj = respuesta.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ClienteModel>(await obj);
         }
 
         public async Task<ClienteModel> Editar(ClienteModel cliente)
         {
-            var respuesta = await _httpClient.PutAsync("api/clientes", cliente);
-            return respuesta;
+            var respuesta = await _httpClient.PutAsJsonAsync($"api/clientes/{cliente.Id}", cliente);
+            var obj = respuesta.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ClienteModel>(await obj);
         }
 
         public async Task<int> Eliminar(int id)

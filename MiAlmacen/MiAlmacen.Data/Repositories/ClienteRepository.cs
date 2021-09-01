@@ -22,12 +22,9 @@ namespace MiAlmacen.Data.Repositories
             cli.Telefono = model.Telefono;
             return cli;
         }
-        public List<Clientes> Get(int? id)
+        public List<Clientes> Get()
         {
-            if (id == null)
-                orden = "SELECT * FROM Clientes";
-            else
-                orden = "SELECT * FROM Clientes WHERE Id = '" + id + "';";
+            orden = "SELECT * FROM Clientes";
 
             List<Clientes> clientes = new();
 
@@ -60,6 +57,37 @@ namespace MiAlmacen.Data.Repositories
             }
             return clientes;
         }
+        public Clientes GetOne(int id) 
+        {
+            orden = "SELECT * FROM Clientes WHERE Id = '" + id + "';";
+            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
+            Clientes cliente = new();
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    cliente.Id = Convert.ToInt32(reader["Id"].ToString());
+                    cliente.Nombre = reader["Nombre"].ToString();
+                    cliente.Direccion = reader["Direccion"].ToString();
+                    cliente.Telefono = reader["Telefono"].ToString();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return cliente;
+        }
         public Clientes Post(ClienteModel model)
         {
             if (model == null)
@@ -75,7 +103,7 @@ namespace MiAlmacen.Data.Repositories
 
         public Clientes Put(int id, ClienteModel model)
         {
-            var valorcli = Get(id);
+            var valorcli = GetOne(id);
             if (valorcli == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
@@ -90,8 +118,8 @@ namespace MiAlmacen.Data.Repositories
         }
         public int Delete(int id)
         {
-            var valorcli = Get(id);
-            if (valorcli.Count == 1)
+            var valorcli = GetOne(id);
+            if (valorcli != null)
             {
                 orden = "DELETE FROM Clientes WHERE Id = " + id;
                 AccionSQL(orden);
