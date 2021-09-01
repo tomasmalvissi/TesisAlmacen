@@ -3,7 +3,15 @@
 @using MiAlmacen.Model.Models
 @inject IClienteService ClienteService
 
-<h3>Clientes</h3>
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <a href="clientes/crear" class="btn btn-sm btn-success">
+            <i class="oi oi-plus"></i> Nuevo
+        </a>
+    </div>
+    <h3>Clientes</h3>
+</div>
 
 @if (clientes == null)
 {
@@ -39,8 +47,9 @@ else
                 <td>@cliente.Telefono</td>
                 <td>
                       <button @onclick="@(() => BorrarCliente(cliente.Id))" class="btn btn-sm btn-danger">
-                           <i class="oi oi-trash"></i> Eliminar cliente
+                           <i class="oi oi-trash"></i> 
                        </button>
+                       <a class="btn btn-sm btn-warning" href="clientes/editar/@cliente.Id"><i class="oi oi-pencil"></i></a>
                  </td>
             </tr>
         }

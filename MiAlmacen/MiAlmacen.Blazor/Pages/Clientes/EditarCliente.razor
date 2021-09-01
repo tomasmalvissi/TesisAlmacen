@@ -4,18 +4,16 @@
 @inject NavigationManager NavigationManager
 @inject IClienteService ClienteService
 
-<button @onclick="@Volver" class="btn btn-sm btn-secondary">
-    <i class="oi oi-arrow-circle-left"></i> Volver al listado
-</button>
 
 <div class="d-flex justify-content-between mb-3">
     <h3><b>Editar cliente</b></h3>
     <div>
-        <button @onclick="@(() => BorrarCliente(cliente.Id))" class="btn btn-sm btn-danger">
-            <i class="oi oi-trash"></i> Eliminar cliente
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Volver al listado
         </button>
     </div>
 </div>
+
 <FormCliente cliente="cliente" OnValidSubmit="@EditarClient" TextBotonSubmit="Guardar cambios" />
 
 @code {
