@@ -2,7 +2,8 @@
 @using MiAlmacen.Blazor.Services
 @using MiAlmacen.Model.Models
 @inject IClienteService ClienteService
-
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 <div class="d-flex justify-content-between mb-3">
     <div>
@@ -70,8 +71,29 @@ else
     {
         clientes = await ClienteService.GetAllClientes();
     }
-    private void BorrarCliente(int id)
+
+    private async Task BorrarCliente(int id)
     {
-        ClienteService.Eliminar(id);
+        var cliente = ClienteService.GetUnCliente(id);
+
+        var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
+            $"¿Desea eliminar cliente?", "warning");
+        if (confirmacion)
+        {
+            var respuesta = ClienteService.Eliminar(id);;
+
+            if (!respuesta.Equals(0))
+            {
+                NavigationManager.NavigateTo("/clientes", true);
+                await JS.InvokeVoidAsync("simple", "¡Éxito!",
+                "Cliente eliminado", "success");
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("simple", "Error",
+                    "No se pudo eliminar cliente", "error");
+            }
+        }
+       
     }
 }

@@ -30,11 +30,6 @@
         await ClienteService.Editar(cliente);
     }
 
-    private void BorrarCliente(int id)
-    {
-        ClienteService.Eliminar(id);
-    }
-
     private void Volver()
     {
         NavigationManager.NavigateTo("/clientes");
