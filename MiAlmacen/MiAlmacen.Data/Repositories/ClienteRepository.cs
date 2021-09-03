@@ -22,9 +22,9 @@ namespace MiAlmacen.Data.Repositories
             cli.Telefono = model.Telefono;
             return cli;
         }
-        public List<Clientes> Get()
+        public List<Clientes> Get(string filtro)
         {
-            orden = "SELECT * FROM Clientes";
+            orden = $"SELECT * FROM Clientes WHERE Nombre LIKE ''%{filtro}%'";
 
             List<Clientes> clientes = new();
 

@@ -3,6 +3,7 @@
 @using MiAlmacen.Model.Models
 @inject NavigationManager NavigationManager
 @inject IClienteService ClienteService
+@inject IJSRuntime JS
 
 <div class="d-flex justify-content-between mb-3">
     <div>
@@ -23,8 +24,15 @@
 
     async Task CrearClient()
     {
-        await ClienteService.Alta(cliente);
-        NavigationManager.NavigateTo("/clientes");
+        var respuesta = await ClienteService.Alta(cliente);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/clientes");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente creado", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo crear cliente.", "error");
     }
 
     private void Volver()

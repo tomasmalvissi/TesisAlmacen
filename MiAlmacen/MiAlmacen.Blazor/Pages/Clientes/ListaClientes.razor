@@ -6,12 +6,13 @@
 @inject IJSRuntime JS
 
 <div class="d-flex justify-content-between mb-3">
+    <h3>Clientes</h3>
+    <input class="form-control" type="text" placeholder="Busque por nombre" @bind="NombreFiltro" />
     <div>
         <a href="clientes/crear" class="btn btn-sm btn-success">
             <i class="oi oi-plus"></i> Nuevo
         </a>
     </div>
-    <h3>Clientes</h3>
 </div>
 
 @if (clientes == null)
@@ -67,9 +68,11 @@ else
 
     public IEnumerable<ClienteModel> clientes { get; set; }
 
+    private string NombreFiltro = "";
+        
     protected override async Task OnInitializedAsync()
     {
-        clientes = await ClienteService.GetAllClientes();
+        clientes = await ClienteService.GetAllClientes(NombreFiltro);
     }
 
     private async Task BorrarCliente(int id)
@@ -80,20 +83,19 @@ else
             $"¿Desea eliminar cliente?", "warning");
         if (confirmacion)
         {
-            var respuesta = ClienteService.Eliminar(id);;
+            var respuesta = ClienteService.Eliminar(id);
+
 
             if (!respuesta.Equals(0))
             {
-                NavigationManager.NavigateTo("/clientes", true);
-                await JS.InvokeVoidAsync("simple", "¡Éxito!",
-                "Cliente eliminado", "success");
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente eliminado", "success");
+                clientes = await ClienteService.GetAllClientes(NombreFiltro);
             }
             else
             {
-                await JS.InvokeVoidAsync("simple", "Error",
-                    "No se pudo eliminar cliente", "error");
+                await JS.InvokeVoidAsync("simple", "Error","No se pudo eliminar cliente", "error");
             }
+
         }
-       
     }
 }

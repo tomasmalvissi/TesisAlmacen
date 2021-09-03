@@ -17,10 +17,10 @@ namespace MiAlmacen.API.Controllers
         {
             _repository = repository;
         }
-        [HttpGet]
-        public async Task<IEnumerable<ClienteModel>> Get()
+        [HttpGet("{filtro}")]
+        public async Task<IEnumerable<ClienteModel>> Get(string filtro)
         {
-            var user = _repository.Get();
+            var user = _repository.Get(filtro);
             List<ClienteModel> clientes = new();
             foreach (var item in user)
             {

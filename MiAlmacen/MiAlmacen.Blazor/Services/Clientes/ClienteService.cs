@@ -14,9 +14,9 @@ namespace MiAlmacen.Blazor.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<IEnumerable<ClienteModel>> GetAllClientes()
+        public async Task<IEnumerable<ClienteModel>> GetAllClientes(string filtro)
         {
-            return JsonConvert.DeserializeObject<IEnumerable<ClienteModel>>(await _httpClient.GetStringAsync($"api/clientes"));
+            return JsonConvert.DeserializeObject<IEnumerable<ClienteModel>>(await _httpClient.GetStringAsync($"api/clientes/{filtro}"));
         }
 
         public async Task<ClienteModel> GetUnCliente(int id)

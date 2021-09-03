@@ -3,6 +3,7 @@
 @using MiAlmacen.Model.Models
 @inject NavigationManager NavigationManager
 @inject IClienteService ClienteService
+@inject IJSRuntime JS
 
 
 <div class="d-flex justify-content-between mb-3">
@@ -27,7 +28,15 @@
 
     async Task EditarClient()
     {
-        await ClienteService.Editar(cliente);
+        var respuesta = await ClienteService.Editar(cliente);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/clientes");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente actualizado", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo actualizar un cliente.", "error");
     }
 
     private void Volver()

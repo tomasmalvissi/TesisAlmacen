@@ -8,7 +8,7 @@ namespace MiAlmacen.Blazor.Services
 {
     public interface IClienteService
     {
-        Task<IEnumerable<ClienteModel>> GetAllClientes();
+        Task<IEnumerable<ClienteModel>> GetAllClientes(string filtro);
         Task<ClienteModel> GetUnCliente(int id);
         Task<ClienteModel> Alta(ClienteModel cliente);
         Task<ClienteModel> Editar(ClienteModel cliente);
