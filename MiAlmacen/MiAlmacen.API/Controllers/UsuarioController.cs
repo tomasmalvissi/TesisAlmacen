@@ -22,8 +22,7 @@ namespace MiAlmacen.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<UsuarioModel>> Get()
         {
-            int? comodin = null;
-            var user = _repository.Get(comodin);
+            var user = _repository.GetAll();
             List<UsuarioModel> usuarios = new();
             foreach (var item in user)
             {
@@ -41,7 +40,7 @@ namespace MiAlmacen.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var user = _repository.Get(id);
+            var user = _repository.GetOne(id);
             return Ok(user);
         }
 

@@ -155,3 +155,49 @@ GO
 ALTER TABLE Clientes
 DROP COLUMN CUIL;
 GO
+
+----
+
+ALTER TABLE Articulos
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE Caja
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE Clientes
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE Compras
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE DetalleCompras
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE DetalleVentas
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE MovimientosCaja
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE Proveedores
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE SalidasDinero
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE Usuarios
+ADD FechaBaja DATETIME 
+GO
+
+ALTER TABLE Ventas
+ADD FechaBaja DATETIME 
+GO

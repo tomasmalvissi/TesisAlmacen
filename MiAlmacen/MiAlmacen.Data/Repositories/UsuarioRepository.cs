@@ -14,7 +14,7 @@ namespace MiAlmacen.Data.Repositories
     public class UsuarioRepository : DBConex
     {
         string orden;
-        private Usuarios IniciarObjeto(UsuarioModel model)   
+        private static Usuarios IniciarObjeto(UsuarioModel model)   
         {
             Usuarios user = new();
             user.Id = model.Id;
@@ -24,12 +24,9 @@ namespace MiAlmacen.Data.Repositories
             user.Contraseña = model.Contraseña;
             return user;
         }
-        public List<Usuarios> Get(int? id)
+        public List<Usuarios> GetAll()
         {
-            if (id == null)
-                orden = "SELECT * FROM Usuarios";
-            else
-                orden = "SELECT * FROM Usuarios WHERE Id = '" + id + "';";
+            orden = "SELECT * FROM Usuarios WHERE FechaBaja IS NOT NULL";
 
             List<Usuarios> usuarios = new();
 
@@ -67,42 +64,79 @@ namespace MiAlmacen.Data.Repositories
             }
             return usuarios;
         }
+        public Usuarios GetOne(int id)
+        {
+            orden = $"SELECT * FROM Usuarios WHERE Id ={id}";
+            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
+            Usuarios usuario = new();
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    usuario.Id = Convert.ToInt32(reader["Id"].ToString());
+                    usuario.Nombre = reader["Nombre"].ToString();
+                    usuario.Email = reader["Email"].ToString();
+                    usuario.Usuario = reader["Usuario"].ToString();
+                    usuario.Contraseña = reader["Contraseña"].ToString();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return usuario;
+        }
         public Usuarios Post(UsuarioModel model)
         {
             if (model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = "INSERT INTO Usuarios values (" + "'" + model.Nombre + "',"
-                                                    + "'" + model.Email + "',"
-                                                    + "'" + model.Usuario + "',"
-                                                    + "'" + model.Contraseña + "'" + ");";
+            orden = $"INSERT INTO Usuarios VALUES (" +
+                $"{model.Nombre}, {model.Email}, {model.Usuario}, {model.Contraseña})";
+
             AccionSQL(orden);
             return IniciarObjeto(model);
         }
 
         public Usuarios Put(int id, UsuarioModel model)
         {
-            var valoruser = Get(id);
+            var valoruser = GetOne(id);
             if (valoruser == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = "UPDATE Usuarios SET "
-                            + "Nombre= '" + model.Nombre + "',"
-                            + "Email= '" + model.Email + "',"
-                            + "Usuario= '" + model.Usuario + "',"
-                            + "Contraseña= '" + model.Contraseña + "'"
-                            + "where Id= " + id;
+            orden = $"UPDATE Usuarios SET Nombre={model.Nombre}, " +
+                                        $"Email={model.Email}, " +
+                                        $"Usuario={model.Usuario}, " +
+                                        $"Contraseña={model.Contraseña } " +
+                                        $"WHERE Id={id}";
             AccionSQL(orden);
             return IniciarObjeto(model);
         }
-        public List<Usuarios> Delete(int id)
+        public int Delete(int id)
         {
-            var valoruser = Get(id);
-            orden = "DELETE FROM Usuarios WHERE Id = " + id;
-            AccionSQL(orden);
-            return valoruser;
+            var valoruser = GetOne(id);
+            if (valoruser != null)
+            {
+                orden = $"UPDATE Usuarios SET FechaBaja={DateTime.Now} WHERE Id={id}";
+                AccionSQL(orden);
+            }
+            else
+            {
+                id = 0;
+            }
+            return id;
         }
     }
 }

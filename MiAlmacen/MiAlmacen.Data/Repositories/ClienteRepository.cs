@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace MiAlmacen.Data.Repositories
 {
-    public class ClienteRepository : DBConex 
+    public class ClienteRepository : DBConex
     {
         string orden;
-        private Clientes IniciarObjeto(ClienteModel model)
+        private static Clientes IniciarObjeto(ClienteModel model)
         {
             Clientes cli = new();
             cli.Id = model.Id;
@@ -57,9 +57,9 @@ namespace MiAlmacen.Data.Repositories
             }
             return clientes;
         }
-        public Clientes GetOne(int id) 
+        public Clientes GetOne(int id)
         {
-            orden = "SELECT * FROM Clientes WHERE Id = '" + id + "';";
+            orden = $"SELECT * FROM Clientes WHERE Id ={id}";
             SqlCommand sqlcmd = new SqlCommand(orden, conexion);
             Clientes cliente = new();
             try
@@ -94,9 +94,9 @@ namespace MiAlmacen.Data.Repositories
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = "INSERT INTO Clientes values (" + "'" + model.Nombre + "',"
-                                                    + "'" + model.Direccion + "',"
-                                                    + "'" + model.Telefono + "'" + ");";
+            orden = $"INSERT INTO Clientes VALUES ({model.Nombre}, " +
+                                                $"{model.Direccion}, " +
+                                                $"{model.Telefono})";
             AccionSQL(orden);
             return IniciarObjeto(model);
         }
@@ -108,11 +108,11 @@ namespace MiAlmacen.Data.Repositories
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = "UPDATE Clientes SET "
-                            + "Nombre= '" + model.Nombre + "',"
-                            + "Direccion= '" + model.Direccion + "',"
-                            + "Telefono= '" + model.Telefono + "'"
-                            + "where Id= " + model.Id;
+            orden = $"UPDATE Clientes SET Nombre={model.Nombre}, " +
+                                        $"Direccion={model.Direccion}, " +
+                                        $"Telefono={model.Telefono} " +
+                                        $"WHERE Id={model.Id}";
+
             AccionSQL(orden);
             return IniciarObjeto(model);
         }
@@ -121,7 +121,7 @@ namespace MiAlmacen.Data.Repositories
             var valorcli = GetOne(id);
             if (valorcli != null)
             {
-                orden = "DELETE FROM Clientes WHERE Id = " + id;
+                orden = $"UPDATE Clientes SET FechaBaja={DateTime.Now} WHERE Id={id}";
                 AccionSQL(orden);
             }
             else
