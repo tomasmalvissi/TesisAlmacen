@@ -22,9 +22,9 @@ namespace MiAlmacen.Data.Repositories
             cli.Telefono = model.Telefono;
             return cli;
         }
-        public List<Clientes> Get(string filtro)
+        public List<Clientes> GetAll()
         {
-            orden = $"SELECT * FROM Clientes WHERE Nombre LIKE ''%{filtro}%'";
+            orden = $"SELECT * FROM Clientes ORDER BY Nombre ASC";
 
             List<Clientes> clientes = new();
 
@@ -101,9 +101,9 @@ namespace MiAlmacen.Data.Repositories
             return IniciarObjeto(model);
         }
 
-        public Clientes Put(int id, ClienteModel model)
+        public Clientes Put(ClienteModel model)
         {
-            var valorcli = GetOne(id);
+            var valorcli = GetOne(model.Id);
             if (valorcli == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
@@ -112,7 +112,7 @@ namespace MiAlmacen.Data.Repositories
                             + "Nombre= '" + model.Nombre + "',"
                             + "Direccion= '" + model.Direccion + "',"
                             + "Telefono= '" + model.Telefono + "'"
-                            + "where Id= " + id;
+                            + "where Id= " + model.Id;
             AccionSQL(orden);
             return IniciarObjeto(model);
         }

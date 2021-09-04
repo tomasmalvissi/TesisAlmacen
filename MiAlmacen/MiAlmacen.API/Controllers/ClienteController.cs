@@ -17,21 +17,11 @@ namespace MiAlmacen.API.Controllers
         {
             _repository = repository;
         }
-        [HttpGet("{filtro}")]
-        public async Task<IEnumerable<ClienteModel>> Get(string filtro)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
-            var user = _repository.Get(filtro);
-            List<ClienteModel> clientes = new();
-            foreach (var item in user)
-            {
-                ClienteModel model = new();
-                model.Id = item.Id;
-                model.Nombre = item.Nombre;
-                model.Direccion = item.Direccion;
-                model.Telefono = item.Telefono;
-                clientes.Add(model);
-            }
-            return clientes;
+            var clientes = _repository.GetAll();
+            return Ok(clientes);
         }
 
         [HttpGet("{id}")]
@@ -48,9 +38,9 @@ namespace MiAlmacen.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] ClienteModel model)
+        public async Task<IActionResult> Put([FromBody] ClienteModel model)
         {
-            return Ok(_repository.Put(id, model));
+            return Ok(_repository.Put(model));
         }
 
         [HttpDelete("{id}")]

@@ -5,15 +5,19 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
-<div class="d-flex justify-content-between mb-3">
+<div class="d-flex justify-content-between mb-1" id="cabecera">
     <h3>Clientes</h3>
-    <input class="form-control" type="text" placeholder="Busque por nombre" @bind="NombreFiltro" />
     <div>
         <a href="clientes/crear" class="btn btn-sm btn-success">
             <i class="oi oi-plus"></i> Nuevo
         </a>
     </div>
 </div>
+
+<div class="p-1" id="filtros">
+    <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @bind="nombreFiltro" @bind:event="oninput" />
+</div>
+
 
 @if (clientes == null)
 {
@@ -40,7 +44,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var cliente in clientes)
+            @foreach (var cliente in clientes.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper())))
             {
                 <tr>
 
@@ -68,11 +72,11 @@ else
 
     public IEnumerable<ClienteModel> clientes { get; set; }
 
-    private string NombreFiltro = "";
-        
+    public string nombreFiltro { get; set; } = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
-        clientes = await ClienteService.GetAllClientes(NombreFiltro);
+        clientes = await ClienteService.GetAllClientes();
     }
 
     private async Task BorrarCliente(int id)
@@ -85,11 +89,11 @@ else
         {
             var respuesta = ClienteService.Eliminar(id);
 
-
             if (!respuesta.Equals(0))
             {
                 await JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente eliminado", "success");
-                clientes = await ClienteService.GetAllClientes(NombreFiltro);
+
+                clientes.Where(x => x.Nombre.Contains(nombreFiltro));
             }
             else
             {
@@ -97,5 +101,12 @@ else
             }
 
         }
+    }
+
+    void CargarGrilla(ChangeEventArgs e)
+    {
+        nombreFiltro = e.Value.ToString();
+
+        clientes.Where(x => x.Nombre.Contains(nombreFiltro));
     }
 }
