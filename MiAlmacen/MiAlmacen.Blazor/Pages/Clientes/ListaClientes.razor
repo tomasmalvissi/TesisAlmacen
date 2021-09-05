@@ -40,6 +40,7 @@ else
                 <th>Nombre</th>
                 <th>Dirección</th>
                 <th>Teléfono</th>
+                <th>Activo</th>
                 <th></th>
             </tr>
         </thead>
@@ -47,14 +48,20 @@ else
             @foreach (var cliente in clientes)
             {
                 <tr>
-
                     <td>@cliente.Id</td>
-
                     <td>@cliente.Nombre</td>
-
                     <td>@cliente.Direccion</td>
-
                     <td>@cliente.Telefono</td>
+                    <td>
+                        @if(cliente.FechaBaja == null)
+                        {
+                           <i class="oi oi-check" style="color:green"></i>
+                        }
+                        else     
+                        {
+                           <i class="oi oi-x" style="color:red"></i>
+                        }
+                    </td>
                     <td>
                         <button @onclick="@(() => BorrarCliente(cliente.Id))" class="btn btn-sm btn-danger">
                             <i class="oi oi-trash"></i>
@@ -69,9 +76,9 @@ else
 
 <nav aria-label="Page navigation example">
   <ul class="pagination">
-    <li class="page-item"><button class="page-link" @onclick="() => Paginar(false, pagina)">Anterior</button></li>
+    <li class="page-item"><button class="page-link" @onclick="() => Paginar(false)">Anterior</button></li>
     <li class="page-item"><button class="page-link">@pagina</button></li>
-    <li class="page-item"><button class="page-link" @onclick="() => Paginar(true, pagina)">Siguiente</button></li>
+    <li class="page-item"><button class="page-link" @onclick="() => Paginar(true)">Siguiente</button></li>
   </ul>
 </nav>
 
@@ -84,8 +91,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await RecargarGrilla();
-        await Paginar(false, pagina);
+        await Paginar(false);
     }
 
     private async Task BorrarCliente(int id)
@@ -101,7 +107,7 @@ else
             if (!respuesta.Equals(0))
             {
                 await JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente eliminado", "success");
-                await Paginar(false, pagina);
+                await Paginar(false);
             }
             else
             {
@@ -110,7 +116,7 @@ else
         }
     }
 
-    async Task Paginar(bool next, int pagina)
+    async Task Paginar(bool next)
     {
         clientes = await ClienteService.GetAllClientes();
         clientes = clientes.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
@@ -134,6 +140,6 @@ else
     void FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
-        Paginar(false, pagina);
+        Paginar(false);
     }
 }

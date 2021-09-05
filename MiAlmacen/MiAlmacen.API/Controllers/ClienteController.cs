@@ -37,7 +37,7 @@ namespace MiAlmacen.API.Controllers
             return Ok(_repository.Post(model));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> Put([FromBody] ClienteModel model)
         {
             return Ok(_repository.Put(model));

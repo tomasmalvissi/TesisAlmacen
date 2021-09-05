@@ -20,11 +20,12 @@ namespace MiAlmacen.Data.Repositories
             cli.Nombre = model.Nombre;
             cli.Direccion = model.Direccion;
             cli.Telefono = model.Telefono;
+            cli.FechaBaja = model.FechaBaja;    
             return cli;
         }
         public List<Clientes> GetAll()
         {
-            orden = $"SELECT * FROM Clientes ORDER BY Nombre ASC";
+            orden = $@"SELECT * FROM Clientes ORDER BY Nombre ASC";
 
             List<Clientes> clientes = new();
 
@@ -42,6 +43,7 @@ namespace MiAlmacen.Data.Repositories
                     cli.Nombre = reader["Nombre"].ToString();
                     cli.Direccion = reader["Direccion"].ToString();
                     cli.Telefono = reader["Telefono"].ToString();
+                    cli.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                     clientes.Add(cli);
                 }
 
@@ -59,7 +61,7 @@ namespace MiAlmacen.Data.Repositories
         }
         public Clientes GetOne(int id)
         {
-            orden = $"SELECT * FROM Clientes WHERE Id ={id}";
+            orden = $@"SELECT * FROM Clientes WHERE Id ={id}";
             SqlCommand sqlcmd = new SqlCommand(orden, conexion);
             Clientes cliente = new();
             try
@@ -74,6 +76,7 @@ namespace MiAlmacen.Data.Repositories
                     cliente.Nombre = reader["Nombre"].ToString();
                     cliente.Direccion = reader["Direccion"].ToString();
                     cliente.Telefono = reader["Telefono"].ToString();
+                    cliente.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                 }
 
             }
@@ -94,24 +97,23 @@ namespace MiAlmacen.Data.Repositories
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = $"INSERT INTO Clientes VALUES ({model.Nombre}, " +
-                                                $"{model.Direccion}, " +
-                                                $"{model.Telefono})";
+            orden = $@"INSERT INTO Clientes (Nombre, Direccion, Telefono) 
+                    VALUES ('{model.Nombre}','{model.Direccion}','{model.Telefono}')";
             AccionSQL(orden);
             return IniciarObjeto(model);
         }
 
         public Clientes Put(ClienteModel model)
         {
-            var valorcli = GetOne(model.Id);
-            if (valorcli == null || model == null)
+            var cliente = GetOne(model.Id);
+            if (cliente == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = $"UPDATE Clientes SET Nombre={model.Nombre}, " +
-                                        $"Direccion={model.Direccion}, " +
-                                        $"Telefono={model.Telefono} " +
-                                        $"WHERE Id={model.Id}";
+            orden = $@"UPDATE Clientes SET Nombre='{model.Nombre}',
+                                        Direccion='{model.Direccion}',
+                                        Telefono='{model.Telefono}'
+                                        WHERE Id={model.Id}";
 
             AccionSQL(orden);
             return IniciarObjeto(model);
@@ -121,7 +123,7 @@ namespace MiAlmacen.Data.Repositories
             var valorcli = GetOne(id);
             if (valorcli != null)
             {
-                orden = $"UPDATE Clientes SET FechaBaja={DateTime.Now} WHERE Id={id}";
+                orden = $@"UPDATE Clientes SET FechaBaja='{DateTime.Now}' WHERE Id={id}";
                 AccionSQL(orden);
             }
             else
