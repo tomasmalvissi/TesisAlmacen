@@ -5,7 +5,7 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
-<div class="d-flex justify-content-between mb-1" id="cabecera">
+<div class="d-flex justify-content-between mb-1" id="header">
     <h3>Clientes</h3>
     <div>
         <a href="clientes/crear" class="btn btn-sm btn-success">
@@ -74,13 +74,19 @@ else
     </table>
 }
 
-<nav aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item"><button class="page-link" @onclick="() => Paginar(false)">Anterior</button></li>
-    <li class="page-item"><button class="page-link">@pagina</button></li>
-    <li class="page-item"><button class="page-link" @onclick="() => Paginar(true)">Siguiente</button></li>
-  </ul>
+<div class="d-flex justify-content-between mb-1" id="footer">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(false)">Anterior</button></li>
+            <li class="page-item"><button class="page-link">@pagina</button></li>
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(true)">Siguiente</button></li>
+        </ul>
 </nav>
+<div>
+        <b>@registros registros totales</b>
+</div>
+</div>
+
 
 @code {
     public IEnumerable<ClienteModel> clientes { get; set; }
@@ -88,6 +94,8 @@ else
     public string nombreFiltro { get; set; } = string.Empty;
 
     public int pagina { get; set; } = 1;
+
+    public int registros { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -122,7 +130,8 @@ else
         clientes = clientes.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
 
         int cantidadPorPagina = 10;
-        decimal total = clientes.Count() / cantidadPorPagina;
+        registros = clientes.Count();
+        decimal total = registros / cantidadPorPagina;
 
         if (!next && pagina > 1) pagina--;
 
