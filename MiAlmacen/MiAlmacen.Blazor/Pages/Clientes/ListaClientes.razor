@@ -15,7 +15,7 @@
 </div>
 
 <div class="p-1" id="filtros">
-    <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @bind="nombreFiltro" @bind:event="oninput" />
+    <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
 </div>
 
 
@@ -44,7 +44,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var cliente in clientes.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper())))
+            @foreach (var cliente in clientes)
             {
                 <tr>
 
@@ -67,16 +67,25 @@ else
     </table>
 }
 
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item"><button class="page-link" @onclick="() => Paginar(false, pagina)">Anterior</button></li>
+    <li class="page-item"><button class="page-link">@pagina</button></li>
+    <li class="page-item"><button class="page-link" @onclick="() => Paginar(true, pagina)">Siguiente</button></li>
+  </ul>
+</nav>
 
 @code {
-
     public IEnumerable<ClienteModel> clientes { get; set; }
 
     public string nombreFiltro { get; set; } = string.Empty;
 
+    public int pagina { get; set; } = 1;
+
     protected override async Task OnInitializedAsync()
     {
-        clientes = await ClienteService.GetAllClientes();
+        await RecargarGrilla();
+        await Paginar(false, pagina);
     }
 
     private async Task BorrarCliente(int id)
@@ -92,21 +101,39 @@ else
             if (!respuesta.Equals(0))
             {
                 await JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente eliminado", "success");
-
-                clientes.Where(x => x.Nombre.Contains(nombreFiltro));
+                await Paginar(false, pagina);
             }
             else
             {
-                await JS.InvokeVoidAsync("simple", "Error","No se pudo eliminar cliente", "error");
+                await JS.InvokeVoidAsync("simple", "Error", "No se pudo eliminar cliente", "error");
             }
-
         }
     }
 
-    void CargarGrilla(ChangeEventArgs e)
+    async Task Paginar(bool next, int pagina)
+    {
+        clientes = await ClienteService.GetAllClientes();
+        clientes = clientes.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+
+        int cantidadPorPagina = 10;
+        decimal total = clientes.Count() / cantidadPorPagina;
+
+        if (!next && pagina > 1) pagina--;
+
+        if (next && pagina <= total) pagina++;
+
+        clientes = clientes.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
+    }
+
+    async Task RecargarGrilla()
+    {
+        clientes = await ClienteService.GetAllClientes();
+        clientes = clientes.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+    }
+
+    void FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
-
-        clientes.Where(x => x.Nombre.Contains(nombreFiltro));
+        Paginar(false, pagina);
     }
 }

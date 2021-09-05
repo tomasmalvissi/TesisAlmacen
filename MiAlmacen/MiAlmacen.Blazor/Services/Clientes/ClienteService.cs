@@ -16,7 +16,7 @@ namespace MiAlmacen.Blazor.Services
         }
         public async Task<IEnumerable<ClienteModel>> GetAllClientes()
         {
-            var respuesta = _httpClient.GetStringAsync($"api/clientes");
+            var respuesta = _httpClient.GetStringAsync($"api/clientes/");
             return JsonConvert.DeserializeObject<IEnumerable<ClienteModel>>(await respuesta);
         }
 
@@ -34,7 +34,7 @@ namespace MiAlmacen.Blazor.Services
 
         public async Task<ClienteModel> Editar(ClienteModel cliente)
         {
-            var respuesta = await _httpClient.PutAsJsonAsync($"api/clientes/{cliente.Id}", cliente);
+            var respuesta = await _httpClient.PutAsJsonAsync($"api/clientes/", cliente);
             var obj = respuesta.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<ClienteModel>(await obj);
         }
