@@ -103,9 +103,9 @@ namespace MiAlmacen.Data.Repositories
             return IniciarObjeto(model);
         }
 
-        public Clientes Put(ClienteModel model)
+        public Clientes Put(int id, ClienteModel model)
         {
-            var cliente = GetOne(model.Id);
+            var cliente = GetOne(id);
             if (cliente == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");

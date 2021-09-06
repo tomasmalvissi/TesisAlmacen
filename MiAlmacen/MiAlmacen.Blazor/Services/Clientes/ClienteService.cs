@@ -34,7 +34,7 @@ namespace MiAlmacen.Blazor.Services
 
         public async Task<ClienteModel> Editar(ClienteModel cliente)
         {
-            var respuesta = await _httpClient.PutAsJsonAsync($"api/clientes/", cliente);
+            var respuesta = await _httpClient.PutAsJsonAsync($"api/clientes/{cliente.Id}", cliente);
             var obj = respuesta.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<ClienteModel>(await obj);
         }

@@ -37,11 +37,12 @@ namespace MiAlmacen.API.Controllers
             return Ok(_repository.Post(model));
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Put([FromBody] ClienteModel model)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] ClienteModel model)
         {
-            return Ok(_repository.Put(model));
+            return Ok(_repository.Put(id, model));
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
