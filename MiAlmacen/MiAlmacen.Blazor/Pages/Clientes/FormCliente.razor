@@ -1,4 +1,8 @@
-﻿@using MiAlmacen.Model.Models
+﻿@using MiAlmacen.Blazor.Services
+@using MiAlmacen.Model.Models
+@inject NavigationManager NavigationManager
+@inject IClienteService ClienteService
+@inject IJSRuntime JS
 
 <EditForm Model="@cliente" OnValidSubmit="@OnValidSubmit">
     <div class="form-field mt-2 mb-2">
@@ -32,6 +36,26 @@
             </div>
         </div>
 
+        @if (!OcultaAlta)
+        {
+            <div class="d-flex justify-content-between form-group row">
+                <label class="col-3 col-form-label">Estado</label>
+                <div class="col">
+                    @if (cliente.FechaBaja == null)
+                    {
+                        <label><b>Cliente activo</b><i class="oi oi-check" style="color:green"></i></label>
+                    }
+                    else
+                    {
+                        <label><b>Cliente dado de baja el: @cliente.FechaBaja.ToString()</b></label>
+                        <div class="btn btn-group">
+                            <button type="button" @onclick="DarAlta" class="btn btn-sm btn-outline-success"><i class="oi oi-data-transfer-upload"></i>Dar de alta</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
         <button type="submit" class="btn btn-block btn-success">
             <i class="oi oi-check "></i>
             <text style="color:white"> @TextBotonSubmit</text>
@@ -44,4 +68,22 @@
     [Parameter] public ClienteModel cliente { get; set; } = new ClienteModel();
     [Parameter] public string TextBotonSubmit { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public bool OcultaAlta { get; set; }
+
+    
+    void DarAlta()
+    {
+        cliente.FechaBaja = null;
+
+        var respuesta = ClienteService.Editar(cliente);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/clientes");
+             JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente dado de alta con éxito!", "success");
+        }
+        else
+             JS.InvokeVoidAsync("simple", "Error", $"No se pudo dar de alta el cliente.", "error");
+    }
+
 }

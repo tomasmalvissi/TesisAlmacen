@@ -112,8 +112,12 @@ namespace MiAlmacen.Data.Repositories
             }
             orden = $@"UPDATE Clientes SET Nombre='{model.Nombre}',
                                         Direccion='{model.Direccion}',
-                                        Telefono='{model.Telefono}'
-                                        WHERE Id={model.Id}";
+                                        Telefono='{model.Telefono}',";
+                                        if (model.FechaBaja == null)
+                                             orden += $"FechaBaja = null";
+                                        else
+                                             orden += $"FechaBaja = '{model.FechaBaja}'";
+                                         orden += $" WHERE Id={model.Id}";
 
             AccionSQL(orden);
             return IniciarObjeto(model);

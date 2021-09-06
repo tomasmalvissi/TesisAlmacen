@@ -15,7 +15,7 @@
     </div>
 </div>
 
-<FormCliente cliente="cliente" OnValidSubmit="@EditarClient" TextBotonSubmit="Guardar cambios" />
+<FormCliente cliente="cliente" OnValidSubmit="@EditarClient" TextBotonSubmit="Guardar cambios" OcultaAlta=false/>
 
 @code {
     public ClienteModel cliente = new ClienteModel();
@@ -33,10 +33,10 @@
         if (respuesta != null)
         {
             NavigationManager.NavigateTo("/clientes");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente actualizado", "success");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Cliente {respuesta.Nombre} actualizado con éxito!", "success");
         }
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo actualizar un cliente.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo actualizar el cliente.", "error");
     }
 
     private void Volver()

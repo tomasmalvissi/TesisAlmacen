@@ -16,8 +16,7 @@
     </div>
 </div>
 
-<FormCliente cliente="@cliente" TextBotonSubmit="Crear cliente"
-             OnValidSubmit="@CrearClient" />
+<FormCliente cliente="@cliente" TextBotonSubmit="Crear cliente" OnValidSubmit="@CrearClient" OcultaAlta=true />
 
 @code {
     public ClienteModel cliente = new ClienteModel();
