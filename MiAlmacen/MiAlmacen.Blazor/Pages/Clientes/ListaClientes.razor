@@ -131,11 +131,21 @@ else
 
         int cantidadPorPagina = 10;
         registros = clientes.Count();
-        decimal total = registros / cantidadPorPagina;
+        decimal total;
+
+        if (registros < cantidadPorPagina)
+            total = pagina;
+        else
+        {
+            if (registros % cantidadPorPagina == 0)
+                total = registros / cantidadPorPagina;
+            else
+                total = (registros / cantidadPorPagina) + 1;
+        }
 
         if (!next && pagina > 1) pagina--;
 
-        if (next && pagina <= total) pagina++;
+        if (next && pagina < total) pagina++;
 
         clientes = clientes.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
     }
