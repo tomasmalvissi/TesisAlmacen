@@ -20,7 +20,7 @@ namespace MiAlmacen.Data.Repositories
             cli.Nombre = model.Nombre;
             cli.Direccion = model.Direccion;
             cli.Telefono = model.Telefono;
-            cli.FechaBaja = model.FechaBaja;    
+            cli.FechaBaja = model.FechaBaja;
             return cli;
         }
         public List<Clientes> GetAll()
@@ -97,10 +97,13 @@ namespace MiAlmacen.Data.Repositories
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = $@"INSERT INTO Clientes (Nombre, Direccion, Telefono) 
+            else
+            {
+                orden = $@"INSERT INTO Clientes (Nombre, Direccion, Telefono) 
                     VALUES ('{model.Nombre}','{model.Direccion}','{model.Telefono}')";
-            AccionSQL(orden);
-            return IniciarObjeto(model);
+                AccionSQL(orden);
+                return IniciarObjeto(model);
+            }
         }
 
         public Clientes Put(int id, ClienteModel model)
@@ -110,17 +113,20 @@ namespace MiAlmacen.Data.Repositories
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = $@"UPDATE Clientes SET Nombre='{model.Nombre}',
-                                        Direccion='{model.Direccion}',
-                                        Telefono='{model.Telefono}',";
-                                        if (model.FechaBaja == null)
-                                             orden += $"FechaBaja = null";
-                                        else
-                                             orden += $"FechaBaja = '{model.FechaBaja}'";
-                                         orden += $" WHERE Id={model.Id}";
+            else
+            {
+                orden = $@"UPDATE Clientes SET Nombre='{model.Nombre}',
+                                            Direccion='{model.Direccion}',
+                                            Telefono='{model.Telefono}',";
+                if (model.FechaBaja == null)
+                    orden += $"FechaBaja = null";
+                else
+                    orden += $"FechaBaja = '{model.FechaBaja}'";
+                orden += $" WHERE Id={model.Id}";
 
-            AccionSQL(orden);
-            return IniciarObjeto(model);
+                AccionSQL(orden);
+                return IniciarObjeto(model);
+            }
         }
         public int Delete(int id)
         {

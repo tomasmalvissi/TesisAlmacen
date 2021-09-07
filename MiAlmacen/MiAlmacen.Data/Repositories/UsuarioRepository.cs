@@ -102,11 +102,14 @@ namespace MiAlmacen.Data.Repositories
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = $"INSERT INTO Usuarios VALUES (" +
+            else
+            {
+                orden = $"INSERT INTO Usuarios VALUES (" +
                 $"{model.Nombre}, {model.Email}, {model.Usuario}, {model.Contraseña})";
 
-            AccionSQL(orden);
-            return IniciarObjeto(model);
+                AccionSQL(orden);
+                return IniciarObjeto(model);
+            }
         }
 
         public Usuarios Put(int id, UsuarioModel model)
@@ -116,13 +119,16 @@ namespace MiAlmacen.Data.Repositories
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
-            orden = $"UPDATE Usuarios SET Nombre={model.Nombre}, " +
+            else
+            {
+                orden = $"UPDATE Usuarios SET Nombre={model.Nombre}, " +
                                         $"Email={model.Email}, " +
                                         $"Usuario={model.Usuario}, " +
                                         $"Contraseña={model.Contraseña } " +
                                         $"WHERE Id={id}";
-            AccionSQL(orden);
-            return IniciarObjeto(model);
+                AccionSQL(orden);
+                return IniciarObjeto(model);
+            }
         }
         public int Delete(int id)
         {

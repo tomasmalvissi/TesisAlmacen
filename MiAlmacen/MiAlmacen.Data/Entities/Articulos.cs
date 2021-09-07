@@ -15,6 +15,7 @@ namespace MiAlmacen.Data.Entities
         public float Precio_Mayor { get; set; }
         public int Stock_Act { get; set; }
         public DateTime Ultima_Modif { get; set; }
+        public DateTime? FechaBaja { get; set; }
 
     }
 }

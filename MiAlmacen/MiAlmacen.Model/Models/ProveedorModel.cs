@@ -13,5 +13,6 @@ namespace MiAlmacen.Model.Models
         public string CUIL { get; set; }
         public string Direccion { get; set; }
         public string Telefono { get; set; }
+        public DateTime? FechaBaja { get; set; }
     }
 }
