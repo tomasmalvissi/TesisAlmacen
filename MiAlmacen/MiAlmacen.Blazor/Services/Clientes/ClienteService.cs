@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MiAlmacen.Blazor.Services
 {
-    public class ClienteService : IClienteService
+    public class ClienteService
     {
         private readonly HttpClient _httpClient;
         public ClienteService(HttpClient httpClient)

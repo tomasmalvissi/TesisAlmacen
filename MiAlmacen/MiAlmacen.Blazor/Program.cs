@@ -20,7 +20,7 @@ namespace MiAlmacen.Blazor
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44330/") });
 
-            builder.Services.AddScoped<IClienteService, ClienteService>();
+            builder.Services.AddScoped<ClienteService>();
 
             await builder.Build().RunAsync();
         }
