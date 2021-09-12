@@ -12,8 +12,12 @@
     </div>
 </div>
 
-<div class="p-1" id="filtros">
+<div class="d-flex justify-content-between mb-1" id="filtros">
     <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
+</div>
+<div class="form-group form-check m-1">
+    <input type="checkbox" class="form-check-input" @onchange="FiltroActivos">
+    <label class="form-check-label">Sólo activos</label>
 </div>
 
 
@@ -51,13 +55,13 @@ else
                     <td>@cliente.Direccion</td>
                     <td>@cliente.Telefono</td>
                     <td>
-                        @if(cliente.FechaBaja == null)
+                        @if (cliente.FechaBaja == null)
                         {
-                           <i class="oi oi-check" style="color:green"></i>
+                            <i class="oi oi-check" style="color:green"></i>
                         }
-                        else     
+                        else
                         {
-                           <i class="oi oi-x" style="color:red"></i>
+                            <i class="oi oi-x" style="color:red"></i>
                         }
                     </td>
                     <td>
@@ -79,10 +83,10 @@ else
             <li class="page-item"><button class="page-link">@pagina</button></li>
             <li class="page-item"><button class="page-link" @onclick="() => Paginar(true)">Siguiente</button></li>
         </ul>
-</nav>
-<div>
+    </nav>
+    <div>
         <b>@registros registros totales</b>
-</div>
+    </div>
 </div>
 
 
@@ -94,6 +98,8 @@ else
     public int pagina { get; set; } = 1;
 
     public int registros { get; set; }
+
+    public bool activos { get; set; } = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -125,7 +131,10 @@ else
     async Task Paginar(bool next)
     {
         clientes = await ClienteService.GetAllClientes();
-        clientes = clientes.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+        if (activos)
+            clientes = clientes.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()) && x.FechaBaja == null);
+        else
+            clientes = clientes.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
 
         int cantidadPorPagina = 10;
         registros = clientes.Count();
@@ -157,6 +166,12 @@ else
     void FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
+        Paginar(false);
+    }
+
+    void FiltroActivos()
+    {
+        activos = !activos;
         Paginar(false);
     }
 }
