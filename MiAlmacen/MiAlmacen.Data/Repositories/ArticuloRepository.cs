@@ -90,9 +90,9 @@ namespace MiAlmacen.Data.Repositories
                     articulo.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
             }
             finally 
             {
@@ -110,35 +110,85 @@ namespace MiAlmacen.Data.Repositories
             }
             else
             {
-                orden = $@"INSERT INTO Articulos (Nombre, Codigo_Art, Precio_Unit, Precio_Mayor, Stock_Act, Ultima_Modif) 
-                        VALUES ('{model.Nombre}','{model.Codigo_Art}','{model.Precio_Unit}','{model.Precio_Mayor}','{model.Stock_Act}','{model.Ultima_Modif}')";
-                AccionSQL(orden);
-                return IniciarObjeto(model);
+                Articulos art = IniciarObjeto(model);
+                SqlCommand sqlcmd = new(orden, conexion);
+                try
+                {
+                    AbrirConex();
+                    orden = $@"INSERT INTO Articulos (Nombre, Codigo_Art, Precio_Unit, Precio_Mayor, Stock_Act, Ultima_Modif) 
+                            VALUES (@Nombre, @Codigo_Art, @Precio_Unit, @Precio_Mayor, @Stock_Act, @Ultima_Modif)";
+
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Nombre", art.Nombre);
+                    sqlcmd.Parameters.AddWithValue("@Codigo_Art", art.Codigo_Art);
+                    sqlcmd.Parameters.AddWithValue("@Precio_Unit", art.Precio_Unit);
+                    sqlcmd.Parameters.AddWithValue("@Precio_Mayor", art.Precio_Mayor);
+                    sqlcmd.Parameters.AddWithValue("@Stock_Act", art.Stock_Act);
+                    sqlcmd.Parameters.AddWithValue("@Ultima_Modif", art.Ultima_Modif);
+
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
+
+
+
+                return art;
             }
         }
         public Articulos Put(int id, ArticuloModel model)
         {
-            var cliente = GetOne(id);
-            if (cliente == null || model == null)
+            var articulo = GetOne(id);
+            if (articulo == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
             else
             {
-                orden = $@"UPDATE Articulos SET Nombre='{model.Nombre}',
-                                        Codigo_Art='{model.Codigo_Art}',
-                                        Precio_Unit = '{model.Precio_Unit}',
-                                        Precio_Mayor = '{model.Precio_Mayor}',
-                                        Stock_Act = '{model.Stock_Act}',
-                                        Ultima_Modif = '{model.Ultima_Modif}',";
-                if (model.FechaBaja == null)
-                    orden += $"FechaBaja = null";
-                else
-                    orden += $"FechaBaja = '{model.FechaBaja}'";
-                orden += $" WHERE Id={model.Id}";
+                Articulos art = IniciarObjeto(model);
+                SqlCommand sqlcmd = new(orden, conexion);
+                try
+                {
+                    AbrirConex();
+                    orden = $@"UPDATE Articulos SET Nombre=@Nombre, Codigo_Art=@Codigo_Art, Precio_Unit=@Precio_Unit, Precio_Mayor=@Precio_Mayor, Stock_Act=@Stock_Act, Ultima_Modif=@Ultima_Modif
+                                                WHERE Id=@Id";
 
-                AccionSQL(orden);
-                return IniciarObjeto(model);
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Id", id);
+                    sqlcmd.Parameters.AddWithValue("@Nombre", art.Nombre);
+                    sqlcmd.Parameters.AddWithValue("@Codigo_Art", art.Codigo_Art);
+                    sqlcmd.Parameters.AddWithValue("@Precio_Unit", art.Precio_Unit);
+                    sqlcmd.Parameters.AddWithValue("@Precio_Mayor", art.Precio_Mayor);
+                    sqlcmd.Parameters.AddWithValue("@Stock_Act", art.Stock_Act);
+                    sqlcmd.Parameters.AddWithValue("@Ultima_Modif", art.Ultima_Modif);
+
+                    if (model.FechaBaja == null)
+                        sqlcmd.Parameters.AddWithValue("@FechaBaja", null);
+                    else
+                        sqlcmd.Parameters.AddWithValue("@FechaBaja", DateTime.Now);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
+                return art;
             }
         }
         public int Delete(int id)
@@ -146,8 +196,29 @@ namespace MiAlmacen.Data.Repositories
             var valorart = GetOne(id);
             if (valorart != null)
             {
-                orden = $@"UPDATE Articulos SET FechaBaja='{DateTime.Now}' WHERE Id={id}";
-                AccionSQL(orden);
+                SqlCommand sqlcmd = new(orden, conexion);
+                try
+                {
+                    AbrirConex();
+                    orden = $"UPDATE Articulos SET FechaBaja=@FechaBaja WHERE Id=@Id";
+
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Id", id);
+                    sqlcmd.Parameters.AddWithValue("@FechaBaja", DateTime.Now);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
             }
             else
             {

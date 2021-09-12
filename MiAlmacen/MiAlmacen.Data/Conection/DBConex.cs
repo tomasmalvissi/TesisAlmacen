@@ -42,27 +42,5 @@ namespace MiAlmacen.Data.Conection
                 throw new Exception("Error al tratar de cerrar la conexión", e);
             }
         }
-
-        public int AccionSQL(string orden)
-        {
-            int resultado;
-            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
-            try
-            {
-                AbrirConex();
-                resultado = sqlcmd.ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-
-                throw new Exception("Error al tratar de ejecutar la operación", e);
-            }
-            finally
-            {
-                CerrarConex();
-                sqlcmd.Dispose();
-            }
-            return resultado;
-        }
     }
 }

@@ -48,9 +48,9 @@ namespace MiAlmacen.Data.Repositories
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
             }
             finally
             {
@@ -80,9 +80,9 @@ namespace MiAlmacen.Data.Repositories
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
             }
             finally
             {
@@ -99,10 +99,33 @@ namespace MiAlmacen.Data.Repositories
             }
             else
             {
-                orden = $@"INSERT INTO Clientes (Nombre, Direccion, Telefono) 
-                    VALUES ('{model.Nombre}','{model.Direccion}','{model.Telefono}')";
-                AccionSQL(orden);
-                return IniciarObjeto(model);
+                Clientes cli = IniciarObjeto(model);
+                SqlCommand sqlcmd = new(orden, conexion);
+                try
+                {
+                    AbrirConex();
+                    orden = $@"INSERT INTO Clientes (Nombre, Direccion, Telefono) 
+                                VALUES (@Nombre, @Direccion, @Telefono)";
+
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Nombre", cli.Nombre);
+                    sqlcmd.Parameters.AddWithValue("@Direccion", cli.Direccion);
+                    sqlcmd.Parameters.AddWithValue("@Telefono", cli.Telefono);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
+
+                return cli;
             }
         }
 
@@ -115,17 +138,39 @@ namespace MiAlmacen.Data.Repositories
             }
             else
             {
-                orden = $@"UPDATE Clientes SET Nombre='{model.Nombre}',
-                                            Direccion='{model.Direccion}',
-                                            Telefono='{model.Telefono}',";
-                if (model.FechaBaja == null)
-                    orden += $"FechaBaja = null";
-                else
-                    orden += $"FechaBaja = '{model.FechaBaja}'";
-                orden += $" WHERE Id={model.Id}";
+                Clientes cli = IniciarObjeto(model);
+                SqlCommand sqlcmd = new(orden, conexion);
+                try
+                {
+                    AbrirConex();
+                    orden = $@"UPDATE Clientes SET Nombre=@Nombre, Direccion=@Direccion, Telefono=@Telefono, FechaBaja = @FechaBaja
+                                           WHERE Id=@Id";
 
-                AccionSQL(orden);
-                return IniciarObjeto(model);
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Id", id);
+                    sqlcmd.Parameters.AddWithValue("@Nombre", cli.Nombre);
+                    sqlcmd.Parameters.AddWithValue("@Direccion", cli.Direccion);
+                    sqlcmd.Parameters.AddWithValue("@Telefono", cli.Telefono);
+
+                    if (model.FechaBaja == null)
+                        sqlcmd.Parameters.AddWithValue("@FechaBaja", null);
+                    else
+                        sqlcmd.Parameters.AddWithValue("@FechaBaja", DateTime.Now);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
+
+                return cli;
             }
         }
         public int Delete(int id)
@@ -133,8 +178,29 @@ namespace MiAlmacen.Data.Repositories
             var valorcli = GetOne(id);
             if (valorcli != null)
             {
-                orden = $@"UPDATE Clientes SET FechaBaja='{DateTime.Now}' WHERE Id={id}";
-                AccionSQL(orden);
+                SqlCommand sqlcmd = new(orden, conexion);
+                try
+                {
+                    AbrirConex();
+                    orden = $"UPDATE Clientes SET FechaBaja=@FechaBaja WHERE Id=@Id";
+
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Id", id);
+                    sqlcmd.Parameters.AddWithValue("@FechaBaja", DateTime.Now);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
             }
             else
             {

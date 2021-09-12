@@ -14,7 +14,7 @@ namespace MiAlmacen.Data.Repositories
     public class UsuarioRepository : DBConex
     {
         string orden;
-        private static Usuarios IniciarObjeto(UsuarioModel model)   
+        private static Usuarios IniciarObjeto(UsuarioModel model)
         {
             Usuarios user = new();
             user.Id = model.Id;
@@ -30,7 +30,7 @@ namespace MiAlmacen.Data.Repositories
 
             List<Usuarios> usuarios = new();
 
-            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
+            SqlCommand sqlcmd = new(orden, conexion);
             try
             {
                 AbrirConex();
@@ -67,7 +67,7 @@ namespace MiAlmacen.Data.Repositories
         public Usuarios GetOne(int id)
         {
             orden = $"SELECT * FROM Usuarios WHERE Id ={id}";
-            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
+            SqlCommand sqlcmd = new(orden, conexion);
             Usuarios usuario = new();
             try
             {
@@ -85,9 +85,9 @@ namespace MiAlmacen.Data.Repositories
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
             }
             finally
             {
@@ -104,11 +104,33 @@ namespace MiAlmacen.Data.Repositories
             }
             else
             {
-                orden = $"INSERT INTO Usuarios VALUES (" +
-                $"{model.Nombre}, {model.Email}, {model.Usuario}, {model.Contraseña})";
+                Usuarios user = IniciarObjeto(model);
+                SqlCommand sqlcmd = new(orden, conexion);
+                try
+                {
+                    AbrirConex();
+                    orden = $@"INSERT INTO Usuarios (Nombre, Email, Usuario, Contraseña) VALUES
+                            (@Nombre, @Email, @Usuario, @Contraseña)";
 
-                AccionSQL(orden);
-                return IniciarObjeto(model);
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Nombre", user.Nombre);
+                    sqlcmd.Parameters.AddWithValue("@Email", user.Email);
+                    sqlcmd.Parameters.AddWithValue("@Usuario", user.Usuario);
+                    sqlcmd.Parameters.AddWithValue("@Contraseña", user.Contraseña);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
+                return user;
             }
         }
 
@@ -121,13 +143,40 @@ namespace MiAlmacen.Data.Repositories
             }
             else
             {
-                orden = $"UPDATE Usuarios SET Nombre={model.Nombre}, " +
-                                        $"Email={model.Email}, " +
-                                        $"Usuario={model.Usuario}, " +
-                                        $"Contraseña={model.Contraseña } " +
-                                        $"WHERE Id={id}";
-                AccionSQL(orden);
-                return IniciarObjeto(model);
+                Usuarios user = IniciarObjeto(model);
+                SqlCommand sqlcmd = new(orden, conexion);
+                try
+                {
+                    AbrirConex();
+                    orden = $@"UPDATE Usuarios SET Nombre=@Nombre, Email=@Email, Usuario=@Usuario, Contraseña=@Contraseña
+                                               WHERE Id=@Id";
+
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Id", id);
+                    sqlcmd.Parameters.AddWithValue("@Nombre", user.Nombre);
+                    sqlcmd.Parameters.AddWithValue("@Email", user.Email);
+                    sqlcmd.Parameters.AddWithValue("@Usuario", user.Usuario);
+                    sqlcmd.Parameters.AddWithValue("@Contraseña", user.Contraseña);
+
+                    if (model.FechaBaja == null)
+                        sqlcmd.Parameters.AddWithValue("@FechaBaja", null);
+                    else
+                        sqlcmd.Parameters.AddWithValue("@FechaBaja", DateTime.Now);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
+
+                return user;
             }
         }
         public int Delete(int id)
@@ -135,8 +184,29 @@ namespace MiAlmacen.Data.Repositories
             var valoruser = GetOne(id);
             if (valoruser != null)
             {
-                orden = $"UPDATE Usuarios SET FechaBaja={DateTime.Now} WHERE Id={id}";
-                AccionSQL(orden);
+                SqlCommand sqlcmd = new(orden, conexion);
+                try
+                {
+                    AbrirConex();
+                    orden = $"UPDATE Usuarios SET FechaBaja=@FechaBaja WHERE Id=@Id";
+
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Id", id);
+                    sqlcmd.Parameters.AddWithValue("@FechaBaja", DateTime.Now);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
             }
             else
             {
