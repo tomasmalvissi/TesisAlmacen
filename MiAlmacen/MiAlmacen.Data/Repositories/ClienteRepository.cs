@@ -42,7 +42,7 @@ namespace MiAlmacen.Data.Repositories
                     Clientes cli = new();
                     cli.Id = Convert.ToInt32(reader["Id"].ToString());
                     cli.Nombre = reader["Nombre"].ToString();
-                    cli.DNI = reader["DNI"].ToString();
+                    cli.DNI = Convert.ToInt32(reader["DNI"].ToString());
                     cli.Direccion = reader["Direccion"].ToString();
                     cli.Telefono = reader["Telefono"].ToString();
                     cli.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
@@ -76,7 +76,7 @@ namespace MiAlmacen.Data.Repositories
                 {
                     cliente.Id = Convert.ToInt32(reader["Id"].ToString());
                     cliente.Nombre = reader["Nombre"].ToString();
-                    cliente.DNI = reader["DNI"].ToString();
+                    cliente.DNI = Convert.ToInt32(reader["DNI"].ToString());
                     cliente.Direccion = reader["Direccion"].ToString();
                     cliente.Telefono = reader["Telefono"].ToString();
                     cliente.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);

@@ -10,7 +10,7 @@ namespace MiAlmacen.Model.Models
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
-        public string CUIL { get; set; }
+        public int CUIL { get; set; }
         public string Direccion { get; set; }
         public string Telefono { get; set; }
         public DateTime? FechaBaja { get; set; }
