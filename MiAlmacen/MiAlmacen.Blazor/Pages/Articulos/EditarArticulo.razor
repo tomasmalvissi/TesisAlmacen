@@ -1,5 +1,34 @@
-﻿<h3>EditarArticulo</h3>
+﻿@page "/articulos/editar/{idArticulo:int}"
+@inject NavigationManager NavigationManager
+@inject ArticuloService ArticuloService
+@inject IJSRuntime JS
+
+<FormArticulo articulo="articulo" OnValidSubmit="@EditarProd" TextBotonSubmit="Guardar cambios" OcultaAlta=false />
 
 @code {
+    public ArticuloModel articulo = new ArticuloModel();
+    [Parameter] public int idArticulo { get; set; }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        articulo = await ArticuloService.GetUn(idArticulo);
+    }
+
+    async Task EditarProd()
+    {
+        var respuesta = await ArticuloService.Editar(articulo);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/articulos");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El producto {respuesta.Nombre} actualizado con éxito!", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo actualizar el producto.", "error");
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/articulos");
+    }
 }

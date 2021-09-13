@@ -1,5 +1,105 @@
-﻿<h3>FormArticulo</h3>
+﻿@inject NavigationManager NavigationManager
+@inject ArticuloService ArticuloService
+@inject IJSRuntime JS
+
+<EditForm Model="@articulo" OnValidSubmit="@OnValidSubmit">
+    <div class="form-field mt-2 mb-2">
+        <div class="form-group row">
+            <label class="col-3 col-form-label">Nombre</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputText @bind-Value="@articulo.Nombre" class="form-control" placeholder="Nombre" />
+                </div>
+                <ValidationMessage For="@(() => articulo.Nombre)" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-3 col-form-label">Código de Articulo</label>
+        <div class="col">
+            <div class="input-group">
+                <InputNumber @bind-Value="@articulo.Codigo_Art" class="form-control" placeholder="Código articulo" />
+            </div>
+            <ValidationMessage For="@(() => articulo.Codigo_Art)" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-3 col-form-label">Precio Por Unidad</label>
+        <div class="col">
+            <div class="input-group">
+                <InputNumber @bind-Value="@articulo.Precio_Unit" class="form-control" placeholder="Precio unidad" />
+            </div>
+            <ValidationMessage For="@(() => articulo.Precio_Unit)" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-3 col-form-label">Precio Mayorista</label>
+        <div class="col">
+            <div class="input-group">
+                <InputNumber @bind-Value="@articulo.Precio_Mayor" class="form-control" placeholder="Precio mayor" />
+            </div>
+            <ValidationMessage For="@(() => articulo.Precio_Mayor)" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-3 col-form-label">Stock Actual</label>
+        <div class="col">
+            <div class="input-group">
+                <InputNumber @bind-Value="@articulo.Stock_Act" class="form-control" placeholder="Stock" />
+            </div>
+            <ValidationMessage For="@(() => articulo.Stock_Act)" />
+        </div>
+    </div>
+
+    @if (!OcultaAlta)
+    {
+        <div class="d-flex justify-content-between form-group row">
+            <label class="col-3 col-form-label">Estado</label>
+            <div class="col">
+                @if (articulo.FechaBaja == null)
+                {
+                    <label><b>Cliente activo</b><i class="oi oi-check" style="color:green"></i></label>
+                }
+                else
+                {
+                    <label><b>Cliente dado de baja el: @articulo.FechaBaja.ToString()</b></label>
+                    <div class="btn btn-group">
+                        <button type="button" @onclick="DarAlta" class="btn btn-sm btn-outline-success"><i class="oi oi-data-transfer-upload"></i>Dar de alta</button>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <button type="submit" class="btn btn-block btn-success">
+        <i class="oi oi-check "></i>
+        <text style="color:white"> @TextBotonSubmit</text>
+    </button>
+
+</EditForm>
 
 @code {
+    [Parameter] public ArticuloModel articulo { get; set; } = new ArticuloModel();
+    [Parameter] public string TextBotonSubmit { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public bool OcultaAlta { get; set; }
 
+    void DarAlta()
+    {
+        articulo.FechaBaja = null;
+
+        var respuesta = ArticuloService.Editar(articulo);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/articulos");
+            JS.InvokeVoidAsync("simple", "¡Éxito!", "Producto dado de alta con éxito!", "success");
+        }
+        else
+            JS.InvokeVoidAsync("simple", "Error", $"No se pudo dar de alta el producto.", "error");
+    }
 }

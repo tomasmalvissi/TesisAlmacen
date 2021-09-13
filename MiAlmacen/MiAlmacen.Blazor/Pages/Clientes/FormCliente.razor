@@ -18,7 +18,7 @@
             <label class="col-3 col-form-label">DNI</label>
             <div class="col">
                 <div class="input-group">
-                    <InputText @bind-Value="@cliente.DNI" class="form-control" placeholder="Dni" />
+                    <InputNumber @bind-Value="@cliente.DNI" class="form-control" placeholder="Dni" />
                 </div>
                 <ValidationMessage For="@(() => cliente.DNI)" />
             </div>

@@ -1,5 +1,39 @@
-﻿<h3>CrearArticulo</h3>
+﻿@page "/articulos/crear"
+@inject NavigationManager NavigationManager
+@inject ArticuloService ArticuloService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h3><b>Nuevo producto</b></h3>
+    </div>
+    <div>
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Volver al listado
+        </button>
+    </div>
+</div>
+
+<FormArticulo articulo="@articulo" TextBotonSubmit="Crear producto" OnValidSubmit="@CrearProd" OcultaAlta=true />
 
 @code {
+    public ArticuloModel articulo = new ArticuloModel();
 
+    async Task CrearProd()
+    {
+        var respuesta = await ArticuloService.Alta(articulo);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/articulos");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Producto creado", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo crear producto.", "error");
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/articulos");
+    }
 }

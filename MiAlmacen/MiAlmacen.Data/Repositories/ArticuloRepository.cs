@@ -112,6 +112,7 @@ namespace MiAlmacen.Data.Repositories
             {
                 Articulos art = IniciarObjeto(model);
                 SqlCommand sqlcmd = new(orden, conexion);
+                art.Ultima_Modif = DateTime.Now;
                 try
                 {
                     AbrirConex();
@@ -156,10 +157,12 @@ namespace MiAlmacen.Data.Repositories
             {
                 Articulos art = IniciarObjeto(model);
                 SqlCommand sqlcmd = new(orden, conexion);
+                art.Ultima_Modif = DateTime.Now;
                 try
                 {
                     AbrirConex();
-                    orden = $@"UPDATE Articulos SET Nombre=@Nombre, Codigo_Art=@Codigo_Art, Precio_Unit=@Precio_Unit, Precio_Mayor=@Precio_Mayor, Stock_Act=@Stock_Act, Ultima_Modif=@Ultima_Modif
+                    orden = $@"UPDATE Articulos 
+                               SET Nombre=@Nombre, Codigo_Art=@Codigo_Art, Precio_Unit=@Precio_Unit, Precio_Mayor=@Precio_Mayor, Stock_Act=@Stock_Act, Ultima_Modif=@Ultima_Modif, FechaBaja=@FechaBaja
                                                 WHERE Id=@Id";
 
                     sqlcmd.CommandText = orden;
@@ -172,7 +175,7 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Parameters.AddWithValue("@Ultima_Modif", art.Ultima_Modif);
 
                     if (model.FechaBaja == null)
-                        sqlcmd.Parameters.AddWithValue("@FechaBaja", null);
+                        sqlcmd.Parameters.AddWithValue("@FechaBaja", DBNull.Value);
                     else
                         sqlcmd.Parameters.AddWithValue("@FechaBaja", DateTime.Now);
 
@@ -200,11 +203,12 @@ namespace MiAlmacen.Data.Repositories
                 try
                 {
                     AbrirConex();
-                    orden = $"UPDATE Articulos SET FechaBaja=@FechaBaja WHERE Id=@Id";
+                    orden = $"UPDATE Articulos SET FechaBaja=@FechaBaja, Ultima_Modif=@Ultima_Modif WHERE Id=@Id";
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Id", id);
                     sqlcmd.Parameters.AddWithValue("@FechaBaja", DateTime.Now);
+                    sqlcmd.Parameters.AddWithValue("@Ultima_Modif", DateTime.Now);
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();

@@ -147,7 +147,7 @@ namespace MiAlmacen.Data.Repositories
                 try
                 {
                     AbrirConex();
-                    orden = $@"UPDATE Clientes SET Nombre=@Nombre, DNI=@DNI, Direccion=@Direccion, Telefono=@Telefono, FechaBaja = @FechaBaja
+                    orden = $@"UPDATE Clientes SET Nombre=@Nombre, DNI=@DNI, Direccion=@Direccion, Telefono=@Telefono, FechaBaja=@FechaBaja
                                            WHERE Id=@Id";
 
                     sqlcmd.CommandText = orden;
@@ -158,7 +158,7 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Parameters.AddWithValue("@Telefono", cli.Telefono);
 
                     if (model.FechaBaja == null)
-                        sqlcmd.Parameters.AddWithValue("@FechaBaja", null);
+                        sqlcmd.Parameters.AddWithValue("@FechaBaja", DBNull.Value);
                     else
                         sqlcmd.Parameters.AddWithValue("@FechaBaja", DateTime.Now);
 

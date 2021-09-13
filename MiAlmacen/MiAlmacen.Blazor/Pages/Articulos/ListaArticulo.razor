@@ -1,5 +1,183 @@
-﻿<h3>ListaArticulo</h3>
+﻿@page "/articulos"
+@inject ArticuloService ArticuloService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-1" id="header">
+    <h3>Productos</h3>
+    <div>
+        <a href="articulos/crear" class="btn btn-sm btn-success">
+            <i class="oi oi-plus"></i> Nuevo
+        </a>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between mb-1" id="filtros">
+    <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
+</div>
+<div class="form-group form-check m-1">
+    <input type="checkbox" class="form-check-input" @onchange="FiltroActivos">
+    <label class="form-check-label">Sólo activos</label>
+</div>
+
+@if (articulos == null)
+{
+    <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="sr-only">Cargando...</span>
+        </div>
+    </div>
+}
+else if (articulos.Count() == 0)
+{
+    <p>No se encontraron productos.</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead class="thead thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Codigo de Articulo</th>
+                <th>Precio Unitario</th>
+                <th>Precio Mayorista</th>
+                <th>Stock Actual</th>
+                <th>Ultima Modificación</th>
+                <th>Activo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var art in articulos)
+            {
+                <tr>
+                    <td>@art.Id</td>
+                    <td>@art.Nombre</td>
+                    <td>@art.Codigo_Art</td>
+                    <td>@art.Precio_Unit</td>
+                    <td>@art.Precio_Mayor</td>
+                    <td>@art.Stock_Act</td>
+                    <td>@art.Ultima_Modif</td>
+                    <td>
+                        @if (art.FechaBaja == null)
+                        {
+                            <i class="oi oi-check" style="color:green"></i>
+                        }
+                        else
+                        {
+                            <i class="oi oi-x" style="color:red"></i>
+                        }
+                    </td>
+                    <td>
+                        <button @onclick="@(() => BorrarProd(art.Id))" class="btn btn-sm btn-danger">
+                            <i class="oi oi-trash"></i>
+                        </button>
+                        <a class="btn btn-sm btn-warning" href="articulos/editar/@art.Id"><i class="oi oi-pencil"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="d-flex justify-content-between mb-1" id="footer">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(false)">Anterior</button></li>
+            <li class="page-item"><button class="page-link">@pagina</button></li>
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(true)">Siguiente</button></li>
+        </ul>
+    </nav>
+    <div>
+        <b>@registros registros totales</b>
+    </div>
+</div>
+
 
 @code {
+    public IEnumerable<ArticuloModel> articulos { get; set; }
+
+    public string nombreFiltro { get; set; } = string.Empty;
+
+    public int pagina { get; set; } = 1;
+
+    public int registros { get; set; }
+
+    public bool activos { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Paginar(false);
+    }
+
+    private async Task BorrarProd(int id)
+    {
+        var articulo = ArticuloService.GetUn(id);
+
+        var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
+            $"¿Desea eliminar este producto?", "warning");
+        if (confirmacion)
+        {
+            var respuesta = ArticuloService.Eliminar(id);
+
+            if (!respuesta.Equals(0))
+            {
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", "Producto eliminado", "success");
+                await Paginar(false);
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("simple", "Error", "No se pudo eliminar el producto", "error");
+            }
+        }
+    }
+
+    async Task Paginar(bool next)
+    {
+        articulos = await ArticuloService.GetAll();
+        if (activos)
+            articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()) && x.FechaBaja == null);
+        else
+            articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+
+        int cantidadPorPagina = 10;
+        registros = articulos.Count();
+        decimal total;
+
+        if (registros < cantidadPorPagina)
+            total = pagina;
+        else
+        {
+            if (registros % cantidadPorPagina == 0)
+                total = registros / cantidadPorPagina;
+            else
+                total = (registros / cantidadPorPagina) + 1;
+        }
+
+        if (!next && pagina > 1) pagina--;
+
+        if (next && pagina < total) pagina++;
+
+        articulos = articulos.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
+    }
+
+    async Task RecargarGrilla()
+    {
+        articulos = await ArticuloService.GetAll();
+        articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+    }
+
+    void FiltroNombre(ChangeEventArgs e)
+    {
+        nombreFiltro = e.Value.ToString();
+        Paginar(false);
+    }
+
+    void FiltroActivos()
+    {
+        activos = !activos;
+        Paginar(false);
+    }
 
 }

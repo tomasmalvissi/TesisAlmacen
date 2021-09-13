@@ -13,7 +13,7 @@
     </div>
 </div>
 
-<FormCliente cliente="cliente" OnValidSubmit="@EditarClient" TextBotonSubmit="Guardar cambios" OcultaAlta=false/>
+<FormCliente cliente="@cliente" OnValidSubmit="@EditarClient" TextBotonSubmit="Guardar cambios" OcultaAlta=false/>
 
 @code {
     public ClienteModel cliente = new ClienteModel();

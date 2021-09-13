@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace MiAlmacen.Blazor.Services.Articulos
+namespace MiAlmacen.Blazor.Services
 {
     public class ArticuloService
     {
@@ -14,13 +14,13 @@ namespace MiAlmacen.Blazor.Services.Articulos
         {
             _httpClient = httpClient;
         }
-        public async Task<IEnumerable<ArticuloModel>> GetAllClientes()
+        public async Task<IEnumerable<ArticuloModel>> GetAll()
         {
             var respuesta = _httpClient.GetStringAsync($"api/articulos/");
             return JsonConvert.DeserializeObject<IEnumerable<ArticuloModel>>(await respuesta);
         }
 
-        public async Task<ArticuloModel> GetUnCliente(int id)
+        public async Task<ArticuloModel> GetUn(int id)
         {
             return await _httpClient.GetFromJsonAsync<ArticuloModel>($"api/articulos/{id}");
         }
