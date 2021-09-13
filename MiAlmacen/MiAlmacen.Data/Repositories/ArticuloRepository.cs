@@ -44,7 +44,7 @@ namespace MiAlmacen.Data.Repositories
                     Articulos art = new();
                     art.Id = Convert.ToInt32(reader["Id"].ToString());
                     art.Nombre = reader["Nombre"].ToString();
-                    art.Codigo_Art = reader["Codigo_Art"].ToString();
+                    art.Codigo_Art = Convert.ToInt32(reader["Codigo_Art"].ToString());
                     art.Precio_Unit = Convert.ToSingle(reader["Precio_Unit"].ToString());
                     art.Precio_Mayor = Convert.ToSingle(reader["Precio_Mayor"].ToString());
                     art.Stock_Act = Convert.ToInt32(reader["Stock_Act"].ToString());
@@ -82,7 +82,7 @@ namespace MiAlmacen.Data.Repositories
                 {
                     articulo.Id = Convert.ToInt32(reader["Id"].ToString());
                     articulo.Nombre = reader["Nombre"].ToString();
-                    articulo.Codigo_Art = reader["Codigo_Art"].ToString();
+                    articulo.Codigo_Art = Convert.ToInt32(reader["Codigo_Art"].ToString());
                     articulo.Precio_Unit = Convert.ToSingle(reader["Precio_Unit"].ToString());
                     articulo.Precio_Mayor = Convert.ToSingle(reader["Precio_Mayor"].ToString());
                     articulo.Stock_Act = Convert.ToInt32(reader["Stock_Act"].ToString());

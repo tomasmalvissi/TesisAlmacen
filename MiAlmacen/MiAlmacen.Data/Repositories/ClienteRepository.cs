@@ -18,6 +18,7 @@ namespace MiAlmacen.Data.Repositories
             Clientes cli = new();
             cli.Id = model.Id;
             cli.Nombre = model.Nombre;
+            cli.DNI = model.DNI;
             cli.Direccion = model.Direccion;
             cli.Telefono = model.Telefono;
             cli.FechaBaja = model.FechaBaja;
@@ -41,6 +42,7 @@ namespace MiAlmacen.Data.Repositories
                     Clientes cli = new();
                     cli.Id = Convert.ToInt32(reader["Id"].ToString());
                     cli.Nombre = reader["Nombre"].ToString();
+                    cli.DNI = reader["DNI"].ToString();
                     cli.Direccion = reader["Direccion"].ToString();
                     cli.Telefono = reader["Telefono"].ToString();
                     cli.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
@@ -74,6 +76,7 @@ namespace MiAlmacen.Data.Repositories
                 {
                     cliente.Id = Convert.ToInt32(reader["Id"].ToString());
                     cliente.Nombre = reader["Nombre"].ToString();
+                    cliente.DNI = reader["DNI"].ToString();
                     cliente.Direccion = reader["Direccion"].ToString();
                     cliente.Telefono = reader["Telefono"].ToString();
                     cliente.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
@@ -104,11 +107,12 @@ namespace MiAlmacen.Data.Repositories
                 try
                 {
                     AbrirConex();
-                    orden = $@"INSERT INTO Clientes (Nombre, Direccion, Telefono) 
-                                VALUES (@Nombre, @Direccion, @Telefono)";
+                    orden = $@"INSERT INTO Clientes (Nombre, DNI, Direccion, Telefono) 
+                                VALUES (@Nombre, @DNI, @Direccion, @Telefono)";
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Nombre", cli.Nombre);
+                    sqlcmd.Parameters.AddWithValue("@DNI", cli.DNI);
                     sqlcmd.Parameters.AddWithValue("@Direccion", cli.Direccion);
                     sqlcmd.Parameters.AddWithValue("@Telefono", cli.Telefono);
 
@@ -143,12 +147,13 @@ namespace MiAlmacen.Data.Repositories
                 try
                 {
                     AbrirConex();
-                    orden = $@"UPDATE Clientes SET Nombre=@Nombre, Direccion=@Direccion, Telefono=@Telefono, FechaBaja = @FechaBaja
+                    orden = $@"UPDATE Clientes SET Nombre=@Nombre, DNI=@DNI, Direccion=@Direccion, Telefono=@Telefono, FechaBaja = @FechaBaja
                                            WHERE Id=@Id";
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Id", id);
                     sqlcmd.Parameters.AddWithValue("@Nombre", cli.Nombre);
+                    sqlcmd.Parameters.AddWithValue("@DNI", cli.DNI);
                     sqlcmd.Parameters.AddWithValue("@Direccion", cli.Direccion);
                     sqlcmd.Parameters.AddWithValue("@Telefono", cli.Telefono);
 
