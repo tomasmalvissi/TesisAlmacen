@@ -1,0 +1,39 @@
+﻿@page "/proveedores/crear"
+@inject NavigationManager NavigationManager
+@inject ProveedorService ProveedorService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h3><b>Nuevo proveedor</b></h3>
+    </div>
+    <div>
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Volver al listado
+        </button>
+    </div>
+</div>
+
+<FormProveedor proveedor="@proveedor" TextBotonSubmit="Crear proveedor" OnValidSubmit="@CrearProv" OcultaAlta=true />
+
+@code {
+    public ProveedorModel proveedor = new ProveedorModel();
+
+    async Task CrearProv()
+    {
+        var respuesta = await ProveedorService.Alta(proveedor);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/proveedores");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Proveedor creado", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo crear proveedor.", "error");
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/proveedores");
+    }
+}

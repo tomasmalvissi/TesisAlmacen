@@ -22,6 +22,7 @@ namespace MiAlmacen.Blazor
 
             builder.Services.AddScoped<ClienteService>();
             builder.Services.AddScoped<ArticuloService>();
+            builder.Services.AddScoped<ProveedorService>();
 
             await builder.Build().RunAsync();
         }

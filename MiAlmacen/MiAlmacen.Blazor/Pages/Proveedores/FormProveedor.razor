@@ -1,0 +1,97 @@
+﻿@inject NavigationManager NavigationManager
+@inject ProveedorService ProveedorService
+@inject IJSRuntime JS
+
+<EditForm Model="@proveedor" OnValidSubmit="@OnValidSubmit">
+    <div class="form-field mt-2 mb-2">
+        <div class="form-group row">
+            <label class="col-3 col-form-label">Nombre Completo</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputText @bind-Value="@proveedor.Nombre" class="form-control" placeholder="Nombre" />
+                </div>
+                <ValidationMessage For="@(() => proveedor.Nombre)" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-3 col-form-label">CUIL</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputNumber @bind-Value="@proveedor.CUIL" class="form-control" placeholder="Cuil-Cuit" />
+                </div>
+                <ValidationMessage For="@(() => proveedor.CUIL)" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-3 col-form-label">Dirección</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputText @bind-Value="@proveedor.Direccion" class="form-control" placeholder="Direccion" />
+                </div>
+                <ValidationMessage For="@(() => proveedor.Direccion)" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-3 col-form-label">Teléfono</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputText @bind-Value="@proveedor.Telefono" class="form-control" placeholder="Telefono" />
+                </div>
+                <ValidationMessage For="@(() => proveedor.Telefono)" />
+            </div>
+        </div>
+
+        @if (!OcultaAlta)
+        {
+            <div class="d-flex justify-content-between form-group row">
+                <label class="col-3 col-form-label">Estado</label>
+                <div class="col">
+                    @if (proveedor.FechaBaja == null)
+                    {
+                        <label><b>Proveedor activo</b><i class="oi oi-check" style="color:green"></i></label>
+                    }
+                    else
+                    {
+                        <label><b>Proveedor dado de baja el: @proveedor.FechaBaja.ToString()</b></label>
+                        <div class="btn btn-group">
+                            <button type="button" @onclick="DarAlta" class="btn btn-sm btn-outline-success"><i class="oi oi-data-transfer-upload"></i>Dar de alta</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-block btn-success">
+            <i class="oi oi-check "></i>
+            <text style="color:white"> @TextBotonSubmit</text>
+        </button>
+    </div>
+</EditForm>
+
+
+@code {
+    [Parameter] public ProveedorModel proveedor { get; set; } = new ProveedorModel();
+    [Parameter] public string TextBotonSubmit { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public bool OcultaAlta { get; set; }
+
+
+    void DarAlta()
+    {
+        proveedor.FechaBaja = null;
+
+        var respuesta = ProveedorService.Editar(proveedor);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/clientes");
+            JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente dado de alta con éxito!", "success");
+        }
+        else
+            JS.InvokeVoidAsync("simple", "Error", $"No se pudo dar de alta el cliente.", "error");
+    }
+
+}

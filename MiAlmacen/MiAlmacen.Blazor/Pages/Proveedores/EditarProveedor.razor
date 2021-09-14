@@ -1,0 +1,44 @@
+﻿@page "/proveedores/editar/{idProveedor:int}"
+@inject NavigationManager NavigationManager
+@inject ProveedorService ProveedorService
+@inject IJSRuntime JS
+
+
+<div class="d-flex justify-content-between mb-3">
+    <h3><b>Editar proveedor</b></h3>
+    <div>
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Volver al listado
+        </button>
+    </div>
+</div>
+
+<FormProveedor proveedor="@proveedor" OnValidSubmit="@EditarProv" TextBotonSubmit="Guardar cambios" OcultaAlta=false />
+
+@code {
+    public ProveedorModel proveedor = new ProveedorModel();
+    [Parameter] public int idProveedor { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        proveedor = await ProveedorService.GetUn(idProveedor);
+    }
+
+    async Task EditarProv()
+    {
+        var respuesta = await ProveedorService.Editar(proveedor);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/proveedores");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Proveedor {respuesta.Nombre} actualizado con éxito!", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo actualizar el proveedor.", "error");
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/proveedores");
+    }
+}

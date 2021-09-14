@@ -1,0 +1,179 @@
+﻿@page "/proveedores"
+@inject ProveedorService ProveedorService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-1" id="header">
+    <h3>Proveedores</h3>
+    <div>
+        <a href="proveedores/crear" class="btn btn-sm btn-success">
+            <i class="oi oi-plus"></i> Nuevo
+        </a>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between mb-1" id="filtros">
+    <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
+</div>
+<div class="form-group form-check m-1">
+    <input type="checkbox" class="form-check-input" @onchange="FiltroActivos">
+    <label class="form-check-label">Sólo activos</label>
+</div>
+
+
+@if (proveedores == null)
+{
+    <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="sr-only">Cargando...</span>
+        </div>
+    </div>
+}
+else if (proveedores.Count() == 0)
+{
+    <p>No se encontraron proveedores.</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead class="thead thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>CUIL</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Activo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var proveedor in proveedores)
+            {
+                <tr>
+                    <td>@proveedor.Id</td>
+                    <td>@proveedor.Nombre</td>
+                    <td>@proveedor.CUIL</td>
+                    <td>@proveedor.Direccion</td>
+                    <td>@proveedor.Telefono</td>
+                    <td>
+                        @if (proveedor.FechaBaja == null)
+                        {
+                            <i class="oi oi-check" style="color:green"></i>
+                        }
+                        else
+                        {
+                            <i class="oi oi-x" style="color:red"></i>
+                        }
+                    </td>
+                    <td>
+                        <button @onclick="@(() => BorrarProv(proveedor.Id))" class="btn btn-sm btn-danger">
+                            <i class="oi oi-trash"></i>
+                        </button>
+                        <a class="btn btn-sm btn-warning" href="proveedores/editar/@proveedor.Id"><i class="oi oi-pencil"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="d-flex justify-content-between mb-1" id="footer">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(false)">Anterior</button></li>
+            <li class="page-item"><button class="page-link">@pagina</button></li>
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(true)">Siguiente</button></li>
+        </ul>
+    </nav>
+    <div>
+        <b>@registros registros totales</b>
+    </div>
+</div>
+
+
+@code {
+    public IEnumerable<ProveedorModel> proveedores { get; set; }
+
+    public string nombreFiltro { get; set; } = string.Empty;
+
+    public int pagina { get; set; } = 1;
+
+    public int registros { get; set; }
+
+    public bool activos { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Paginar(false);
+    }
+
+    private async Task BorrarProv(int id)
+    {
+        var cliente = ProveedorService.GetUn(id);
+
+        var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
+            $"¿Desea eliminar proveedor?", "warning");
+        if (confirmacion)
+        {
+            var respuesta = ProveedorService.Eliminar(id);
+
+            if (!respuesta.Equals(0))
+            {
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", "Proveedor eliminado", "success");
+                await Paginar(false);
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("simple", "Error", "No se pudo eliminar proveedor", "error");
+            }
+        }
+    }
+
+    async Task Paginar(bool next)
+    {
+        proveedores = await ProveedorService.GetAll();
+        if (activos)
+            proveedores = proveedores.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()) && x.FechaBaja == null);
+        else
+            proveedores = proveedores.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+
+        int cantidadPorPagina = 10;
+        registros = proveedores.Count();
+        decimal total;
+
+        if (registros < cantidadPorPagina)
+            total = pagina;
+        else
+        {
+            if (registros % cantidadPorPagina == 0)
+                total = registros / cantidadPorPagina;
+            else
+                total = (registros / cantidadPorPagina) + 1;
+        }
+
+        if (!next && pagina > 1) pagina--;
+
+        if (next && pagina < total) pagina++;
+
+        proveedores = proveedores.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
+    }
+
+    async Task RecargarGrilla()
+    {
+        proveedores = await ProveedorService.GetAll();
+        proveedores = proveedores.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+    }
+
+    void FiltroNombre(ChangeEventArgs e)
+    {
+        nombreFiltro = e.Value.ToString();
+        Paginar(false);
+    }
+
+    void FiltroActivos()
+    {
+        activos = !activos;
+        Paginar(false);
+    }
+}
