@@ -22,11 +22,12 @@ namespace MiAlmacen.Data.Repositories
             user.Usuario = model.Usuario;
             user.Email = model.Email;
             user.Contraseña = model.Contraseña;
+            user.FechaBaja = model.FechaBaja;
             return user;
         }
         public List<Usuarios> GetAll()
         {
-            orden = "SELECT * FROM Usuarios WHERE FechaBaja IS NOT NULL";
+            orden = "SELECT * FROM Usuarios ORDER BY Nombre ASC";
 
             List<Usuarios> usuarios = new();
 
@@ -45,6 +46,7 @@ namespace MiAlmacen.Data.Repositories
                     user.Email = reader["Email"].ToString();
                     user.Usuario = reader["Usuario"].ToString();
                     user.Contraseña = reader["Contraseña"].ToString();
+                    user.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                     usuarios.Add(user);
                 }
 
@@ -82,6 +84,7 @@ namespace MiAlmacen.Data.Repositories
                     usuario.Email = reader["Email"].ToString();
                     usuario.Usuario = reader["Usuario"].ToString();
                     usuario.Contraseña = reader["Contraseña"].ToString();
+                    usuario.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                 }
 
             }

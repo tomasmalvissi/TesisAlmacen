@@ -1,0 +1,39 @@
+﻿@page "/login"
+@inject UsuarioService UsuarioService
+@inject NavigationManager NavigationManager
+
+<div class="card">
+    <h4 class="card-header">Iniciá sesión para continuar</h4>
+    <div class="card-body">
+        <EditForm Model="@usuario" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <label>Nombre de Usuario</label>
+                <InputText @bind-Value="usuario.Usuario" class="form-control" />
+                <ValidationMessage For="@(() => usuario.Usuario)" />
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <InputText @bind-Value="usuario.Contraseña" type="password" class="form-control" />
+                <ValidationMessage For="@(() => usuario.Contraseña)" />
+            </div>
+
+            <button class="btn btn-success"> Iniciar Sesión</button>
+            <NavLink href="usuarios/registrar" class="btn btn-link">Registrarme</NavLink>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private UsuarioModel usuario = new UsuarioModel();
+
+    private async void OnValidSubmit()
+    {
+        //TODO: algo asi seria el modelo
+        //await usuarioservice.login(usuario)
+        //la otra es agregar un campo a la tabla usuario llamado Token
+        //y usar eso para definirlo como clave de autenticacion unica
+        // o directamente usar el id mas una serie de caracteres concatenados
+    }
+}

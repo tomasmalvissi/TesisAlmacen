@@ -1,0 +1,40 @@
+﻿@page "/usuarios/registrar"
+@inject NavigationManager NavigationManager
+@inject UsuarioService UsuarioService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h3><b>Registrarse</b></h3>
+    </div>
+    <div>
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Ya tengo cuenta
+        </button>
+    </div>
+</div>
+
+
+<FormUsuario usuario="usuario" TextBotonSubmit="Crear usuario" OnValidSubmit="@CrearUser" />
+
+@code {
+    public UsuarioModel usuario = new UsuarioModel();
+
+    async Task CrearUser()
+    {
+        var respuesta = await UsuarioService.Alta(usuario);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/login");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Usuario creado", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo crear usuario.", "error");
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+}

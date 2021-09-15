@@ -1,0 +1,61 @@
+﻿@inject NavigationManager NavigationManager
+@inject UsuarioService UsuarioService
+@inject IJSRuntime JS
+
+
+<EditForm Model="@usuario" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+        <div class="form-field mt-2 mb-2">
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Nombre Completo</label>
+                <div class="col">
+                    <div class="input-group">
+                        <InputText @bind-Value="@usuario.Nombre" class="form-control" placeholder="Nombre Completo" />
+                    </div>
+                    <ValidationMessage For="@(() => usuario.Nombre)" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Correo Electrónico</label>
+                <div class="col">
+                    <div class="input-group">
+                        <InputText @bind-Value="@usuario.Email" type="email" class="form-control" placeholder="Correo Electrónico" />
+                    </div>
+                    <ValidationMessage For="@(() => usuario.Email)" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Usuario</label>
+                <div class="col">
+                    <div class="input-group">
+                        <InputText @bind-Value="@usuario.Usuario" class="form-control" placeholder="Usuario" />
+                    </div>
+                    <ValidationMessage For="@(() => usuario.Usuario)" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-3 col-form-label">Contraseña</label>
+                <div class="col">
+                    <div class="input-group">
+                        <InputText @bind-Value="@usuario.Contraseña" type="password" class="form-control" placeholder="Contraseña" />
+                    </div>
+                    <ValidationMessage For="@(() => usuario.Contraseña)" />
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-block btn-success">
+            <i class="oi oi-check "></i>
+            <text style="color:white"> @TextBotonSubmit</text>
+        </button>
+</EditForm>
+
+
+@code {
+    [Parameter] public UsuarioModel usuario { get; set; } = new UsuarioModel();
+    [Parameter] public string TextBotonSubmit { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+}

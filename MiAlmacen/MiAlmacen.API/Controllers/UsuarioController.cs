@@ -20,21 +20,10 @@ namespace MiAlmacen.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<UsuarioModel>> Get()
+        public async Task<IActionResult> GetAll()
         {
-            var user = _repository.GetAll();
-            List<UsuarioModel> usuarios = new();
-            foreach (var item in user)
-            {
-                UsuarioModel model = new();
-                model.Id = item.Id;
-                model.Nombre = item.Nombre;
-                model.Usuario = item.Usuario;
-                model.Email = item.Email;
-                model.Contraseña = item.Contraseña;
-                usuarios.Add(model);
-            }
-            return usuarios;
+            var usuarios = _repository.GetAll();
+            return Ok(usuarios);
         }
 
         [HttpGet("{id}")]
