@@ -39,9 +39,9 @@ namespace MiAlmacen.Data.Repositories
                     Proveedores prov = new();
                     prov.Id = Convert.ToInt32(reader["Id"].ToString());
                     prov.Nombre = reader["Nombre"].ToString();
-                    prov.CUIL = Convert.ToInt32(reader["CUIL"].ToString());
+                    prov.CUIL = Convert.ToInt64(reader["CUIL"].ToString());
                     prov.Direccion = reader["Direccion"].ToString();
-                    prov.Telefono = reader["Telefono"].ToString();
+                    prov.Telefono = Convert.ToInt64(reader["Telefono"].ToString());
                     prov.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                     Proveedores.Add(prov);
                 }
@@ -75,7 +75,7 @@ namespace MiAlmacen.Data.Repositories
                     proveedor.Nombre = reader["Nombre"].ToString();
                     proveedor.CUIL = Convert.ToInt32(reader["CUIL"].ToString());
                     proveedor.Direccion = reader["Direccion"].ToString();
-                    proveedor.Telefono = reader["Telefono"].ToString();
+                    proveedor.Telefono = Convert.ToInt64(reader["Telefono"].ToString());
                     proveedor.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                 }
 

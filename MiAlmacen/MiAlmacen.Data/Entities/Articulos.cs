@@ -10,7 +10,7 @@ namespace MiAlmacen.Data.Entities
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
-        public int Codigo_Art { get; set; }
+        public long Codigo_Art { get; set; }
         public float Precio_Unit { get; set; }
         public float Precio_Mayor { get; set; }
         public int Stock_Act { get; set; }

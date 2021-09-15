@@ -10,9 +10,9 @@ namespace MiAlmacen.Data.Entities
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
-        public int CUIL { get; set; }
+        public long CUIL { get; set; }
         public string Direccion { get; set; }
-        public string Telefono { get; set; }
+        public long Telefono { get; set; }
         public DateTime? FechaBaja { get; set; }
     }
 }

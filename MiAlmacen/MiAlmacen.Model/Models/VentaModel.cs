@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,11 +10,17 @@ namespace MiAlmacen.Model.Models
     public class VentaModel
     {
         public int Id { get; set; }
+        [Required]
         public DateTime Fecha { get; set; }
+        [Required]
         public string FormaPago { get; set; }
         public int Cliente_Id { get; set; }
         public int Empleado_Id { get; set; }
+        [Required]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
         public float Total { get; set; }
+        [Required]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
         public float Saldo { get; set; }
 
         public ClienteModel Cliente { get; set; }

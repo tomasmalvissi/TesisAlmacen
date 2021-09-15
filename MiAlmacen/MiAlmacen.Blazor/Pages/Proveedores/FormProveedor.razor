@@ -38,7 +38,7 @@
             <label class="col-3 col-form-label">Teléfono</label>
             <div class="col">
                 <div class="input-group">
-                    <InputText @bind-Value="@proveedor.Telefono" class="form-control" placeholder="Telefono" />
+                    <InputNumber @bind-Value="@proveedor.Telefono" class="form-control" placeholder="Telefono" />
                 </div>
                 <ValidationMessage For="@(() => proveedor.Telefono)" />
             </div>
