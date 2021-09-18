@@ -170,14 +170,6 @@ ALTER TABLE Compras
 ADD FechaBaja DATETIME 
 GO
 
-ALTER TABLE DetalleCompras
-ADD FechaBaja DATETIME 
-GO
-
-ALTER TABLE DetalleVentas
-ADD FechaBaja DATETIME 
-GO
-
 ALTER TABLE MovimientosCaja
 ADD FechaBaja DATETIME 
 GO
