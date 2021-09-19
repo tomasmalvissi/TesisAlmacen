@@ -206,6 +206,47 @@ namespace MiAlmacen.Data.Repositories
             }
         }
 
+        public float PutSaldo(int id, float pago)
+        {
+            var venta = GetOne(id);
+            if (venta != null)
+            {
+                AbrirConex();
+
+                SqlTransaction transaction;
+                transaction = conexion.BeginTransaction();
+                SqlCommand sqlcmd = new(orden, conexion, transaction);
+
+                float nuevoSaldo = venta.Saldo - pago;
+                try
+                {
+                    orden = $"UPDATE Ventas SET Saldo=@Saldo WHERE Id=@Id";
+
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Id", id);
+                    sqlcmd.Parameters.AddWithValue("@Saldo", nuevoSaldo);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+                }
+                finally
+                {
+                    CerrarConex();
+                    sqlcmd.Dispose();
+                }
+                return nuevoSaldo;
+            }
+            else
+                return 0;
+        }
+
         public int Delete(int id)
         {
             var venta = GetOne(id);
