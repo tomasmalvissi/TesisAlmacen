@@ -23,6 +23,7 @@ namespace MiAlmacen.Model.Models
         [Required]
         [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
         public float Saldo { get; set; }
+        public DateTime Fecha_Baja { get; set; }
 
         public ProveedorModel Proveedor { get; set; }
         public UsuarioModel Empleado { get; set; }

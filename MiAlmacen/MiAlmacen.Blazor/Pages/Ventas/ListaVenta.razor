@@ -1,0 +1,185 @@
+﻿@page "/ventas"
+@inject VentaService VentaService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-1" id="header">
+    <h3>Ventas</h3>
+    <div>
+        <a href="ventas/crear" class="btn btn-sm btn-success">
+            <i class="oi oi-plus"></i> Nueva
+        </a>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between mb-1" id="filtros">
+    <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
+</div>
+<div class="form-group form-check m-1">
+    <input type="checkbox" class="form-check-input" @onchange="FiltroActivos">
+    <label class="form-check-label">Sólo no anuladas</label>
+</div>
+
+@if (ventas == null)
+{
+    <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="sr-only">Cargando...</span>
+        </div>
+    </div>
+}
+else if (ventas.Count() == 0)
+{
+    <p>No se encontraron ventas.</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead class="thead thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Fecha</th>
+                <th>Forma de Pago</th>
+                <th>Cliente</th>
+                <th>Empleado</th>
+                <th>Total</th>
+                <th>Saldo</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var venta in ventas)
+            {
+                <tr>
+                    <td>@venta.Id</td>
+                    <td>@venta.Fecha</td>
+                    <td>@venta.FormaPago</td>
+                    <td>@venta.Cliente_Id</td>
+                    <td>@venta.Empleado_Id</td>
+                    <td>@venta.Total</td>
+                    <td>@venta.Saldo</td>
+                    <td>
+                        @if (venta.Fecha_Baja == null)
+                        {
+                            <i class="oi oi-arrow-thick-top" style="color:green"></i>
+                        }
+                        else
+                        {
+                            <i class="oi oi-arrow-thick-bottom" style="color:red"></i>
+                        }
+                    </td>
+                    <td>
+                        @if (venta.Fecha_Baja == null)
+                        {
+                            <button @onclick="@(() => Borrar(venta.Id))" class="btn btn-sm btn-danger">
+                             <i class="oi oi-arrow-thick-bottom"></i> Anular
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="d-flex justify-content-between mb-1" id="footer">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(false)">Anterior</button></li>
+            <li class="page-item"><button class="page-link">@pagina</button></li>
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(true)">Siguiente</button></li>
+        </ul>
+    </nav>
+    <div>
+        <b>@registros registros totales</b>
+    </div>
+</div>
+
+
+@code {
+    public IEnumerable<Ventas> ventas { get; set; }
+
+    public string nombreFiltro { get; set; } = string.Empty;
+
+    public int pagina { get; set; } = 1;
+
+    public int registros { get; set; }
+
+    public bool activos { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Paginar(false);
+    }
+
+    private async Task Borrar(int id)
+    {
+        var venta = VentaService.GetUn(id);
+
+        var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
+            $"¿Seguro desea eliminar la venta seleccionada?", "warning");
+        if (confirmacion)
+        {
+            var respuesta = VentaService.Eliminar(id);
+
+            if (!respuesta.Equals(0))
+            {
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", "Venta anulada", "success");
+                await Paginar(false);
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("simple", "Error", "No se pudo anular venta", "error");
+            }
+        }
+    }
+
+    async Task Paginar(bool next)
+    {
+        ventas = await VentaService.GetAll();
+        if (activos)
+            ventas = ventas.Where(x => x.Fecha_Baja == null);
+        else
+            ventas = ventas;
+
+        int cantidadPorPagina = 10;
+        registros = ventas.Count();
+        decimal total;
+
+        if (registros < cantidadPorPagina)
+            total = pagina;
+        else
+        {
+            if (registros % cantidadPorPagina == 0)
+                total = registros / cantidadPorPagina;
+            else
+                total = (registros / cantidadPorPagina) + 1;
+        }
+
+        if (!next && pagina > 1) pagina--;
+
+        if (next && pagina < total) pagina++;
+
+        ventas = ventas.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
+    }
+
+    async Task RecargarGrilla()
+    {
+        ventas = await VentaService.GetAll();
+        //articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+    }
+
+    void FiltroNombre(ChangeEventArgs e)
+    {
+        nombreFiltro = e.Value.ToString();
+        Paginar(false);
+    }
+
+    void FiltroActivos()
+    {
+        activos = !activos;
+        Paginar(false);
+    }
+
+}

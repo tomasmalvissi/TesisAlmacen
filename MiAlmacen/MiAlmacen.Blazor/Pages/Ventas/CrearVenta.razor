@@ -1,0 +1,39 @@
+﻿@page "/ventas/crear"
+@inject NavigationManager NavigationManager
+@inject VentaService VentaService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h3><b>Nueva venta</b></h3>
+    </div>
+    <div>
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Volver al listado
+        </button>
+    </div>
+</div>
+
+<FormVenta venta="@venta" TextBotonSubmit="Cargar venta" OnValidSubmit="@Crear"></FormVenta>
+
+@code {
+    public Ventas venta = new Ventas();
+
+    async Task Crear()
+    {
+        var respuesta = await VentaService.Alta(venta);
+
+        if (respuesta != null)
+        {
+            NavigationManager.NavigateTo("/ventas");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Venta cargada exitosamente!", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se cargar venta.", "error");
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/ventas");
+    }
+}

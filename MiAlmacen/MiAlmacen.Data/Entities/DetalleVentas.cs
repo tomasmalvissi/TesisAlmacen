@@ -14,7 +14,7 @@ namespace MiAlmacen.Data.Entities
         public int Cantidad { get; set; }
         public int Venta_Id { get; set; }
 
-        public Articulos Articulo { get; set; }
-        public Ventas Venta { get; set; }
+        public virtual Articulos Articulo { get; set; }
+        public virtual Ventas Venta { get; set; }
     }
 }
