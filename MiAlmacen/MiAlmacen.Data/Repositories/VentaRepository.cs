@@ -102,8 +102,8 @@ namespace MiAlmacen.Data.Repositories
                     venta.Fecha_Baja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                 }
 
-                DetalleVentaRepository detalleVentasRepository = new DetalleVentaRepository();
-                venta.Detalle.AddRange(detalleVentasRepository.GetAll(venta));
+                CerrarConex();
+                venta.Detalle.AddRange(GetDetalle(venta));
             }
             catch (Exception e)
             {
@@ -115,6 +115,46 @@ namespace MiAlmacen.Data.Repositories
                 sqlcmd.Dispose();
             }
             return venta;
+        }
+
+        public List<DetalleVentas> GetDetalle(Ventas venta)
+        {
+            SqlCommand sqlcmd = new(orden, conexion);
+
+            List<DetalleVentas> detalles = new();
+            try
+            {
+                orden = @"SELECT * FROM DetalleVentas  
+                         WHERE Venta_Id = @Venta_Id";
+
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                sqlcmd.Parameters.AddWithValue("@Venta_Id", venta.Id);
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    DetalleVentas detVenta = new();
+                    detVenta.Venta = venta;
+                    detVenta.Id = Convert.ToInt32(reader["Id"].ToString());
+                    detVenta.Articulo_Id = Convert.ToInt32(reader["Articulo_Id"].ToString());
+                    detVenta.Cantidad = Convert.ToInt32(reader["Cantidad"].ToString());
+                    detVenta.Precio = Convert.ToSingle(reader["Precio"].ToString());
+                    detVenta.Venta_Id = Convert.ToInt32(reader["Venta_Id"].ToString());
+
+                    detalles.Add(detVenta);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return detalles;
         }
 
         public Ventas Post(Ventas venta)

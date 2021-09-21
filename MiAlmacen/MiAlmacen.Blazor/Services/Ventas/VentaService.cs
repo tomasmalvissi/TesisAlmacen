@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace MiAlmacen.Blazor.Services
@@ -22,7 +24,12 @@ namespace MiAlmacen.Blazor.Services
 
         public async Task<Ventas> GetUn(int id)
         {
-            return await _httpClient.GetFromJsonAsync<Ventas>($"api/ventas/{id}");
+            var options = new JsonSerializerOptions()
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                PropertyNameCaseInsensitive = true
+            };
+            return await _httpClient.GetFromJsonAsync<Ventas>($"api/ventas/{id}", options);
         }
 
         public async Task<Ventas> Alta(Ventas venta)

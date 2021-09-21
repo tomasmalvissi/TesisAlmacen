@@ -24,3 +24,7 @@ function simple(title, text, icon) {
         icon
     })
 }
+
+function levantaModal(id) {
+    $(id).modal('show');
+}

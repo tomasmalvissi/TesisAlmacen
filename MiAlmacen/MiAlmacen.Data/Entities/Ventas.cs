@@ -17,8 +17,8 @@ namespace MiAlmacen.Data.Entities
         public float Saldo { get; set; }
         public DateTime? Fecha_Baja { get; set; }
 
-        public List<DetalleVentas> Detalle { get; set; } = new List<DetalleVentas>();
-        public Clientes Cliente { get; set; }
-        public Usuarios Empleado { get; set; }
+        public List<DetalleVentas> Detalle { get; set; } = new();
+        public Clientes Cliente { get; set; } = new ();
+        public Usuarios Empleado { get; set; } = new ();
     }
 }
