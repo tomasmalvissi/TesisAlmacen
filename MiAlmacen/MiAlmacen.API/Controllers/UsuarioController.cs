@@ -33,6 +33,13 @@ namespace MiAlmacen.API.Controllers
             return Ok(user);
         }
 
+        [HttpGet("{user}/{pass}")]
+        public async Task<IActionResult> Login(string user, string pass)
+        {
+            var result = _repository.Login(user,pass);
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(UsuarioModel model)
         {

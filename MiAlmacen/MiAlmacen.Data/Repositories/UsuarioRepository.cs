@@ -99,6 +99,39 @@ namespace MiAlmacen.Data.Repositories
             }
             return usuario;
         }
+
+        public int Login(string user, string pass)
+        {
+            orden = @"SELECT Id FROM Usuarios WHERE Usuario=@user AND Contraseña=@pass AND FechaBaja IS NULL";
+            SqlCommand sqlcmd = new(orden, conexion);
+            int Id = 0;
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                sqlcmd.Parameters.AddWithValue("@user", user);
+                sqlcmd.Parameters.AddWithValue("@pass", pass);
+                sqlcmd.ExecuteNonQuery();
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Id = Convert.ToInt32(reader["Id"].ToString());
+                }
+                sqlcmd.Parameters.Clear();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return Id;
+        }
+
         public Usuarios Post(UsuarioModel model)
         {
             if (model == null)

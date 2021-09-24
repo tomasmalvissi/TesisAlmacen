@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @inject UsuarioService UsuarioService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 <div class="card">
     <h4 class="card-header">Iniciá sesión para continuar</h4>
@@ -19,21 +20,25 @@
                 <ValidationMessage For="@(() => usuario.Contraseña)" />
             </div>
 
-            <button class="btn btn-success"> Iniciar Sesión</button>
+            <button class="btn btn-success" type="submit"> Iniciar Sesión</button>
             <NavLink href="usuarios/registrar" class="btn btn-link">Registrarme</NavLink>
         </EditForm>
     </div>
 </div>
 
 @code {
-    private UsuarioModel usuario = new UsuarioModel();
+    private LoginModel usuario = new LoginModel();
 
-    private async void OnValidSubmit()
+    async Task OnValidSubmit()
     {
-        //TODO: algo asi seria el modelo
-        //await usuarioservice.login(usuario)
-        //la otra es agregar un campo a la tabla usuario llamado Token
-        //y usar eso para definirlo como clave de autenticacion unica
-        // o directamente usar el id mas una serie de caracteres concatenados
+        var id = await UsuarioService.Login(usuario.Usuario, usuario.Contraseña);
+        if (id == 0)
+        {
+            await JS.InvokeVoidAsync("simple", "Error", $"Datos incorrectos.", "error");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MiAlmacen.Model.Models;
+using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,11 @@ namespace MiAlmacen.Blazor.Services
     public class UsuarioService
     {
         private readonly HttpClient _httpClient;
-        public UsuarioService(HttpClient httpClient)
+        private IJSRuntime _jsRuntime;
+        public UsuarioService(HttpClient httpClient, IJSRuntime jsRuntime)
         {
             _httpClient = httpClient;
+            _jsRuntime = jsRuntime;
         }
         public async Task<IEnumerable<UsuarioModel>> GetAll()
         {
@@ -50,5 +53,57 @@ namespace MiAlmacen.Blazor.Services
             }
             return id;
         }
+
+
+        //login service
+
+
+        public async Task<int> Login(string username, string pass)
+        {
+            var respuesta = await _httpClient.GetAsync($"api/usuarios/{username}/{pass}");
+            var obj = respuesta.Content.ReadAsStringAsync();
+            int id = JsonConvert.DeserializeObject<int>(await obj);
+
+            if (id != 0)
+            {
+                string token = TokenGenerator(id);
+                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Token", token);
+            }
+            return id;
+        }
+
+        public async Task Logout(string token)
+        {
+            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", token);
+        }
+
+        public async Task<string> GetSesion()
+        {
+            string result = String.Empty;
+            var token = await _jsRuntime.InvokeAsync<string>("localStorage.removeItem", "Token");
+            if (token == null)
+            {
+                result = default;
+            }
+            else
+            {
+                result = JsonConvert.DeserializeObject<string>(token);
+            }
+            return result;
+        }
+
+
+        private string TokenGenerator(int id)
+        {
+            Random r = new Random();
+            string numero = "";
+            for (int i = 0; i < 10; i++)
+            {
+                numero += r.Next(0, 9).ToString();
+            }
+            string result = id + numero;
+            return result;
+        }
+
     }
 }
