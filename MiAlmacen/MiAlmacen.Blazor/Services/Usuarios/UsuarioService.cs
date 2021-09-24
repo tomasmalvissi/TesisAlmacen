@@ -72,9 +72,9 @@ namespace MiAlmacen.Blazor.Services
             return id;
         }
 
-        public async Task Logout(string token)
+        public async Task Logout()
         {
-            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", token);
+            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "Token");
         }
 
         public async Task<string> GetSesion()

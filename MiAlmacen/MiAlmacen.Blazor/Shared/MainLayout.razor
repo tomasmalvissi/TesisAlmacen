@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject UsuarioService UsuarioService
+@inject NavigationManager NavigationManager
 
 <div class="page">
     <div class="sidebar">
@@ -7,11 +9,18 @@
 
     <div class="main">
         <div class="top-row px-4">
-            <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+            <button class="btn btn-danger" @onclick="Logout"> Cerrar Sesión</button>
         </div>
-
         <div class="content px-4">
             @Body
         </div>
     </div>
 </div>
+
+@code{
+    private async void Logout()
+    {
+        await UsuarioService.Logout();
+        NavigationManager.NavigateTo("/login");
+    }
+}
