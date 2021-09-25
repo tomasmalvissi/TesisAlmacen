@@ -9,7 +9,14 @@
 
     <div class="main">
         <div class="top-row px-4">
-            <button class="btn btn-danger" @onclick="Logout"> Cerrar Sesión</button>
+            @if (token != null)
+            {
+                <button class="btn btn-sm btn-outline-danger" @onclick="Logout"> Cerrar Sesión</button>
+            }
+            else
+            {
+                <a href="/login" class="btn btn-sm btn-outline-primary"> Iniciar Sesión</a>
+            }
         </div>
         <div class="content px-4">
             @Body
@@ -18,9 +25,18 @@
 </div>
 
 @code{
+    //TODO Que refresque la barra de arriba
+    private string token { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        token = await UsuarioService.GetSesion();
+    }
+
     private async void Logout()
     {
         await UsuarioService.Logout();
         NavigationManager.NavigateTo("/login");
     }
+
 }

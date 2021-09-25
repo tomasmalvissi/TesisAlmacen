@@ -1,6 +1,7 @@
 ﻿@page "/ventas"
 @inject VentaService VentaService
 @inject NavigationManager NavigationManager
+@inject UsuarioService UsuarioService
 @inject IJSRuntime JS
 
 <div class="d-flex justify-content-between mb-1" id="header">
@@ -179,7 +180,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Paginar(false);
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            await Paginar(false);
+        }
     }
 
     private async Task LevantaModalSaldo(float saldo)

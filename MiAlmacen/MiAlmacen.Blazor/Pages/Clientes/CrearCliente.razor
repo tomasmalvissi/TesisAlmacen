@@ -1,6 +1,7 @@
 ﻿@page "/clientes/crear"
 @inject NavigationManager NavigationManager
 @inject ClienteService ClienteService
+@inject UsuarioService UsuarioService
 @inject IJSRuntime JS
 
 <div class="d-flex justify-content-between mb-3">
@@ -18,6 +19,15 @@
 
 @code {
     public ClienteModel cliente = new ClienteModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
 
     async Task CrearClient()
     {

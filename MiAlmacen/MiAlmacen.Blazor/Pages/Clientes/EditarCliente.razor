@@ -1,6 +1,7 @@
 ﻿@page "/clientes/editar/{idCliente:int}"
 @inject NavigationManager NavigationManager
 @inject ClienteService ClienteService
+@inject UsuarioService UsuarioService  
 @inject IJSRuntime JS
 
 
@@ -21,7 +22,15 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        cliente = await ClienteService.GetUnCliente(idCliente);
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            cliente = await ClienteService.GetUnCliente(idCliente);
+        }
     }
 
     async Task EditarClient()

@@ -1,6 +1,7 @@
 ﻿@page "/proveedores/editar/{idProveedor:int}"
 @inject NavigationManager NavigationManager
 @inject ProveedorService ProveedorService
+@inject UsuarioService UsuarioService
 @inject IJSRuntime JS
 
 
@@ -21,7 +22,15 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        proveedor = await ProveedorService.GetUn(idProveedor);
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            proveedor = await ProveedorService.GetUn(idProveedor);
+        }
     }
 
     async Task EditarProv()

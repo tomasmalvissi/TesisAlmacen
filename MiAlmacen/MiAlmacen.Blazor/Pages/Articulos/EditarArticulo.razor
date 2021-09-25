@@ -1,6 +1,7 @@
 ﻿@page "/articulos/editar/{idArticulo:int}"
 @inject NavigationManager NavigationManager
 @inject ArticuloService ArticuloService
+@inject UsuarioService UsuarioService
 @inject IJSRuntime JS
 
 <FormArticulo articulo="articulo" OnValidSubmit="@EditarProd" TextBotonSubmit="Guardar cambios" OcultaAlta=false />
@@ -11,7 +12,15 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        articulo = await ArticuloService.GetUn(idArticulo);
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            articulo = await ArticuloService.GetUn(idArticulo);    
+        }
     }
 
     async Task EditarProd()

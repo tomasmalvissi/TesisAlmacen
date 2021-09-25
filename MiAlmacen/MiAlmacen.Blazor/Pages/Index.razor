@@ -1,6 +1,18 @@
 ﻿@page "/"
-
+@inject UsuarioService UsuarioService 
+@inject NavigationManager NavigationManager
 <h1>Mi Almacen</h1>
 
 Bienvenido a su aplicación!
 
+@code{
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+}

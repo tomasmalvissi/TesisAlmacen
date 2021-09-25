@@ -1,6 +1,7 @@
 ﻿@page "/articulos/crear"
 @inject NavigationManager NavigationManager
 @inject ArticuloService ArticuloService
+@inject UsuarioService UsuarioService
 @inject IJSRuntime JS
 
 <div class="d-flex justify-content-between mb-3">
@@ -18,6 +19,15 @@
 
 @code {
     public ArticuloModel articulo = new ArticuloModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
 
     async Task CrearProd()
     {

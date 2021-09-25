@@ -80,10 +80,10 @@ namespace MiAlmacen.Blazor.Services
         public async Task<string> GetSesion()
         {
             string result = String.Empty;
-            var token = await _jsRuntime.InvokeAsync<string>("localStorage.removeItem", "Token");
+            var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "Token");
             if (token == null)
             {
-                result = default;
+                result = null;
             }
             else
             {
