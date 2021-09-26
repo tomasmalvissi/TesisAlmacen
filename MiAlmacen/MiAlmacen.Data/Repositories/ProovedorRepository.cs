@@ -73,7 +73,7 @@ namespace MiAlmacen.Data.Repositories
                 {
                     proveedor.Id = Convert.ToInt32(reader["Id"].ToString());
                     proveedor.Nombre = reader["Nombre"].ToString();
-                    proveedor.CUIL = Convert.ToInt32(reader["CUIL"].ToString());
+                    proveedor.CUIL = Convert.ToInt64(reader["CUIL"].ToString());
                     proveedor.Direccion = reader["Direccion"].ToString();
                     proveedor.Telefono = Convert.ToInt64(reader["Telefono"].ToString());
                     proveedor.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
