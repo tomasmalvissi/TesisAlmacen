@@ -28,3 +28,7 @@ function simple(title, text, icon) {
 function levantaModal(id) {
     $(id).modal('show');
 }
+
+function ocultaModal(id) {
+    $(id).modal('hide');
+}

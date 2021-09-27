@@ -56,10 +56,10 @@ else
                     <td>@venta.Id</td>
                     <td>@venta.Fecha</td>
                     <td>@venta.FormaPago</td>
-                    <td>@venta.Cliente_Id</td>
-                    <td>@venta.Empleado_Id</td>
-                    <td>@venta.Total</td>
-                    <td>@venta.Saldo</td>
+                    <td>@venta.Cliente.Nombre</td>
+                    <td>@venta.Empleado.Nombre</td>
+                    <td>$@venta.Total</td>
+                    <td>$@venta.Saldo</td>
                     <td>
                         @if (venta.Fecha_Baja == null)
                         {
@@ -79,7 +79,7 @@ else
                             <button @onclick="@(() => Borrar(venta.Id))" class="btn btn-sm btn-outline-danger m-1">
                                 <i class="oi oi-arrow-thick-bottom"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary m-1" @onclick="@(() => LevantaModalSaldo(venta.Saldo))">
+                            <button type="button" class="btn btn-sm btn-outline-secondary m-1" @onclick="@(() => LevantaModalSaldo(venta))">
                                 <i class="oi oi-pencil"></i>
                             </button>
                         }
@@ -95,7 +95,7 @@ else
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Detalle venta</h5>
+                <h5 class="modal-title">Detalle venta Nro: @idVentaSeleccionada </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -106,8 +106,8 @@ else
                         <tr>
                             <th>Id</th>
                             <th>Articulo</th>
-                            <th>Precio</th>
                             <th>Cantidad</th>
+                            <th>Precio</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,9 +115,9 @@ else
                         {
                             <tr>
                                 <td>@d.Id</td>
-                                <td>@d.Articulo_Id</td>
-                                <td>@d.Precio</td>
+                                <td>@d.Articulo.Nombre</td>
                                 <td>@d.Cantidad</td>
+                                <td>$@d.Precio</td>
                             </tr>
                         }
                     </tbody>
@@ -132,18 +132,19 @@ else
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h6 class="modal-title">Modificar saldo venta</h6>
+                <h6 class="modal-title">Modificar saldo venta </h6>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <b>Saldo actual de la venta seleccionada: $@saldoVenta</b>
-                <input class="form-control form-control-sm" type="text" placeholder="Ingrese pago del cliente en $" onclick="" />
+                <div class="d-flex inline justify-content-between"></div>
+                <b>Ingrese el pago del cliente:</b>
+                <input class="form-control form-control" @bind-value="saldoVenta" type="number" placeholder="Ingrese pago del cliente en $">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success">Guardar y actualizar</button>
+                <button type="button" class="btn btn-success" @onclick="@(() => ModificarSaldo())">Guardar y actualizar</button>
             </div>
         </div>
     </div>
@@ -165,6 +166,8 @@ else
 
 @code {
     public IEnumerable<Ventas> ventas { get; set; }
+
+    public int idVentaSeleccionada { get; set; }
 
     public List<DetalleVentas> detalle { get; set; } = new List<DetalleVentas>();
 
@@ -191,17 +194,28 @@ else
         }
     }
 
-    private async Task LevantaModalSaldo(float saldo)
+    private async Task LevantaModalSaldo(Ventas venta)
     {
-        saldoVenta = saldo;
+        saldoVenta = venta.Saldo;
+        idVentaSeleccionada = venta.Id;
         await JS.InvokeVoidAsync("levantaModal", "#modalSaldo");
     }
 
     private async Task LevantaModalDetalle(int id)
     {
         var venta = await VentaService.GetUn(id);
+        idVentaSeleccionada = id;
         detalle = venta.Detalle;
         await JS.InvokeVoidAsync("levantaModal", "#modalDetalle");
+    }
+
+    private async Task ModificarSaldo()
+    {
+        var venta = await VentaService.GetUn(idVentaSeleccionada);
+        VentaService.EditarSaldo(venta, saldoVenta);
+        VentaService.GetAll();
+        Paginar(false);
+        await JS.InvokeVoidAsync("ocultaModal", "#modalSaldo");
     }
 
     private async Task Borrar(int id)
@@ -272,5 +286,4 @@ else
         activos = !activos;
         Paginar(false);
     }
-
 }

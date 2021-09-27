@@ -14,14 +14,14 @@ namespace MiAlmacen.Model.Models
         public DateTime Fecha { get; set; }
         public int Proveedor_Id { get; set; }
         [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public long NroRecibo { get; set; }
         public int Empleado_Id { get; set; }
         [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public float Total { get; set; }
         [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public float Saldo { get; set; }
         public DateTime Fecha_Baja { get; set; }
 

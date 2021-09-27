@@ -39,9 +39,9 @@ namespace MiAlmacen.Blazor.Services
             return JsonConvert.DeserializeObject<Ventas>(await obj);
         }
 
-        public async Task<Ventas> Editar(Ventas venta)
+        public async Task<Ventas> EditarSaldo(Ventas venta, float nuevoSaldo)
         {
-            var respuesta = await _httpClient.PutAsJsonAsync($"api/ventas/{venta.Id}", venta);
+            var respuesta = await _httpClient.PutAsJsonAsync($"api/ventas/{nuevoSaldo}", venta);
             var obj = respuesta.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<Ventas>(await obj);
         }

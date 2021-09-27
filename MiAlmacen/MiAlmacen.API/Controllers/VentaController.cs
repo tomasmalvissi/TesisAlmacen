@@ -33,10 +33,10 @@ namespace MiAlmacen.API.Controllers
         }
 
 
-        [HttpPut("{id}/{pago}")]
-        public async Task<IActionResult> PutSaldo(int id, float pago)
+        [HttpPut("{pago}")]
+        public async Task<IActionResult> PutSaldo(Ventas venta, float pago)
         {
-            var nuevoSaldo = _repository.PutSaldo(id, pago);
+            var nuevoSaldo = _repository.PutSaldo(venta, pago);
             return Ok(nuevoSaldo);
         }
 

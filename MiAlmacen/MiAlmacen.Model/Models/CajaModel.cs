@@ -13,9 +13,9 @@ namespace MiAlmacen.Model.Models
         [Required]
         public DateTime Fecha { get; set; }
         public int Empleado_Id { get; set; }
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public float Apertura { get; set; }
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public float Cierre { get; set; }
         public UsuarioModel Empleado { get; set; }
     }

@@ -15,10 +15,10 @@ namespace MiAlmacen.Model.Models
         [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
         public int Cantidad { get; set; }
         [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public float Precio_Mayor { get; set; }
         [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public float Precio_Unit { get; set; }
         public int Compra_Id { get; set; }
 

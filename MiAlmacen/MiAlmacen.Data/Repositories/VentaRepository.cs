@@ -64,6 +64,16 @@ namespace MiAlmacen.Data.Repositories
                     venta.Total = Convert.ToSingle(reader["Total"].ToString());
                     venta.Saldo = Convert.ToSingle(reader["Saldo"].ToString());
                     venta.Fecha_Baja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
+
+                    Clientes cliente = new();
+                    ClienteRepository clienteRepository = new ClienteRepository();
+                    cliente = clienteRepository.GetOne(Convert.ToInt32(reader["Cliente_Id"].ToString()));
+                    venta.Cliente = cliente;
+                    Usuarios usuario = new();
+                    UsuarioRepository usuarioRepository = new UsuarioRepository();
+                    usuario = usuarioRepository.GetOne(Convert.ToInt32(reader["Empleado_Id"].ToString()));
+                    venta.Empleado = usuario;
+
                     ventas.Add(venta);
                 }
             }
@@ -100,10 +110,19 @@ namespace MiAlmacen.Data.Repositories
                     venta.Total = Convert.ToSingle(reader["Total"].ToString());
                     venta.Saldo = Convert.ToSingle(reader["Saldo"].ToString());
                     venta.Fecha_Baja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
+
+                    Clientes cliente = new();
+                    ClienteRepository clienteRepository  = new ClienteRepository();
+                    cliente = clienteRepository.GetOne(Convert.ToInt32(reader["Cliente_Id"].ToString()));
+                    venta.Cliente = cliente;
+                    Usuarios usuario = new();
+                    UsuarioRepository usuarioRepository = new UsuarioRepository();
+                    usuario = usuarioRepository.GetOne(Convert.ToInt32(reader["Empleado_Id"].ToString()));
+                    venta.Empleado = usuario;
                 }
 
                 CerrarConex();
-                venta.Detalle.AddRange(GetDetalle(venta));
+                venta = GetDetalle(venta);
             }
             catch (Exception e)
             {
@@ -117,11 +136,10 @@ namespace MiAlmacen.Data.Repositories
             return venta;
         }
 
-        public List<DetalleVentas> GetDetalle(Ventas venta)
+        public Ventas GetDetalle(Ventas venta)
         {
             SqlCommand sqlcmd = new(orden, conexion);
 
-            List<DetalleVentas> detalles = new();
             try
             {
                 orden = @"SELECT * FROM DetalleVentas  
@@ -135,14 +153,17 @@ namespace MiAlmacen.Data.Repositories
                 while (reader.Read())
                 {
                     DetalleVentas detVenta = new();
-                    detVenta.Venta = venta;
                     detVenta.Id = Convert.ToInt32(reader["Id"].ToString());
                     detVenta.Articulo_Id = Convert.ToInt32(reader["Articulo_Id"].ToString());
                     detVenta.Cantidad = Convert.ToInt32(reader["Cantidad"].ToString());
                     detVenta.Precio = Convert.ToSingle(reader["Precio"].ToString());
                     detVenta.Venta_Id = Convert.ToInt32(reader["Venta_Id"].ToString());
 
-                    detalles.Add(detVenta);
+                    Articulos articulo = new();
+                    ArticuloRepository articuloRepository = new ArticuloRepository();
+                    articulo = articuloRepository.GetOne(Convert.ToInt32(reader["Articulo_Id"].ToString()));
+                    detVenta.Articulo = articulo;   
+                    venta.Detalle.Add(detVenta);
                 }
             }
             catch (Exception ex)
@@ -154,7 +175,7 @@ namespace MiAlmacen.Data.Repositories
                 CerrarConex();
                 sqlcmd.Dispose();
             }
-            return detalles;
+            return venta;
         }
 
         public Ventas Post(Ventas venta)
@@ -246,9 +267,8 @@ namespace MiAlmacen.Data.Repositories
             }
         }
 
-        public float PutSaldo(int id, float pago)
+        public float PutSaldo(Ventas venta, float pago)
         {
-            var venta = GetOne(id);
             if (venta != null)
             {
                 AbrirConex();
@@ -263,7 +283,7 @@ namespace MiAlmacen.Data.Repositories
                     orden = $"UPDATE Ventas SET Saldo=@Saldo WHERE Id=@Id";
 
                     sqlcmd.CommandText = orden;
-                    sqlcmd.Parameters.AddWithValue("@Id", id);
+                    sqlcmd.Parameters.AddWithValue("@Id", venta.Id);
                     sqlcmd.Parameters.AddWithValue("@Saldo", nuevoSaldo);
 
                     sqlcmd.ExecuteNonQuery();
