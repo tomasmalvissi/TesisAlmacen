@@ -104,20 +104,22 @@ else
                 <table class="table table-hover">
                     <thead class="thead thead-dark">
                         <tr>
-                            <th>Id</th>
+                            <th>Código Articulo</th>
                             <th>Articulo</th>
                             <th>Cantidad</th>
                             <th>Precio</th>
+                            <th>SubTotal</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var d in detalle)
+                        @foreach (var det in detalle)
                         {
                             <tr>
-                                <td>@d.Id</td>
-                                <td>@d.Articulo.Nombre</td>
-                                <td>@d.Cantidad</td>
-                                <td>$@d.Precio</td>
+                                <td>@det.Articulo.Codigo_Art</td>
+                                <td>@det.Articulo.Nombre</td>
+                                <td>@det.Cantidad</td>
+                                <td>$@det.Precio</td>
+                                <td>$@det.SubTotal</td>
                             </tr>
                         }
                     </tbody>
@@ -139,12 +141,12 @@ else
             </div>
             <div class="modal-body">
                 <div class="d-flex inline justify-content-between"></div>
-                <b>Ingrese el pago del cliente:</b>
-                <input class="form-control form-control" @bind-value="saldoVenta" type="number" placeholder="Ingrese pago del cliente en $">
+                <b>Ingrese el pago del cliente en $(pesos):</b>
+                <input class="form-control form-control" @bind-value="saldoVenta" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success" @onclick="@(() => ModificarSaldo())">Guardar y actualizar</button>
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-success" @onclick="@(() => ModificarSaldo())">Guardar y actualizar</button>
             </div>
         </div>
     </div>
