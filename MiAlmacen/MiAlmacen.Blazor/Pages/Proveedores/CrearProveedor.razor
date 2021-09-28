@@ -33,7 +33,7 @@
     {
         var respuesta = await ProveedorService.Alta(proveedor);
 
-        if (respuesta != null)
+        if (respuesta.Id != 0)
         {
             NavigationManager.NavigateTo("/proveedores");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", "Proveedor creado", "success");

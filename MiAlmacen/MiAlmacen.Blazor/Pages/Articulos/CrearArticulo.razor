@@ -33,7 +33,7 @@
     {
         var respuesta = await ArticuloService.Alta(articulo);
 
-        if (respuesta != null)
+        if (respuesta.Id != 0)
         {
             NavigationManager.NavigateTo("/articulos");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", "Producto creado", "success");
