@@ -1,102 +1,180 @@
 ﻿@inject NavigationManager NavigationManager
 @inject VentaService VentaService
 @inject ArticuloService ArticuloService
+@inject ClienteService ClienteService
 @inject IJSRuntime JS
 
 
 <EditForm Model="@venta" OnValidSubmit="@OnValidSubmit">
     <div id="header" class="form-row">
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-6">
             <label>Fecha</label>
             <InputDate @bind-Value="@venta.Fecha" class="form-control" />
             <ValidationMessage For="@(() => venta.Fecha)" />
         </div>
-        <div class="form-group col-md-4">
-            <label>Forma de Pago</label>
-            <InputText @bind-Value="@venta.FormaPago" class="form-control" />
+
+        <div class="form-group col-md-6">
+            <label>Forma de pago</label>
+            <InputSelect @bind-Value="@venta.FormaPago">
+                @foreach (var dept in Departments)
+                {
+                    <option value="Efectivo">"Efectivo"</option>
+                    <option value="Tarjeta de crédito">"Tarjeta de crédito"</option>
+                    <option value="Tarjeta de débito">"Tarjeta de débito"</option>
+                }
+            </InputSelect>
             <ValidationMessage For="@(() => venta.FormaPago)" />
         </div>
-        <div class="form-group col-md-4">
-            <label>Cliente</label>
-            <InputNumber @bind-Value="@venta.Cliente_Id" class="form-control" />
-            <ValidationMessage For="@(() => venta.Cliente_Id)" />
-        </div>
     </div>
-
-
-    <button type="submit" class="btn btn-block btn-success">
-        <i class="oi oi-check "></i>
-        <text style="color:white"> @TextBotonSubmit</text>
-    </button>
 </EditForm>
 
-<div id="detalle">
-    <div id="buscador" class="p-2">
-        <BlazoredTypeahead SearchMethod="BuscarArticulos" @bind-Value="articuloSeleccionado">
-            <SelectedTemplate>@context.Nombre</SelectedTemplate>
-            <ResultTemplate>@context.Nombre</ResultTemplate>
+<div id="header" class="form-row">
+    <div id="buscador-clientes" class="form-group col-md-12">
+        <label>Cliente</label>
+        <BlazoredTypeahead SearchMethod="BuscarClientes" @bind-Value="clienteSeleccionado" placeholder="Seleccione cliente" class="form-control">
+            <SelectedTemplate>@context.Nombre | @context.DNI</SelectedTemplate>
+            <ResultTemplate>@context.Nombre | @context.DNI</ResultTemplate>
         </BlazoredTypeahead>
     </div>
+</div>
 
-    @*    <div class="form-group col-md-4">
-        <label>Fecha</label>
-        <input @bind="@articuloSeleccionado.Nombre" class="form-control" />
-        <ValidationMessage For="@(() => articuloSeleccionado.Nombre)" />
-        </div>
-        <div class="form-group col-md-4">
-        <label>Forma de Pago</label>
-        <input @bind="@detalleVenta.Cantidad" class="form-control" />
-        <ValidationMessage For="@(() => detalleVenta.Cantidad)" />
-        </div>
-        <div class="form-group col-md-4">
-        <label>Cliente</label>
-        <input @bind="@articuloSeleccionado.Precio_Unit" class="form-control" />
-        <ValidationMessage For="@(() => articuloSeleccionado.Precio_Unit)" />
-        </div>*@
+<hr />
 
+<div id="detalle">
+
+    <div class="form-row p-2">
+        <div id="buscador-articulos" class="form-group col-md-3">
+            <label>Producto</label>
+            <BlazoredTypeahead SearchMethod="BuscarArticulos" @bind-Value="articuloSeleccionado" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Seleccione producto" class="form-control">
+                <SelectedTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act</SelectedTemplate>
+                <ResultTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act</ResultTemplate>
+            </BlazoredTypeahead>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label>Cantidad</label>
+            <input type="number" @bind="@cantidad" class="form-control" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Ingrese cantidad" />
+        </div>
+
+        <div class="form-group col-md-3">
+            <label>Precio</label>
+            <input type="number" @bind="precio" class="form-control" placeholder="Ingrese precio" readonly="readonly" />
+        </div>
+
+        <div class="form-group col-md-3">
+            <label>SubTotal</label>
+            <input type="number" @bind="subtotal" class="form-control" placeholder="Subtotal" />
+        </div>
+
+        <div class="form-group col-md-3">
+            <label> </label>
+            <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
+                <i class="oi oi-plus"></i>Agregar Detalle
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
     <table class="table table-hover">
         <thead class="thead thead-dark">
             <tr>
                 <th>#</th>
                 <th>Articulo</th>
-                <th>Cantidad</th>
                 <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var d in venta.Detalle)
+            @foreach (var item in venta.Detalle)
             {
                 <tr>
-                    <td></td>
-                    <td>@d.Articulo.Nombre</td>
-                    <td>@d.Cantidad</td>
-                    <td>$@d.Precio</td>
+                    <td>1</td>
+                    <td>@item.Articulo.Nombre</td>
+                    <td>$@item.Precio</td>
+                    <td>@item.Cantidad</td>
+                    <td>$@item.SubTotal</td>
+                    <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => venta.Detalle.Remove(item)"><i class="oi oi-trash"></i></button></td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
 
+<button type="submit" class="btn btn-block btn-success">
+    <i class="oi oi-check "></i>
+    <text style="color:white"> @TextBotonSubmit</text>
+</button>
 
 @code {
-    [Parameter] public Ventas venta { get; set; } = new Ventas();
+    #region Parametros
+    [Parameter] public VentaModel venta { get; set; } = new VentaModel();
     [Parameter] public string TextBotonSubmit { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }
+    #endregion
 
     private ArticuloModel articuloSeleccionado;
     private IEnumerable<ArticuloModel> articulos;
 
-    private DetalleVentas detalleVenta;
+    private ClienteModel clienteSeleccionado;
+    private IEnumerable<ClienteModel> clientes;
+
+    #region Detalle
+    private int cantidad { get; set; } = 1;
+    private float precio { get; set; }
+    private float subtotal { get; set; }
+    #endregion
 
     protected override async Task OnInitializedAsync()
     {
         articulos = await ArticuloService.GetAll();
+        clientes = await ClienteService.GetAllClientes();
         venta.FormaPago = "Efectivo";
         venta.Fecha = DateTime.Now;
     }
 
+    void AgregarArticulo()
+    {
+        if (articuloSeleccionado != null)
+        {
+            precio = articuloSeleccionado.Precio_Unit;
+            subtotal = precio * cantidad;
+        }
+    }
+
+    void AgregarDetalle()
+    {
+        if (articuloSeleccionado != null)
+        {
+            DetalleVentaModel detalle = new();
+            detalle.Cantidad = cantidad;
+            detalle.Precio = precio;
+            detalle.Articulo_Id = articuloSeleccionado.Id;
+            detalle.Articulo = articuloSeleccionado;
+            detalle.SubTotal = subtotal;
+            venta.Detalle.Add(detalle);
+
+            cantidad = 1; precio = 0; subtotal = 0;
+        }
+    }
+
+    void AsignarCliente()
+    {
+        if (clienteSeleccionado != null)
+        {
+            venta.Cliente = clienteSeleccionado;
+        }
+    }
+
     private async Task<IEnumerable<ArticuloModel>> BuscarArticulos(string busqueda)
     {
-        return await Task.FromResult(articulos.Where(x => x.Nombre.ToUpper().Contains(busqueda.ToUpper())).ToList());
+        return await Task.FromResult(articulos.Where(x => x.Nombre.ToUpper().Contains(busqueda.ToUpper()));
+    }
+
+    private async Task<IEnumerable<ClienteModel>> BuscarClientes(string busqueda)
+    {
+        return await Task.FromResult(clientes.Where(x => x.Nombre.ToUpper().Contains(busqueda.ToUpper())).ToList());
     }
 }

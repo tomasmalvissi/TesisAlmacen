@@ -41,7 +41,7 @@ namespace MiAlmacen.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Ventas venta)
+        public async Task<IActionResult> Post(VentaModel venta)
         {
             return Ok(_repository.Post(venta));
         }

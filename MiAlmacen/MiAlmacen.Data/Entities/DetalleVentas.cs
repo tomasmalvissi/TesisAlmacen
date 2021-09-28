@@ -13,6 +13,7 @@ namespace MiAlmacen.Data.Entities
         public float Precio { get; set; }
         public int Cantidad { get; set; }
         public int Venta_Id { get; set; }
+        public float SubTotal { get; set; }
 
         public Articulos Articulo { get; set; } = new();  
         public Ventas Venta { get; set; } =  new (); 

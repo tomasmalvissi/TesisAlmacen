@@ -24,7 +24,7 @@ namespace MiAlmacen.Model.Models
         public float Saldo { get; set; }
         public DateTime? Fecha_Baja { get; set; }
 
-        public List<DetalleVentaModel> DetalleVenta { get; set; } = new List<DetalleVentaModel>();
+        public List<DetalleVentaModel> Detalle { get; set; } = new ();
         public ClienteModel Cliente { get; set; }
         public UsuarioModel Empleado { get; set; }
     }

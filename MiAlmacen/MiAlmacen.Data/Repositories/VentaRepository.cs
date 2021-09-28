@@ -13,31 +13,31 @@ namespace MiAlmacen.Data.Repositories
     public class VentaRepository : DBConex
     {
         string orden;
-        //private static Ventas IniciarObjeto(VentaModel model)
-        //{
-        //    Ventas venta = new();
-        //    venta.Id = model.Id;
-        //    venta.Fecha = model.Fecha;
-        //    venta.FormaPago = model.FormaPago;
-        //    venta.Cliente_Id = model.Cliente_Id;
-        //    venta.Empleado_Id = model.Empleado_Id;
-        //    venta.Total = model.Total;
-        //    venta.Saldo = model.Saldo;
-        //    venta.Fecha_Baja = model.Fecha_Baja;
+        private static Ventas IniciarObjeto(VentaModel model)
+        {
+            Ventas venta = new();
+            venta.Id = model.Id;
+            venta.Fecha = model.Fecha;
+            venta.FormaPago = model.FormaPago;
+            venta.Cliente_Id = model.Cliente_Id;
+            venta.Empleado_Id = model.Empleado_Id;
+            venta.Total = model.Total;
+            venta.Saldo = model.Saldo;
+            venta.Fecha_Baja = model.Fecha_Baja;
 
-        //    foreach (var item in model.DetalleVenta)
-        //    {
-        //        DetalleVentas detventa = new();
-        //        detventa.Venta_Id = item.Venta_Id;
-        //        detventa.Articulo_Id = item.Articulo_Id;
-        //        detventa.Precio = item.Precio;
-        //        detventa.Cantidad = item.Cantidad;
+            foreach (var item in model.Detalle)
+            {
+                DetalleVentas detventa = new();
+                detventa.Venta_Id = item.Venta_Id;
+                detventa.Articulo_Id = item.Articulo_Id;
+                detventa.Precio = item.Precio;
+                detventa.Cantidad = item.Cantidad;
 
-        //        venta.Detalle.Add(detventa);
-        //    }
+                venta.Detalle.Add(detventa);
+            }
 
-        //    return venta;
-        //}
+            return venta;
+        }
 
         public List<Ventas> GetAll()
         {
@@ -178,7 +178,7 @@ namespace MiAlmacen.Data.Repositories
             return venta;
         }
 
-        public Ventas Post(Ventas venta)
+        public Ventas Post(VentaModel venta)
         {
             if (venta == null)
             {
@@ -263,7 +263,9 @@ namespace MiAlmacen.Data.Repositories
                     CerrarConex();
                     sqlcmd.Dispose();
                 }
-                return venta;
+
+                var ventaEntity = IniciarObjeto(venta);
+                return ventaEntity;
             }
         }
 

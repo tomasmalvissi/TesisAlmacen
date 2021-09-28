@@ -1,4 +1,5 @@
 ﻿using MiAlmacen.Data.Entities;
+using MiAlmacen.Model.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -32,7 +33,7 @@ namespace MiAlmacen.Blazor.Services
             return await _httpClient.GetFromJsonAsync<Ventas>($"api/ventas/{id}", options);
         }
 
-        public async Task<Ventas> Alta(Ventas venta)
+        public async Task<Ventas> Alta(VentaModel venta)
         {
             var respuesta = await _httpClient.PostAsJsonAsync("api/ventas/", venta);
             var obj = respuesta.Content.ReadAsStringAsync();
