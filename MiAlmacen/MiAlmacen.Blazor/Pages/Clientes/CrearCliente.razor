@@ -33,7 +33,7 @@
     {
         var respuesta = await ClienteService.Alta(cliente);
 
-        if (respuesta != null)
+        if (respuesta.Id != 0)
         {
             NavigationManager.NavigateTo("/clientes");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente creado", "success");
