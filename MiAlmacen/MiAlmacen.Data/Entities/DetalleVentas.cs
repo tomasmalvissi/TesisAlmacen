@@ -16,6 +16,5 @@ namespace MiAlmacen.Data.Entities
         public float SubTotal { get; set; }
 
         public Articulos Articulo { get; set; } = new();  
-        public Ventas Venta { get; set; } =  new (); 
     }
 }

@@ -189,3 +189,12 @@ GO
 ALTER TABLE Ventas
 ADD FechaBaja DATETIME 
 GO
+
+
+ALTER TABLE DetalleVentas
+ADD SubTotal FLOAT
+GO
+
+ALTER TABLE DetalleCompras
+ADD SubTotal FLOAT
+GO

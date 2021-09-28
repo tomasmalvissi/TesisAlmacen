@@ -92,7 +92,7 @@ else
 
 <!-- Modal Detalle -->
 <div class="modal fade" id="modalDetalle" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Detalle venta Nro: @idVentaSeleccionada </h5>
@@ -131,7 +131,7 @@ else
 
 <!-- Modal Saldo -->
 <div class="modal fade" id="modalSaldo" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title">Modificar saldo venta </h6>
@@ -140,9 +140,10 @@ else
                 </button>
             </div>
             <div class="modal-body">
-                <div class="d-flex inline justify-content-between"></div>
-                <b>Ingrese el pago del cliente en $(pesos):</b>
-                <input class="form-control form-control" @bind-value="saldoVenta" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
+                <div class="form-group form-check m-1">
+                    <b>Ingrese el pago del cliente en $ (pesos):</b>
+                    <input class="form-control form-control" @bind-value="saldoVenta" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>

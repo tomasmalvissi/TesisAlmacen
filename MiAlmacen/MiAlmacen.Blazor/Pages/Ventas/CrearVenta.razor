@@ -15,7 +15,7 @@
     </div>
 </div>
 
-<FormVenta venta="@venta" TextBotonSubmit="Cargar venta" OnValidSubmit="@Crear"></FormVenta>
+<FormVenta></FormVenta>
 
 @code {
     public VentaModel venta = new VentaModel();
@@ -29,24 +29,11 @@
         }
     }
 
-    async Task Crear()
-    {
-        var respuesta = await VentaService.Alta(venta);
-
-        if (respuesta != null)
-        {
-            NavigationManager.NavigateTo("/ventas");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Venta cargada exitosamente!", "success");
-        }
-        else
-            await JS.InvokeVoidAsync("simple", "Error", $"No se cargar venta.", "error");
-    }
-
     private void Volver()
     {
         NavigationManager.NavigateTo("/ventas");
     }
 
-//TODO: Subtotal en ventas
-//TODO: Forma Pago enum
+    //TODO: Subtotal en ventas
+    //TODO: Forma Pago enum
 }

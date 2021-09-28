@@ -5,28 +5,13 @@
 @inject IJSRuntime JS
 
 
-<EditForm Model="@venta" OnValidSubmit="@OnValidSubmit">
-    <div id="header" class="form-row">
-        <div class="form-group col-md-6">
-            <label>Fecha</label>
-            <InputDate @bind-Value="@venta.Fecha" class="form-control" />
-            <ValidationMessage For="@(() => venta.Fecha)" />
-        </div>
-
-        <div class="form-group col-md-6">
-            <label>Forma de pago</label>
-            <InputSelect @bind-Value="@venta.FormaPago" class="form-control">
-                <option value="Efectivo">Efectivo</option>
-                <option value="Tarjeta de crédito">Tarjeta de crédito</option>
-                <option value="Tarjeta de débito">Tarjeta de débito</option>
-            </InputSelect>
-            <ValidationMessage For="@(() => venta.FormaPago)" />
-        </div>
-    </div>
-</EditForm>
-
 <div id="header" class="form-row">
-    <div id="buscador-clientes" class="form-group col-md-12">
+    <div class="form-group col-md-6">
+        <label>Fecha</label>
+        <input type="date" @bind="@venta.Fecha" class="form-control" />
+    </div>
+
+    <div id="buscador-clientes" class="form-group col-md-6">
         <label>Cliente</label>
         <BlazoredTypeahead SearchMethod="BuscarClientes" @bind-Value="clienteSeleccionado" placeholder="Seleccione cliente" class="form-control">
             <SelectedTemplate>@context.Nombre | @context.DNI</SelectedTemplate>
@@ -38,7 +23,6 @@
 <hr />
 
 <div id="detalle">
-
     <div class="form-row p-2">
         <div id="buscador-articulos" class="form-group col-md-3">
             <label>Producto</label>
@@ -110,17 +94,45 @@
     </button>
 </div>
 
-<button type="submit" class="btn btn-block btn-success">
-    <i class="oi oi-check "></i>
-    <text style="color:white"> @TextBotonSubmit</text>
+<button type="submit" class="btn btn-block btn-success" @onclick="LevantaModal">
+    <i class="oi oi-check"></i> Finalizar Venta
 </button>
 
+<!-- Modal Saldo y Forma Pago -->
+<div class="modal fade" id="modalFinalizaVenta" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Ingrese pago </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body form-row">
+                <div class="form-group col-md-6">
+                    <label>Ingrese el pago del cliente en $(pesos)</label>
+                    <input class="form-control form-control" @bind="venta.Saldo" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
+                </div>
+                 
+                <div class="form-group col-md-6">
+                    <label>Forma de pago</label>
+                    <select @bind="@venta.FormaPago" class="form-control">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta de crédito">Tarjeta de crédito</option>
+                        <option value="Tarjeta de débito">Tarjeta de débito</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-success" @onclick="@(() => CrearVenta())">Registrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @code {
-    #region Parametros
-    [Parameter] public VentaModel venta { get; set; } = new VentaModel();
-    [Parameter] public string TextBotonSubmit { get; set; }
-    [Parameter] public EventCallback OnValidSubmit { get; set; }
-    #endregion
+    public VentaModel venta { get; set; } = new VentaModel();
 
     private ArticuloModel articuloSeleccionado;
     private IEnumerable<ArticuloModel> articulos;
@@ -163,8 +175,6 @@
             detalle.SubTotal = subtotal;
             venta.Detalle.Add(detalle);
             venta.Total = CalcularTotal();
-
-            cantidad = 1; precio = 0; subtotal = 0;
         }
     }
 
@@ -188,6 +198,31 @@
         }
         return venta.Total;
     }
+
+    void CrearVenta()
+    {
+        AsignarCliente();
+        CalcularTotal();
+        venta.Empleado_Id = 4;
+        venta.Cliente_Id = clienteSeleccionado.Id;
+
+        var respuesta = VentaService.Alta(venta);
+
+        if (respuesta.Id != 0)
+        {
+            JS.InvokeVoidAsync("ocultaModal", "#modalFinalizaVenta");
+            NavigationManager.NavigateTo("/ventas");
+            JS.InvokeVoidAsync("simple", "¡Éxito!", "Venta cargada exitosamente!", "success");
+        }
+        else
+            JS.InvokeVoidAsync("simple", "Error", $"Error al cargar venta.", "error");
+    }
+
+    void LevantaModal()
+    {
+        JS.InvokeVoidAsync("levantaModal", "#modalFinalizaVenta");
+    }
+
 
     private async Task<IEnumerable<ArticuloModel>> BuscarArticulos(string busqueda)
     {

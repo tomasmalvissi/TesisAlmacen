@@ -21,6 +21,16 @@ namespace MiAlmacen.Data.Repositories
             venta.FormaPago = model.FormaPago;
             venta.Cliente_Id = model.Cliente_Id;
             venta.Empleado_Id = model.Empleado_Id;
+            venta.Cliente.Id =  model.Cliente.Id;
+            venta.Cliente.Nombre = model.Cliente.Nombre;
+            venta.Cliente.Telefono = model.Cliente.Telefono;
+            venta.Cliente.DNI = model.Cliente.DNI;
+            venta.Cliente.Direccion = model.Cliente.Direccion;
+            venta.Cliente.FechaBaja = model.Cliente.FechaBaja;
+            //venta.Empleado.Id = model.Empleado.Id;
+            //venta.Empleado.Nombre = model.Empleado.Nombre;
+            //venta.Empleado.Contraseña = model.Empleado.Contraseña;
+            //venta.Empleado.Email = model.Empleado.Email;
             venta.Total = model.Total;
             venta.Saldo = model.Saldo;
             venta.Fecha_Baja = model.Fecha_Baja;
@@ -30,9 +40,16 @@ namespace MiAlmacen.Data.Repositories
                 DetalleVentas detventa = new();
                 detventa.Venta_Id = item.Venta_Id;
                 detventa.Articulo_Id = item.Articulo_Id;
+                detventa.Articulo.Codigo_Art = item.Articulo.Codigo_Art;
+                detventa.Articulo.FechaBaja = item.Articulo.FechaBaja;
+                detventa.Articulo.Nombre = item.Articulo.Nombre;
+                detventa.Articulo.Precio_Mayor = item.Articulo.Precio_Mayor;
+                detventa.Articulo.Precio_Unit = item.Articulo.Precio_Unit;
+                detventa.Articulo.Stock_Act = item.Articulo.Stock_Act;
+                detventa.Articulo.Ultima_Modif = item.Articulo.Ultima_Modif;
                 detventa.Precio = item.Precio;
                 detventa.Cantidad = item.Cantidad;
-
+                detventa.SubTotal = item.SubTotal;
                 venta.Detalle.Add(detventa);
             }
 
@@ -157,6 +174,7 @@ namespace MiAlmacen.Data.Repositories
                     detVenta.Articulo_Id = Convert.ToInt32(reader["Articulo_Id"].ToString());
                     detVenta.Cantidad = Convert.ToInt32(reader["Cantidad"].ToString());
                     detVenta.Precio = Convert.ToSingle(reader["Precio"].ToString());
+                    detVenta.SubTotal = string.IsNullOrEmpty(reader["SubTotal"].ToString()) ? 0 : Convert.ToSingle(reader["SubTotal"].ToString());
                     detVenta.Venta_Id = Convert.ToInt32(reader["Venta_Id"].ToString());
 
                     Articulos articulo = new();
@@ -213,13 +231,14 @@ namespace MiAlmacen.Data.Repositories
                     
                     foreach (var detalle in venta.Detalle)
                     {
-                        orden = @"INSERT INTO DetalleVentas (Articulo_Id, Precio, Cantidad, Venta_Id)
-                            VALUES (@Articulo_Id, @Precio, @Cantidad, (SELECT IDENT_CURRENT ('Ventas')))";
+                        orden = @"INSERT INTO DetalleVentas (Articulo_Id, Precio, Cantidad, SubTotal, Venta_Id)
+                            VALUES (@Articulo_Id, @Precio, @Cantidad, @SubTotal, (SELECT IDENT_CURRENT ('Ventas')))";
 
                         sqlcmd.CommandText = orden;
                         sqlcmd.Parameters.AddWithValue("@Articulo_Id", detalle.Articulo_Id);
                         sqlcmd.Parameters.AddWithValue("@Precio", detalle.Precio);
                         sqlcmd.Parameters.AddWithValue("@Cantidad", detalle.Cantidad);
+                        sqlcmd.Parameters.AddWithValue("@SubTotal", detalle.SubTotal);
 
                         sqlcmd.ExecuteNonQuery();
                         sqlcmd.Parameters.Clear();
