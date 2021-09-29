@@ -13,12 +13,13 @@ namespace MiAlmacen.Model.Models
         [Required]
         public string Nombre { get; set; }
         [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [Range(1, 99999999999, ErrorMessage = "Máximo 11 caracteres")]
         public long CUIL { get; set; }
         [Required]
+        [StringLength(20, MinimumLength = 1, ErrorMessage = "Máximo 20 dígitos")]
         public string Direccion { get; set; }
         [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [Phone(ErrorMessage = "Solo números")]
         public long Telefono { get; set; }
         public DateTime? FechaBaja { get; set; }
     }

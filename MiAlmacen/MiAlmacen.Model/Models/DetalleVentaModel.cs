@@ -14,7 +14,7 @@ namespace MiAlmacen.Model.Models
         [Required]
         public float Precio { get; set; }
         [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [Range(0, 1000, ErrorMessage = "Solo números")]
         public int Cantidad { get; set; }
 
         public float SubTotal { get; set; }

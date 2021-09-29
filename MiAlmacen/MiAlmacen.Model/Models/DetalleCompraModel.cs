@@ -12,7 +12,7 @@ namespace MiAlmacen.Model.Models
         public int Id { get; set; }
         public int Articulo_Id { get; set; }
         [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [Range(0, 1000, ErrorMessage = "Solo números")]
         public int Cantidad { get; set; }
         [Required]
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]

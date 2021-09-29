@@ -14,7 +14,7 @@ namespace MiAlmacen.Model.Models
         public DateTime Fecha { get; set; }
         public int Proveedor_Id { get; set; }
         [Required]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
         public long NroRecibo { get; set; }
         public int Empleado_Id { get; set; }
         [Required]
