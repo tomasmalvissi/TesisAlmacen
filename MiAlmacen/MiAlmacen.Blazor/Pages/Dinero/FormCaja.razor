@@ -1,0 +1,48 @@
+﻿@inject CajaService CajaSerive
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<EditForm Model="@caja" OnValidSubmit="@OnValidSubmit">
+    <div class="form-group row">
+        <div class="form-group col-md-3">
+            <label>Fecha</label>
+            <input type="date" @bind="@caja.Fecha" class="form-control" readonly/>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-3 col-form-label">Monto Apertura de Caja</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputNumber @bind-Value="@caja.Apertura" class="form-control" placeholder="Apertura" />
+                </div>
+                <ValidationMessage For="@(() => caja.Apertura)" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-3 col-form-label">Monto Cierre de Caja</label>
+            <div class="col">
+                <div class="input-group">
+                    <InputNumber @bind-Value="@caja.Cierre" class="form-control" placeholder="Cierre" />
+                </div>
+                <ValidationMessage For="@(() => caja.Cierre)" />
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-block btn-success">
+            <i class="oi oi-check "></i>
+            <text style="color:white"> @TextBotonSubmit</text>
+        </button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public CajaModel caja { get; set; } = new CajaModel();
+    [Parameter] public string TextBotonSubmit { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        caja.Fecha = DateTime.Now;
+    }
+}

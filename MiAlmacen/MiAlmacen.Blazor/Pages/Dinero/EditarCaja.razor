@@ -1,0 +1,52 @@
+﻿@page "/caja/cerrar/{idCaja:int}"
+@inject NavigationManager NavigationManager
+@inject CajaService CajaService
+@inject UsuarioService UsuarioService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-3">
+    <h3><b>Cerrar Caja</b></h3>
+    <div>
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Volver atrás
+        </button>
+    </div>
+</div>
+
+<FormCaja caja="@caja" OnValidSubmit="@CerrarCaja" TextBotonSubmit="Confirmar Cierre de Caja"/>
+
+@code {
+    public CajaModel caja = new CajaModel();
+    [Parameter] public int idCaja { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            caja = await CajaService.GetUn(idCaja);
+        }
+    }
+
+    async Task CerrarCaja()
+    {
+        var respuesta = await CajaService.Editar(caja);
+
+        if (respuesta.Cierre != 0)
+        {
+            NavigationManager.NavigateTo("/clientes");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Caja cerrada con éxito!", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo cerrar la caja.", "error");
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/clientes");
+    }
+}

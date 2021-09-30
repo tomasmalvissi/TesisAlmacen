@@ -1,0 +1,49 @@
+﻿@page "/caja/abrir"
+@inject NavigationManager NavigationManager
+@inject CajaService CajaService
+@inject UsuarioService UsuarioService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h3><b>Abrir Caja</b></h3>
+    </div>
+    <div>
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Volver atrás
+        </button>
+    </div>
+</div>
+
+<FormCaja caja="@caja" TextBotonSubmit="Confirmar Apertura de Caja" OnValidSubmit="@AbrirCaja" />
+
+@code {
+    public CajaModel caja = new CajaModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    async Task AbrirCaja()
+    {
+        var respuesta = await CajaService.Alta(caja);
+
+        if (respuesta.Apertura != 0)
+        {
+            NavigationManager.NavigateTo("/clientes");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Caja Abierta", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo abrir la caja.", "error");
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/caja");
+    }
+}

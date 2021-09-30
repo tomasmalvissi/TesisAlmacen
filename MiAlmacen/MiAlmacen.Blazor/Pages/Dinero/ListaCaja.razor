@@ -1,0 +1,56 @@
+﻿@page "/caja"
+@inject CajaService CajaService
+@inject NavigationManager NavigationManager
+@inject UsuarioService UsuarioService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-1" id="header">
+    <h3>Caja</h3>
+    <div>
+        <a href="caja/abrir" class="btn btn-sm btn-success">
+            <i class="oi oi-plus"></i> Abrir
+        </a>
+    </div>
+</div>
+
+@if (caja != null)
+{
+    <table class="table table-hover">
+        <thead class="thead thead-dark">
+            <tr>
+                <th>Empleado</th>
+                <th>Monto Apertura</th>
+                <th>Monto Cierre</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@caja.Empleado</td>
+                <td>@caja.Apertura</td>
+                <td>@caja.Cierre</td>
+                <td>
+                    <a class="btn btn-sm btn-warning" href="caja/cerrar/@caja.Id"><i class="oi oi-pencil"></i></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private CajaModel caja { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            caja = await CajaService.GetUltimo();
+        }
+    }
+}
