@@ -24,9 +24,9 @@
     {
         var respuesta = await UsuarioService.Alta(usuario);
 
-        if (respuesta.Id != 0)
+        if (respuesta.Usuario != null)
         {
-            NavigationManager.NavigateTo("/login");
+            NavigationManager.NavigateTo("/");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", "Usuario creado", "success");
         }
         else

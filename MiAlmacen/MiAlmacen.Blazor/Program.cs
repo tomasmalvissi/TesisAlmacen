@@ -1,4 +1,5 @@
 using MiAlmacen.Blazor.Services;
+using MiAlmacen.Blazor.Services.Usuarios;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,11 +21,11 @@ namespace MiAlmacen.Blazor
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44330/") });
 
-            builder.Services.AddScoped<ClienteService>();
-            builder.Services.AddScoped<ArticuloService>();
-            builder.Services.AddScoped<ProveedorService>();
-            builder.Services.AddScoped<UsuarioService>();
-            builder.Services.AddScoped<VentaService>();
+            builder.Services.AddScoped<ClienteService>()
+                            .AddScoped<ArticuloService>()
+                            .AddScoped<ProveedorService>()
+                            .AddScoped<UsuarioService>()
+                            .AddScoped<VentaService>();
 
             await builder.Build().RunAsync();
         }

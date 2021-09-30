@@ -1,4 +1,5 @@
-﻿using MiAlmacen.Model.Models;
+﻿using MiAlmacen.Blazor.Services.Usuarios;
+using MiAlmacen.Model.Models;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using System;
@@ -61,12 +62,12 @@ namespace MiAlmacen.Blazor.Services
         public async Task<int> Login(string username, string pass)
         {
             var respuesta = await _httpClient.GetAsync($"api/usuarios/{username}/{pass}");
-            var obj = respuesta.Content.ReadAsStringAsync();
-            int id = JsonConvert.DeserializeObject<int>(await obj);
-
-            if (id != 0)
+            int id = 0;
+            if (respuesta.IsSuccessStatusCode)
             {
-                string token = TokenGenerator(id);
+                var obj = respuesta.Content.ReadAsStringAsync();
+                id = JsonConvert.DeserializeObject<int>(await obj);
+                string token = TokenGenerator();
                 await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Token", token);
             }
             return id;
@@ -91,9 +92,12 @@ namespace MiAlmacen.Blazor.Services
             }
             return result;
         }
-
-
-        private string TokenGenerator(int id)
+        public async Task<UsuarioModel> SetUsuarioLog(int id)
+        {
+            var usuarioregistrado = await GetUn(id);
+            return usuarioregistrado;
+        }
+        private string TokenGenerator()
         {
             Random r = new Random();
             string numero = "";
@@ -101,7 +105,7 @@ namespace MiAlmacen.Blazor.Services
             {
                 numero += r.Next(0, 9).ToString();
             }
-            string result = id + numero;
+            string result = numero;
             return result;
         }
 

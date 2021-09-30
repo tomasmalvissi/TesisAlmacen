@@ -33,10 +33,10 @@
     {
         var respuesta = await ProveedorService.Alta(proveedor);
 
-        if (respuesta.Id != 0)
+        if (respuesta.CUIL != 0)
         {
             NavigationManager.NavigateTo("/proveedores");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Proveedor creado", "success");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Proveedor creado con éxito.", "success");
         }
         else
             await JS.InvokeVoidAsync("simple", "Error", $"No se pudo crear proveedor.", "error");
