@@ -11,6 +11,7 @@ namespace MiAlmacen.Model.Models
     {
         public int Id { get; set; }
         public int Caja_Id { get; set; }
+        public string Descripción { get; set; }
         [Required]
         public string FormaPago { get; set; }
         [Required]

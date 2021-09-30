@@ -113,7 +113,7 @@ CREATE TABLE MovimientosCaja
 (
 	Id INT PRIMARY KEY IDENTITY,
 	Caja_Id INT NOT NULL,
-	Operacion VARCHAR(20) NOT NULL,
+	Descripcion VARCHAR(100) NULL,
 	FormaPago VARCHAR(20) NOT NULL,
 	Ingreso FLOAT NOT NULL,
 	Egreso FLOAT NOT NULL,
@@ -130,9 +130,6 @@ ALTER TABLE Compras
 ADD Saldo FLOAT;
 GO
 
-ALTER TABLE MovimientosCaja
-DROP COLUMN Operacion;
-GO
 
 ALTER TABLE MovimientosCaja
 ADD Venta_Id INT, Compra_Id INT;
@@ -143,14 +140,6 @@ ADD FOREIGN KEY (Venta_Id) REFERENCES Ventas(Id),
 FOREIGN KEY (Compra_Id) REFERENCES Compras(Id);
 GO
 
-CREATE TABLE SalidasDinero
-(
-	Id INT PRIMARY KEY IDENTITY,
-	Operacion VARCHAR(20) NOT NULL,
-	MovimientosCaja_Id INT NOT NULL,
-	FOREIGN KEY (MovimientosCaja_Id) REFERENCES MovimientosCaja(Id)
-)
-GO
 
 ----
 
@@ -178,9 +167,6 @@ ALTER TABLE Proveedores
 ADD FechaBaja DATETIME 
 GO
 
-ALTER TABLE SalidasDinero
-ADD FechaBaja DATETIME 
-GO
 
 ALTER TABLE Usuarios
 ADD FechaBaja DATETIME 
@@ -189,7 +175,6 @@ GO
 ALTER TABLE Ventas
 ADD FechaBaja DATETIME 
 GO
-
 
 ALTER TABLE DetalleVentas
 ADD SubTotal FLOAT
