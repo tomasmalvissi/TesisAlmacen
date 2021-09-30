@@ -1,5 +1,4 @@
-﻿using MiAlmacen.Blazor.Services.Usuarios;
-using MiAlmacen.Model.Models;
+﻿using MiAlmacen.Model.Models;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using System;
@@ -48,66 +47,77 @@ namespace MiAlmacen.Blazor.Services
         public async Task<int> Eliminar(int id)
         {
             var respuesta = await _httpClient.DeleteAsync($"api/usuarios/{id}");
-            if (!respuesta.IsSuccessStatusCode)
-            {
-                id = 0;
-            }
+            if (!respuesta.IsSuccessStatusCode) id = 0;
             return id;
         }
 
 
-        //login service
-
-
-        public async Task<int> Login(string username, string pass)
+        //LOGIN SERVICE
+        public async Task<UsuarioModel> Login(string username, string pass)
         {
             var respuesta = await _httpClient.GetAsync($"api/usuarios/{username}/{pass}");
-            int id = 0;
+            UsuarioModel usuario = new();
             if (respuesta.IsSuccessStatusCode)
             {
                 var obj = respuesta.Content.ReadAsStringAsync();
-                id = JsonConvert.DeserializeObject<int>(await obj);
-                string token = TokenGenerator();
-                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Token", token);
+                int id = JsonConvert.DeserializeObject<int>(await obj);
+                usuario = await GetUn(id);
+                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Id", Encriptar(usuario.Id.ToString()));
+                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Nombre", Encriptar(usuario.Nombre));
             }
-            return id;
+            return usuario;
         }
 
         public async Task Logout()
         {
-            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "Token");
+            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "Id");
+            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "Nombre");
         }
 
-        public async Task<string> GetSesion()
+        public async Task<UsuarioModel> GetSesion()
         {
-            string result = String.Empty;
-            var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "Token");
-            if (token == null)
-            {
-                result = null;
-            }
+            UsuarioModel usuario;
+            string id = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "Id");
+            string nombre = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "Nombre");
+            if (id == null)
+                return null;
             else
             {
-                result = JsonConvert.DeserializeObject<string>(token);
+                usuario = new UsuarioModel()
+                {
+                    Id = Convert.ToInt32(DesEncriptar(id)),
+                    Nombre = DesEncriptar(nombre)
+                };
+                return usuario;
             }
-            return result;
         }
-        public async Task<UsuarioModel> SetUsuarioLog(int id)
+
+        public string Encriptar(string _cadenaAencriptar)
         {
-            var usuarioregistrado = await GetUn(id);
-            return usuarioregistrado;
-        }
-        private string TokenGenerator()
-        {
-            Random r = new Random();
-            string numero = "";
-            for (int i = 0; i < 10; i++)
-            {
-                numero += r.Next(0, 9).ToString();
-            }
-            string result = numero;
+            string result = string.Empty;
+            byte[] encryted = System.Text.Encoding.Unicode.GetBytes(_cadenaAencriptar);
+            result = Convert.ToBase64String(encryted);
             return result;
         }
 
+        public string DesEncriptar(string _cadenaAdesencriptar)
+        {
+            string result = string.Empty;
+            byte[] decryted = Convert.FromBase64String(_cadenaAdesencriptar);
+            result = System.Text.Encoding.Unicode.GetString(decryted);
+            return result;
+        }
+
+        //private string TokenGenerator()
+        //{
+        //    Random r = new Random();
+        //    string numero = "";
+        //    for (int i = 0; i < 10; i++)
+        //    {
+        //        numero += r.Next(0, 9).ToString();
+        //    }
+        //    string result = numero;
+        //    return result;
+        //}
     }
 }

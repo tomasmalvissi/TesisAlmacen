@@ -25,7 +25,7 @@
         var result = await UsuarioService.GetSesion();
         if (result == null)
         {
-            NavigationManager.NavigateTo("/login");
+            NavigationManager.NavigateTo("/");
         }
         else
         {

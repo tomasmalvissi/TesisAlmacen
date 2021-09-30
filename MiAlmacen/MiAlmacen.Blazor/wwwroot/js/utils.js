@@ -32,3 +32,10 @@ function levantaModal(id) {
 function ocultaModal(id) {
     $(id).modal('hide');
 }
+
+
+function levantaTooltips() {
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger: 'hover'
+    });
+}
