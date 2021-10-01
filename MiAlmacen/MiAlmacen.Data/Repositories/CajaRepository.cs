@@ -20,11 +20,11 @@ namespace MiAlmacen.Data.Repositories
             ca.Empleado_Id = model.Empleado_Id;
             ca.Apertura = model.Apertura;
             ca.Cierre = model.Cierre;
-            ca.Empleado.Id = model.Empleado.Id;
-            ca.Empleado.Nombre = model.Empleado.Nombre;
-            ca.Empleado.Email = model.Empleado.Email;
-            ca.Empleado.Usuario = model.Empleado.Usuario;
-            ca.Empleado.Contraseña = model.Empleado.Contraseña;
+            //ca.Empleado.Id = model.Empleado.Id;
+            //ca.Empleado.Nombre = model.Empleado.Nombre;
+            //ca.Empleado.Email = model.Empleado.Email;
+            //ca.Empleado.Usuario = model.Empleado.Usuario;
+            //ca.Empleado.Contraseña = model.Empleado.Contraseña;
 
             return ca;
         }
@@ -212,15 +212,13 @@ namespace MiAlmacen.Data.Repositories
                 {
                     AbrirConex();
                     orden = $@"UPDATE Caja 
-                               SET Apertura=@Apertura, Cierre=@Cierre
-                                                WHERE Id=@Id";
+                               SET Cierre=@Cierre WHERE Id=@Id";
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Id", id);
-                    sqlcmd.Parameters.AddWithValue("@Apertura", caja.Apertura);
                     sqlcmd.Parameters.AddWithValue("@Cierre", caja.Cierre);
 
-                   
+
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();

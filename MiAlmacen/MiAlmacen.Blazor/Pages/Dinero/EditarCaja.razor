@@ -38,7 +38,7 @@
 
         if (respuesta.Cierre != 0)
         {
-            NavigationManager.NavigateTo("/clientes");
+            NavigationManager.NavigateTo("/caja");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Caja cerrada con éxito!", "success");
         }
         else

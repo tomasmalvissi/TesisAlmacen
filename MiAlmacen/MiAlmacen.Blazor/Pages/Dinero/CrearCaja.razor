@@ -27,7 +27,14 @@
         {
             NavigationManager.NavigateTo("/");
         }
+        else
+        {
+            caja.Empleado_Id = result.Id;
+            caja.Empleado = await UsuarioService.GetUn(caja.Empleado_Id);
+        }
     }
+
+    //TODO: ver repository la conversion de model a entity tengo bastantes dudas
 
     async Task AbrirCaja()
     {
@@ -35,7 +42,7 @@
 
         if (respuesta.Apertura != 0)
         {
-            NavigationManager.NavigateTo("/clientes");
+            NavigationManager.NavigateTo("/caja");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", "Caja Abierta", "success");
         }
         else
