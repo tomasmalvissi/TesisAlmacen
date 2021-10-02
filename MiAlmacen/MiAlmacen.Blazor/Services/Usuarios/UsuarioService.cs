@@ -61,9 +61,14 @@ namespace MiAlmacen.Blazor.Services
             {
                 var obj = respuesta.Content.ReadAsStringAsync();
                 int id = JsonConvert.DeserializeObject<int>(await obj);
-                usuario = await GetUn(id);
-                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Id", Encriptar(usuario.Id.ToString()));
-                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Nombre", Encriptar(usuario.Nombre));
+                if (id.Equals(0))
+                    return null;
+                else
+                {
+                    usuario = await GetUn(id);
+                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Id", Encriptar(usuario.Id.ToString()));
+                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Nombre", Encriptar(usuario.Nombre));
+                }
             }
             return usuario;
         }

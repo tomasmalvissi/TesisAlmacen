@@ -67,7 +67,7 @@
 
 @code{
     private LoginModel login = new LoginModel();
-    private UsuarioModel UsuarioLogueado { get; set; }
+    private UsuarioModel UsuarioLogueado { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,7 +87,7 @@
         UsuarioLogueado = await UsuarioService.Login(login.Usuario, login.Contraseña);
         if (UsuarioLogueado == null)
         {
-            await JS.InvokeVoidAsync("simple", "Error", $"El usuario y/o contraseña son inválidos.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"El usuario y/o contraseña ingresados no son válidos.", "error");
         }
         else
         {
