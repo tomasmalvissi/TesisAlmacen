@@ -2,8 +2,16 @@
 @inject VentaService VentaService
 @inject ArticuloService ArticuloService
 @inject ClienteService ClienteService
+@inject UsuarioService UsuarioService
 @inject IJSRuntime JS
 
+
+@if (!string.IsNullOrEmpty(errores))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="validaciones">
+        <b> Error! </b> @errores
+    </div>
+}
 
 <div id="header" class="form-row">
     <div class="form-group col-md-6">
@@ -22,7 +30,7 @@
 
 <hr />
 
-<div id="detalle">
+<div class="mb-1" id="detalle">
     <div class="form-row p-2">
         <div id="buscador-articulos" class="form-group col-md-3">
             <label>Producto</label>
@@ -46,21 +54,47 @@
             <label>SubTotal</label>
             <input type="number" @bind="subtotal" class="form-control" placeholder="Subtotal" />
         </div>
+    </div>
 
-        <div class="form-group col-md-3">
-            <label> </label>
+
+    @if (venta.Detalle.Count == 0)
+    {
+        <div class="row">
+            <div class="col-md-9">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <b> No hay productos cargados en la compra,</b> agregue un nuevo detalle.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
+                        <i class="oi oi-plus"></i> Agregar Detalle
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
                 <i class="oi oi-plus"></i> Agregar Detalle
             </button>
         </div>
-    </div>
+    }
 </div>
 
-<div class="form-group">
+
+@if (venta.Detalle.Count > 0)
+{
     <table class="table table-hover">
         <thead class="thead thead-dark">
             <tr>
-                <th>#</th>
+                <th> </th>
                 <th>Articulo</th>
                 <th>Precio</th>
                 <th>Cantidad</th>
@@ -72,7 +106,7 @@
             @foreach (var item in venta.Detalle)
             {
                 <tr>
-                    <td>1</td>
+                    <td>#</td>
                     <td>@item.Articulo.Nombre</td>
                     <td>$@item.Precio</td>
                     <td>@item.Cantidad</td>
@@ -82,7 +116,8 @@
             }
         </tbody>
     </table>
-</div>
+}
+
 
 <div class="d-flex justify-content-end py-2">
     <button @onclick="@(() => CalcularTotal())" type="button" class="btn btn-outline-dark" style="border:none">
@@ -108,12 +143,18 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            @if (!string.IsNullOrEmpty(erroresModal))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <b> Error! </b> @erroresModal
+                </div>
+            }
             <div class="modal-body form-row">
                 <div class="form-group col-md-6">
                     <label>Ingrese el pago del cliente en $(pesos)</label>
-                    <input class="form-control form-control" @bind="venta.Saldo" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
+                    <input class="form-control form-control" @bind="pago" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
                 </div>
-                 
+
                 <div class="form-group col-md-6">
                     <label>Forma de pago</label>
                     <select @bind="@venta.FormaPago" class="form-control">
@@ -132,6 +173,7 @@
 </div>
 
 @code {
+
     public VentaModel venta { get; set; } = new VentaModel();
 
     private ArticuloModel articuloSeleccionado;
@@ -144,6 +186,7 @@
     private int cantidad { get; set; } = 1;
     private float precio { get; set; }
     private float subtotal { get; set; }
+    private float pago { get; set; }
     #endregion
 
     protected override async Task OnInitializedAsync()
@@ -165,7 +208,8 @@
 
     void AgregarDetalle()
     {
-        if (articuloSeleccionado != null)
+        ValidacionDetalle();
+        if (string.IsNullOrEmpty(errores))
         {
             DetalleVentaModel detalle = new();
             detalle.Cantidad = cantidad;
@@ -183,6 +227,7 @@
         if (clienteSeleccionado != null)
         {
             venta.Cliente = clienteSeleccionado;
+            venta.Cliente_Id = clienteSeleccionado.Id;
         }
     }
 
@@ -199,28 +244,74 @@
         return venta.Total;
     }
 
-    void CrearVenta()
+    #region Validaciones
+
+    private string errores { get; set; }
+    private string erroresModal { get; set; }
+
+    void ValidacionVenta()
+    {
+        errores = string.Empty;
+        if (clienteSeleccionado == null)
+            errores += "Seleccione un cliente. \r\n";
+        if (venta.Detalle.Count == 0)
+            errores += "La venta no posee detalles, agregue productos a la lista. \r\n";
+    }
+
+    void ValidacionDetalle()
+    {
+        errores = string.Empty;
+        if (articuloSeleccionado == null)
+            errores += "Seleccione un producto. \r\n";
+        if (cantidad < 0)
+            errores += "Ingrese una cantidad válida. Igual o mayor a 0. \r\n";
+        if (subtotal < 0)
+            errores += "Seleccione un Sub Total válido. \r\n";
+    }
+
+    void ValidacionModal()
+    {
+        erroresModal = string.Empty;
+        if (venta.FormaPago == null)
+            erroresModal += "Ingrese una forma de pago válida. \r\n";
+        if (pago < 0)
+            erroresModal += "El pago debe ser mayor o igual a 0. \r\n";
+    }
+
+    #endregion
+
+    async Task CrearVenta()
     {
         AsignarCliente();
         CalcularTotal();
-        venta.Empleado_Id = 4;
+        var empleado = await UsuarioService.GetSesion();
+        venta.Saldo = venta.Total - pago;
+        venta.Empleado_Id = empleado.Id;
         venta.Cliente_Id = clienteSeleccionado.Id;
 
-        var respuesta = VentaService.Alta(venta);
+        ValidacionModal();
 
-        if (respuesta.Id != 0)
+        if (string.IsNullOrEmpty(errores) && string.IsNullOrEmpty(erroresModal))
         {
-            JS.InvokeVoidAsync("ocultaModal", "#modalFinalizaVenta");
-            NavigationManager.NavigateTo("/ventas");
-            JS.InvokeVoidAsync("simple", "¡Éxito!", "Venta cargada exitosamente!", "success");
+            var respuesta = await VentaService.Alta(venta);
+            if (respuesta.IsSuccessStatusCode)
+            {
+                await JS.InvokeVoidAsync("ocultaModal", "#modalFinalizaVenta");
+                NavigationManager.NavigateTo("/ventas");
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", "Venta cargada correctamente!", "success");
+            }
+            else
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo cargar venta.", "error");
         }
-        else
-            JS.InvokeVoidAsync("simple", "Error", $"Error al cargar venta.", "error");
     }
 
     void LevantaModal()
     {
-        JS.InvokeVoidAsync("levantaModal", "#modalFinalizaVenta");
+        ValidacionVenta();
+        if (string.IsNullOrEmpty(errores))
+        {
+            JS.InvokeVoidAsync("levantaModal", "#modalFinalizaVenta");
+        }
     }
 
 

@@ -39,3 +39,11 @@ function levantaTooltips() {
         trigger: 'hover'
     });
 }
+
+function levantaAlerta() {
+    $('.alert').alert()
+}
+
+function ocultaAlerta() {
+    $('.alert').alert('close')
+}

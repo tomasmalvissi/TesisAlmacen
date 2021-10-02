@@ -27,10 +27,6 @@ namespace MiAlmacen.Data.Repositories
             venta.Cliente.DNI = model.Cliente.DNI;
             venta.Cliente.Direccion = model.Cliente.Direccion;
             venta.Cliente.FechaBaja = model.Cliente.FechaBaja;
-            //venta.Empleado.Id = model.Empleado.Id;
-            //venta.Empleado.Nombre = model.Empleado.Nombre;
-            //venta.Empleado.Contraseña = model.Empleado.Contraseña;
-            //venta.Empleado.Email = model.Empleado.Email;
             venta.Total = model.Total;
             venta.Saldo = model.Saldo;
             venta.Fecha_Baja = model.Fecha_Baja;
@@ -288,7 +284,7 @@ namespace MiAlmacen.Data.Repositories
             }
         }
 
-        public float PutSaldo(Ventas venta, float pago)
+        public float PutSaldo(VentaModel venta, float pago)
         {
             if (venta != null)
             {

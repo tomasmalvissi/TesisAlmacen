@@ -31,14 +31,19 @@
 }
 else if (ventas.Count() == 0)
 {
-    <p>No se encontraron ventas.</p>
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <b> No hay ventas registradas.</b> Cargue una haciendo click en el botón "Nueva".
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
 }
 else
 {
     <table class="table table-hover">
         <thead class="thead thead-dark">
             <tr>
-                <th>Id</th>
+                <th>#</th>
                 <th>Fecha</th>
                 <th>Forma de Pago</th>
                 <th>Cliente</th>
@@ -131,7 +136,7 @@ else
 
 <!-- Modal Saldo -->
 <div class="modal fade" id="modalSaldo" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title">Modificar saldo venta </h6>
@@ -168,11 +173,11 @@ else
 
 
 @code {
-    public IEnumerable<Ventas> ventas { get; set; }
+    public IEnumerable<VentaModel> ventas { get; set; }
 
     public int idVentaSeleccionada { get; set; }
 
-    public List<DetalleVentas> detalle { get; set; } = new List<DetalleVentas>();
+    public List<DetalleVentaModel> detalle { get; set; } = new List<DetalleVentaModel>();
 
     public string nombreFiltro { get; set; } = string.Empty;
 
@@ -188,16 +193,12 @@ else
     {
         var result = await UsuarioService.GetSesion();
         if (result == null)
-        {
             NavigationManager.NavigateTo("/");
-        }
         else
-        {
             await Paginar(false);
-        }
     }
 
-    private async Task LevantaModalSaldo(Ventas venta)
+    private async Task LevantaModalSaldo(VentaModel venta)
     {
         saldoVenta = venta.Saldo;
         idVentaSeleccionada = venta.Id;
@@ -206,7 +207,7 @@ else
 
     private async Task LevantaModalDetalle(int id)
     {
-        var venta = await VentaService.GetUn(id);
+        var venta = await VentaService.GetUn(idVentaSeleccionada);
         idVentaSeleccionada = id;
         detalle = venta.Detalle;
         await JS.InvokeVoidAsync("levantaModal", "#modalDetalle");
@@ -215,41 +216,49 @@ else
     private async Task ModificarSaldo()
     {
         var venta = await VentaService.GetUn(idVentaSeleccionada);
-        VentaService.EditarSaldo(venta, saldoVenta);
-        VentaService.GetAll();
-        Paginar(false);
-        await JS.InvokeVoidAsync("ocultaModal", "#modalSaldo");
+        var respuesta = await VentaService.EditarSaldo(venta, saldoVenta);
+
+        if (respuesta.IsSuccessStatusCode)
+        {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            var objDeserealizado = JsonConvert.DeserializeObject<float>(content);
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Saldo venta actualizado! Nuevo saldo: ${objDeserealizado}", "success");
+            await Paginar(false);
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo actualizar venta", "error");
     }
 
     private async Task Borrar(int id)
     {
-        var venta = VentaService.GetUn(id);
+        var venta = await VentaService.GetUn(id);
 
         var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
-            $"¿Seguro desea eliminar la venta seleccionada?", "warning");
+            $"¿Seguro desea anular la venta seleccionada?", "warning");
         if (confirmacion)
         {
-            var respuesta = VentaService.Eliminar(id);
+            var respuesta = await VentaService.Eliminar(id);
 
-            if (!respuesta.Equals(0))
+            if (respuesta.IsSuccessStatusCode)
             {
-                await JS.InvokeVoidAsync("simple", "¡Éxito!", "Venta anulada", "success");
+                var content = await respuesta.Content.ReadAsStringAsync();
+                var objDeserealizado = JsonConvert.DeserializeObject<int>(content);
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Venta #{objDeserealizado} anulada correctamente", "success");
                 await Paginar(false);
             }
             else
-            {
-                await JS.InvokeVoidAsync("simple", "Error", "No se pudo anular venta", "error");
-            }
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo anular venta", "error");
         }
     }
 
     async Task Paginar(bool next)
     {
         ventas = await VentaService.GetAll();
+
         if (activos)
             ventas = ventas.Where(x => x.Fecha_Baja == null);
-        else
-            ventas = ventas;
+        //else
+        //    ventas = ventas;
 
         int cantidadPorPagina = 10;
         registros = ventas.Count();
@@ -272,21 +281,21 @@ else
         ventas = ventas.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
     }
 
-    async Task RecargarGrilla()
-    {
-        ventas = await VentaService.GetAll();
-        //articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
-    }
+    //async Task RecargarGrilla()
+    //{
+    //    ventas = await VentaService.GetAll();
+    //    //articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+    //}
 
-    void FiltroNombre(ChangeEventArgs e)
+    async Task FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
-        Paginar(false);
+        await Paginar(false);
     }
 
-    void FiltroActivos()
+    async Task FiltroActivos()
     {
         activos = !activos;
-        Paginar(false);
+        await Paginar(false);
     }
 }

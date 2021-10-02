@@ -4,8 +4,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MiAlmacen.Blazor.Services
@@ -17,44 +16,38 @@ namespace MiAlmacen.Blazor.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<IEnumerable<Ventas>> GetAll()
+        public async Task<IEnumerable<VentaModel>> GetAll()
         {
             var respuesta = _httpClient.GetStringAsync($"api/ventas/");
-            return JsonConvert.DeserializeObject<IEnumerable<Ventas>>(await respuesta);
+            return JsonConvert.DeserializeObject<IEnumerable<VentaModel>>(await respuesta);
         }
 
-        public async Task<Ventas> GetUn(int id)
+        public async Task<VentaModel> GetUn(int id)
         {
-            var options = new JsonSerializerOptions()
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                PropertyNameCaseInsensitive = true
-            };
-            return await _httpClient.GetFromJsonAsync<Ventas>($"api/ventas/{id}", options);
+            var respuesta = _httpClient.GetStringAsync($"api/ventas/{id}");
+            return JsonConvert.DeserializeObject<VentaModel>(await respuesta);
         }
 
-        public async Task<Ventas> Alta(VentaModel venta)
+        public async Task<HttpResponseMessage> Alta(VentaModel venta)
         {
-            var respuesta = await _httpClient.PostAsJsonAsync("api/ventas/", venta);
-            var obj = respuesta.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Ventas>(await obj);
+            string ventaSerealizada = JsonConvert.SerializeObject(venta);
+            var respuesta = await _httpClient.PostAsync("api/ventas/",
+                            new StringContent(ventaSerealizada, UnicodeEncoding.UTF8, "application/json"));
+            return respuesta;
         }
 
-        public async Task<Ventas> EditarSaldo(Ventas venta, float nuevoSaldo)
+        public async Task<HttpResponseMessage> EditarSaldo(VentaModel venta, float nuevoSaldo)
         {
-            var respuesta = await _httpClient.PutAsJsonAsync($"api/ventas/{nuevoSaldo}", venta);
-            var obj = respuesta.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Ventas>(await obj);
+            string ventaSerealizada = JsonConvert.SerializeObject(venta);
+            var respuesta = await _httpClient.PutAsync($"api/ventas/{nuevoSaldo}", 
+                            new StringContent(ventaSerealizada, UnicodeEncoding.UTF8, "application/json"));
+            return respuesta;
         }
 
-        public async Task<int> Eliminar(int id)
+        public async Task<HttpResponseMessage> Eliminar(int id)
         {
             var respuesta = await _httpClient.DeleteAsync($"api/ventas/{id}");
-            if (!respuesta.IsSuccessStatusCode)
-            {
-                id = 0;
-            }
-            return id;
+            return respuesta;
         }
     }
 }
