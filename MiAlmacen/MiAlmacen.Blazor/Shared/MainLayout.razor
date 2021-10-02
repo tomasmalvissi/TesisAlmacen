@@ -4,57 +4,59 @@
 @inject IJSRuntime JS
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    @if (UsuarioLogueado != null)
+    {
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    }
 
     <div class="main">
         <div class="top-row px-4">
             @if (UsuarioLogueado != null)
             {
-                <b class="mx-2"> Hola, @UsuarioLogueado.Nombre !</b>
-                <button class="btn btn-sm btn-outline-danger mx-2" @onclick="Logout" data-toggle="tooltip" data-placement="bottom" title="Cerrar sesión"> Cerrar Sesión</button>
+                <b class="mx-2" style="color:white"> Hola, @UsuarioLogueado.Nombre !</b>
+                <button class="btn btn-sm btn-light mx-2" @onclick="Logout" data-toggle="tooltip" data-placement="bottom" title="Cerrar sesión"><b>Cerrar Sesión</b></button>
             }
             else
             {
-                <button class="btn btn-sm btn-outline-primary" @onclick="LevantaModal" data-toggle="tooltip" data-placement="bottom" title="Iniciar sesión"> Iniciar Sesión</button>
+                <button class="btn btn-sm btn-light" @onclick="LevantaModal" data-toggle="tooltip" data-placement="bottom" title="Iniciar sesión"><b> Iniciar Sesión</b></button>
             }
         </div>
         <div class="content px-4">
             @Body
 
             <!-- Modal Login -->
-            <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" aria-hidden="true" style="background-color: rgba(255,255,255, 0.91) !important;">
+            <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" aria-hidden="true" style="background-color: rgba(37,74,113, 0.91) !important;">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
+                            <h3 class="modal-title">Inicie sesión para continuar </h3>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="card">
-                                <h4 class="card-header">Iniciá sesión para continuar</h4>
-                                <div class="card-body">
-                                    <EditForm Model="@login" OnValidSubmit="OnValidSubmit">
-                                        <DataAnnotationsValidator />
-                                        <div class="form-group">
-                                            <label>Nombre de Usuario</label>
-                                            <InputText @bind-Value="login.Usuario" class="form-control" />
-                                            <ValidationMessage For="@(() => login.Usuario)" />
-                                        </div>
+                            <div class="p-2">
+                                <EditForm Model="@login" OnValidSubmit="OnValidSubmit">
+                                    <DataAnnotationsValidator />
+                                    <div class="form-group">
+                                        <label>Nombre de Usuario</label>
+                                        <InputText @bind-Value="login.Usuario" class="form-control" />
+                                        <ValidationMessage For="@(() => login.Usuario)" />
+                                    </div>
 
-                                        <div class="form-group">
-                                            <label>Contraseña</label>
-                                            <InputText @bind-Value="login.Contraseña" type="password" class="form-control" />
-                                            <ValidationMessage For="@(() => login.Contraseña)" />
-                                        </div>
+                                    <div class="form-group">
+                                        <label>Contraseña</label>
+                                        <InputText @bind-Value="login.Contraseña" type="password" class="form-control" />
+                                        <ValidationMessage For="@(() => login.Contraseña)" />
+                                    </div>
 
-                                        <button class="btn btn-success" type="submit"> Iniciar Sesión</button>
-                                        <NavLink href="usuarios/registrar" @onclick="OcultaModal" class="btn btn-link">Registrarme</NavLink>
-                                    </EditForm>
-                                </div>
+                                    <button class="btn btn-success" type="submit"> Iniciar Sesión</button>
+                                    <NavLink href="usuarios/registrar" @onclick="OcultaModal" class="btn btn-link">Registrarme</NavLink>
+                                </EditForm>
                             </div>
+
                         </div>
                     </div>
                 </div>

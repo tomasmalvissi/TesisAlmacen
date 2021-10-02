@@ -5,8 +5,8 @@
             text,
             icon,
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#254A71',
+            cancelButtonColor: '#B6374A',
             cancelButtonText: 'Cancelar',
             confirmButtonText: 'Aceptar'
         }).then((result) => {

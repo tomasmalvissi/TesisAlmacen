@@ -2,7 +2,8 @@
 
 html, body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: 500
+    font-weight: 500;
+    color: #263E57;
 }
 
 a, .btn-link {
@@ -11,8 +12,42 @@ a, .btn-link {
 
 .btn-primary {
     color: #fff;
-    background-color: #1b6ec2;
+    background-color: #254A71;
     border-color: #1861ac;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #B6374A;
+}
+
+.table, .modal-body table {
+    color: #263E57;
+}
+
+    .table thead, .modal-body table thead {
+        background-color: #335171;
+        color: white;
+    }
+
+    .table td, .modal-body table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+.table-hover tbody tr:hover, .modal-body .table-hover tbody tr:hover {
+    background-color: rgb(182,55,74,0.2);
+    color: #B6374A;
+}
+
+.modal-header, .modal-header h1, .modal-header h1
+.modal-header h2, .modal-header h3, .modal-header h4, .modal-header h5,
+.modal-header h6 {
+    background-color: #B6374A;
+    color: white;
+}
+
+.modal-header .close {
+    color:white;
 }
 
 .content {
@@ -29,7 +64,7 @@ a, .btn-link {
 
 .validation-message {
     color: red;
-    font-weight: bold     
+    font-weight: bold
 }
 
 #blazor-error-ui {
