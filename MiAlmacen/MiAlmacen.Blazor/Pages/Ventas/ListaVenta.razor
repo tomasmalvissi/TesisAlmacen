@@ -76,15 +76,15 @@ else
                         }
                     </td>
                     <td>
-                        <button type="button" class="btn btn-sm btn-outline-warning m-1" @onclick="@(() => LevantaModalDetalle(venta.Id))">
+                        <button type="button" class="btn btn-sm btn-outline-warning m-1" @onclick="@(() => LevantaModalDetalle(venta.Id))" data-toggle="tooltip" data-placement="bottom" title="Ver detalle">
                             <i class="oi oi-eye"></i>
                         </button>
                         @if (venta.Fecha_Baja == null)
                         {
-                            <button @onclick="@(() => Borrar(venta.Id))" class="btn btn-sm btn-outline-danger m-1">
+                            <button @onclick="@(() => Borrar(venta.Id))" class="btn btn-sm btn-outline-danger m-1" data-toggle="tooltip" data-placement="bottom" title="Anular">
                                 <i class="oi oi-arrow-thick-bottom"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary m-1" @onclick="@(() => LevantaModalSaldo(venta))">
+                            <button type="button" class="btn btn-sm btn-outline-secondary m-1" @onclick="@(() => LevantaModalSaldo(venta))" data-toggle="tooltip" data-placement="bottom" title="Modificar saldo">
                                 <i class="oi oi-pencil"></i>
                             </button>
                         }
@@ -189,6 +189,14 @@ else
 
     public float saldoVenta { get; set; }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("levantaTooltips");
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         var result = await UsuarioService.GetSesion();
@@ -197,6 +205,8 @@ else
         else
             await Paginar(false);
     }
+
+
 
     private async Task LevantaModalSaldo(VentaModel venta)
     {
