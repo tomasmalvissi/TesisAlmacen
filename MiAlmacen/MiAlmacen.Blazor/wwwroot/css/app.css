@@ -18,8 +18,8 @@ a, .btn-link {
 
     .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
         color: #fff;
-        background-color: #B6374A;
-        border-color: #B6374A;
+        background-color: #1C3754;
+        border-color: #1C3754;
     }
 
 .btn-secondary {
@@ -30,8 +30,8 @@ a, .btn-link {
 
     .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-secondary.active, .open > .dropdown-toggle.btn-secondary {
         color: #fff;
-        background-color: #254A71;
-        border-color: #254A71;
+        background-color: #872937;
+        border-color: #872937;
     }
 
 h1, h2, h3, h4, h5, h6 {
@@ -60,12 +60,12 @@ h1, h2, h3, h4, h5, h6 {
 .modal-header, .modal-header h1, .modal-header h1
 .modal-header h2, .modal-header h3, .modal-header h4, .modal-header h5,
 .modal-header h6 {
-    background-color: #B6374A;
-    color: white;
+    background-color: white;
+    color: #B6374A;
 }
 
     .modal-header .close {
-        color: white;
+        color: #B6374A;
     }
 
 .content {

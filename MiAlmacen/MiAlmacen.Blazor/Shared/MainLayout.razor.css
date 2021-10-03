@@ -13,8 +13,9 @@
 }
 
 .top-row {
-    background-color: #B6374A;
-    border-bottom: 1px solid #d6d5d5;
+    background-color: white;
+    border-bottom: 0.1rem solid #B6374A;
+    box-shadow: 0 10px 14px -6px rgb(182, 55, 74, 0.7);
     justify-content: flex-end;
     height: 3rem;
     display: flex;

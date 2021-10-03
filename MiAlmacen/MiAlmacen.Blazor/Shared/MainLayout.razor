@@ -15,12 +15,12 @@
         <div class="top-row px-4">
             @if (UsuarioLogueado != null)
             {
-                <b class="mx-2" style="color:white"> Hola, @UsuarioLogueado.Nombre !</b>
-                <button class="btn btn-sm btn-light mx-2" @onclick="Logout" data-toggle="tooltip" data-placement="bottom" title="Cerrar sesión"><b>Cerrar Sesión</b></button>
+                <b class="mx-2" style="color:#B6374A"> Hola, @UsuarioLogueado.Nombre !</b>
+                <button class="btn btn-sm btn-secondary mx-2" @onclick="Logout" data-toggle="tooltip" data-placement="bottom" title="Cerrar sesión"> Cerrar Sesión</button>
             }
             else
             {
-                <button class="btn btn-sm btn-light" @onclick="LevantaModal" data-toggle="tooltip" data-placement="bottom" title="Iniciar sesión"><b> Iniciar Sesión</b></button>
+                <button class="btn btn-sm btn-primary" @onclick="LevantaModal" data-toggle="tooltip" data-placement="bottom" title="Iniciar sesión"> Iniciar Sesión</button>
             }
         </div>
         <div class="content px-4">

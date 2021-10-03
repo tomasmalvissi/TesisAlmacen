@@ -49,5 +49,5 @@ function ocultaAlerta() {
 }
 
 function levantaCollapse(id) {
-    $('.collapse').collapse('toggle');
+    $('#collapseFiltros').collapse('toggle');
 }

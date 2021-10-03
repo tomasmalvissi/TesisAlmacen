@@ -6,7 +6,7 @@
 
 <h3>Ventas</h3>
 <div class="d-flex justify-content-between mb-1" id="header">
-    <button class="btn btn-sm btn-secondary" @onclick="LevantaCollapse" type="button" data-toggle="collapse" data-target="" role="button" aria-expanded="false" aria-controls="collapseFiltros">
+    <button class="btn btn-sm btn-secondary" @onclick="LevantaCollapse" type="button" data-toggle="collapse" data-target="#collapseFiltros" role="button" aria-expanded="false" aria-controls="collapseFiltros">
         <i class="oi oi-eye"></i> Mostrar filtros
     </button>
     <div>
@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<div class="collapse" id="#collapseFiltros">
+<div class="collapse" id="collapseFiltros">
     <div class="card card-body">
         <div class="input-group d-flex justify-content-between mb-1" id="filtros">
             <input class="form-control form-control-sm" type="text" placeholder="Buscar por cliente" @oninput="FiltroCliente" />
@@ -308,9 +308,9 @@ else
 
     async Task Paginar(bool next = false)
     {
-        int cantidadPorPagina = 10;
+        await Filtrar();
+        int cantidadPorPagina = 10; decimal total;
         registros = ventas.Count();
-        decimal total;
 
         if (registros < cantidadPorPagina)
             total = pagina;
