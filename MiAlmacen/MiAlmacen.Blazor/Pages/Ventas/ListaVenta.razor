@@ -4,32 +4,38 @@
 @inject UsuarioService UsuarioService
 @inject IJSRuntime JS
 
+<h3>Ventas</h3>
 <div class="d-flex justify-content-between mb-1" id="header">
-    <h3>Ventas</h3>
+    <button class="btn btn-sm btn-secondary" @onclick="LevantaCollapse" type="button" data-toggle="collapse" data-target="" role="button" aria-expanded="false" aria-controls="collapseFiltros">
+        <i class="oi oi-eye"></i> Mostrar filtros
+    </button>
     <div>
-        <a href="ventas/crear" class="btn btn-sm btn-success">
+        <a href="ventas/crear" class="btn btn-sm btn-primary">
             <i class="oi oi-plus"></i> Nueva
         </a>
     </div>
 </div>
 
-<div class="input-group d-flex justify-content-between mb-1" id="filtros">
-    <input class="form-control form-control-sm" type="text" placeholder="Buscar por cliente" @oninput="FiltroCliente" />
-    <input class="form-control form-control-sm" type="text" placeholder="Buscar por empleado" @oninput="FiltroEmpleado" />
+<div class="collapse" id="#collapseFiltros">
+    <div class="card card-body">
+        <div class="input-group d-flex justify-content-between mb-1" id="filtros">
+            <input class="form-control form-control-sm" type="text" placeholder="Buscar por cliente" @oninput="FiltroCliente" />
+            <input class="form-control form-control-sm" type="text" placeholder="Buscar por empleado" @oninput="FiltroEmpleado" />
+        </div>
+        <div class="input-group d-flex justify-content-between mb-1" id="filtros2">
+            <input class="form-control form-control-sm" type="date" @bind="@FechaDesde" @oninput="FiltroFechaDesde" />
+            <input class="form-control form-control-sm" type="date" @bind="@FechaHasta" @oninput="FiltroFechaHasta" />
+        </div>
+        <div class="btn-group d-flex justify-content-between mb-1" id="filtros3">
+            <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, false, false, false))"> Todos</button>
+            <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(true, false, false, false))"> Solo activos</button>
+            <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, true, false, false))"> Solo inactivos</button>
+            <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, false, false, true))"> Con deuda</button>
+            <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(true, false, false, true))"> Activos con deuda</button>
+            <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, true, false, true))"> Inactivos con deuda</button>
+        </div>
+    </div>
 </div>
-<div class="input-group d-flex justify-content-between mb-1" id="filtros2">
-    <input class="form-control form-control-sm" type="date" @bind="@FechaDesde"  @oninput="FiltroFechaDesde" />
-    <input class="form-control form-control-sm" type="date" @bind="@FechaHasta" @oninput="FiltroFechaHasta" />
-</div>
-<div class="btn-group d-flex justify-content-between mb-1" id="filtros3">
-    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, false, false, false))"> Todos</button>
-    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(true, false, false, false))"> Solo activos</button>
-    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, true, false, false))"> Solo inactivos</button>
-    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, false, false, true))"> Con deuda</button>
-    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(true, false, false, true))"> Activos con deuda</button>
-    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, true, false, true))"> Inactivos con deuda</button>
-</div>
-
 
 @if (ventas == null)
 {
@@ -185,6 +191,8 @@ else
 @code {
     public IEnumerable<VentaModel> ventas { get; set; }
 
+    public IEnumerable<VentaModel> ventasTemp { get; set; }
+
     public int idVentaSeleccionada { get; set; }
 
     public List<DetalleVentaModel> detalle { get; set; } = new List<DetalleVentaModel>();
@@ -225,12 +233,16 @@ else
         if (result == null)
             NavigationManager.NavigateTo("/");
         else
+        {
+            await GetVentas();
             await Paginar();
+        }
     }
 
     private async Task GetVentas()
     {
         ventas = await VentaService.GetAll();
+        ventasTemp = ventas;
     }
 
     private async Task LevantaModalSaldo(VentaModel venta)
@@ -248,6 +260,11 @@ else
         await JS.InvokeVoidAsync("levantaModal", "#modalDetalle");
     }
 
+    private async Task LevantaCollapse()
+    {
+        await JS.InvokeVoidAsync("levantaCollapse", "#collapseFiltros");
+    }
+
     private async Task ModificarSaldo()
     {
         var venta = await VentaService.GetUn(idVentaSeleccionada);
@@ -259,6 +276,7 @@ else
             var objDeserealizado = JsonConvert.DeserializeObject<float>(content);
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Saldo venta actualizado! Nuevo saldo: ${objDeserealizado}", "success");
             await GetVentas();
+            await Filtrar();
             await Paginar();
         }
         else
@@ -290,20 +308,6 @@ else
 
     async Task Paginar(bool next = false)
     {
-        await GetVentas();
-
-        if (activos)
-            ventas = await Task.FromResult(ventas.Where(x => x.Fecha_Baja == null));
-        if (deuda)
-            ventas = await Task.FromResult(ventas.Where(x => x.Saldo > 0));
-        if (!string.IsNullOrEmpty(clienteFiltro))
-            ventas = await Task.FromResult(ventas.Where(x => x.Cliente.Nombre.ToUpper().Contains(clienteFiltro.ToUpper())));
-        if (!string.IsNullOrEmpty(empleadoFiltro))
-            ventas = await Task.FromResult(ventas.Where(x => x.Empleado.Nombre.ToUpper().Contains(empleadoFiltro.ToUpper())));
-
-        ventas = await Task.FromResult(ventas.Where(x => x.Fecha > FechaDesde));
-        ventas = await Task.FromResult(ventas.Where(x => x.Fecha < FechaHasta));
-
         int cantidadPorPagina = 10;
         registros = ventas.Count();
         decimal total;
@@ -322,18 +326,37 @@ else
 
         if (next && pagina < total) pagina++;
 
-        ventas = ventas.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
+        ventas = await Task.FromResult(ventas.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina));
+    }
+
+    async Task Filtrar()
+    {
+        ventas = ventasTemp;
+
+        if (activos)
+            ventas = await Task.FromResult(ventas.Where(x => x.Fecha_Baja == null));
+        if (deuda)
+            ventas = await Task.FromResult(ventas.Where(x => x.Saldo > 0));
+        if (!string.IsNullOrEmpty(clienteFiltro))
+            ventas = await Task.FromResult(ventas.Where(x => x.Cliente.Nombre.ToUpper().Contains(clienteFiltro.ToUpper())));
+        if (!string.IsNullOrEmpty(empleadoFiltro))
+            ventas = await Task.FromResult(ventas.Where(x => x.Empleado.Nombre.ToUpper().Contains(empleadoFiltro.ToUpper())));
+
+        ventas = await Task.FromResult(ventas.Where(x => x.Fecha > FechaDesde));
+        ventas = await Task.FromResult(ventas.Where(x => x.Fecha < FechaHasta));
     }
 
     async Task FiltroEmpleado(ChangeEventArgs e)
     {
         empleadoFiltro = e.Value.ToString();
+        await Filtrar();
         await Paginar();
     }
 
     async Task FiltroCliente(ChangeEventArgs e)
     {
         clienteFiltro = e.Value.ToString();
+        await Filtrar();
         await Paginar();
     }
 
@@ -341,18 +364,21 @@ else
     {
         activos = activosB; deuda = deudaB;
         inactivos = inactivosB; sindeuda = sinDeudaB;
+        await Filtrar();
         await Paginar();
     }
 
     async Task FiltroFechaDesde(ChangeEventArgs e)
     {
         FechaDesde = Convert.ToDateTime(e.Value.ToString());
+        await Filtrar();
         await Paginar();
     }
 
     async Task FiltroFechaHasta(ChangeEventArgs e)
     {
         FechaHasta = Convert.ToDateTime(e.Value.ToString());
+        await Filtrar();
         await Paginar();
     }
 }

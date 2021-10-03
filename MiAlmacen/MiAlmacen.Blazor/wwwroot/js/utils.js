@@ -47,3 +47,7 @@ function levantaAlerta() {
 function ocultaAlerta() {
     $('.alert').alert('close')
 }
+
+function levantaCollapse(id) {
+    $('.collapse').collapse('toggle');
+}
