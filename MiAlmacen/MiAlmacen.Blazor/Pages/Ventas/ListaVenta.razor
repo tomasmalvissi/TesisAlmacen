@@ -13,13 +13,23 @@
     </div>
 </div>
 
-<div class="d-flex justify-content-between mb-1" id="filtros">
-    <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
+<div class="input-group d-flex justify-content-between mb-1" id="filtros">
+    <input class="form-control form-control-sm" type="text" placeholder="Buscar por cliente" @oninput="FiltroCliente" />
+    <input class="form-control form-control-sm" type="text" placeholder="Buscar por empleado" @oninput="FiltroEmpleado" />
 </div>
-<div class="form-group form-check m-1">
-    <input type="checkbox" class="form-check-input" @onchange="FiltroActivos">
-    <label class="form-check-label">Sólo no anuladas</label>
+<div class="input-group d-flex justify-content-between mb-1" id="filtros2">
+    <input class="form-control form-control-sm" type="date" @bind="@FechaDesde"  @oninput="FiltroFechaDesde" />
+    <input class="form-control form-control-sm" type="date" @bind="@FechaHasta" @oninput="FiltroFechaHasta" />
 </div>
+<div class="btn-group d-flex justify-content-between mb-1" id="filtros3">
+    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, false, false, false))"> Todos</button>
+    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(true, false, false, false))"> Solo activos</button>
+    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, true, false, false))"> Solo inactivos</button>
+    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, false, false, true))"> Con deuda</button>
+    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(true, false, false, true))"> Activos con deuda</button>
+    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, true, false, true))"> Inactivos con deuda</button>
+</div>
+
 
 @if (ventas == null)
 {
@@ -161,7 +171,7 @@ else
 <div class="d-flex justify-content-between mb-1" id="footer">
     <nav aria-label="Page navigation example">
         <ul class="pagination">
-            <li class="page-item"><button class="page-link" @onclick="() => Paginar(false)">Anterior</button></li>
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar()">Anterior</button></li>
             <li class="page-item"><button class="page-link">@pagina</button></li>
             <li class="page-item"><button class="page-link" @onclick="() => Paginar(true)">Siguiente</button></li>
         </ul>
@@ -179,13 +189,22 @@ else
 
     public List<DetalleVentaModel> detalle { get; set; } = new List<DetalleVentaModel>();
 
-    public string nombreFiltro { get; set; } = string.Empty;
-
     public int pagina { get; set; } = 1;
 
     public int registros { get; set; }
 
-    public bool activos { get; set; } = true;
+    public string empleadoFiltro { get; set; } = string.Empty;
+
+    public string clienteFiltro { get; set; } = string.Empty;
+
+    public DateTime FechaDesde { get; set; }
+
+    public DateTime FechaHasta { get; set; }
+
+    public bool activos { get; set; } = true; public bool inactivos { get; set; }
+
+    public bool deuda { get; set; }
+    public bool sindeuda { get; set; }
 
     public float saldoVenta { get; set; }
 
@@ -199,14 +218,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        FechaDesde = DateTime.Now.AddDays(-15);
+        FechaHasta = DateTime.Now.AddDays(1);
+
         var result = await UsuarioService.GetSesion();
         if (result == null)
             NavigationManager.NavigateTo("/");
         else
-            await Paginar(false);
+            await Paginar();
     }
 
-
+    private async Task GetVentas()
+    {
+        ventas = await VentaService.GetAll();
+    }
 
     private async Task LevantaModalSaldo(VentaModel venta)
     {
@@ -233,7 +258,8 @@ else
             var content = await respuesta.Content.ReadAsStringAsync();
             var objDeserealizado = JsonConvert.DeserializeObject<float>(content);
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Saldo venta actualizado! Nuevo saldo: ${objDeserealizado}", "success");
-            await Paginar(false);
+            await GetVentas();
+            await Paginar();
         }
         else
             await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo actualizar venta", "error");
@@ -254,21 +280,29 @@ else
                 var content = await respuesta.Content.ReadAsStringAsync();
                 var objDeserealizado = JsonConvert.DeserializeObject<int>(content);
                 await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Venta #{objDeserealizado} anulada correctamente", "success");
-                await Paginar(false);
+                await GetVentas();
+                await Paginar();
             }
             else
                 await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo anular venta", "error");
         }
     }
 
-    async Task Paginar(bool next)
+    async Task Paginar(bool next = false)
     {
-        ventas = await VentaService.GetAll();
+        await GetVentas();
 
         if (activos)
-            ventas = ventas.Where(x => x.Fecha_Baja == null);
-        //else
-        //    ventas = ventas;
+            ventas = await Task.FromResult(ventas.Where(x => x.Fecha_Baja == null));
+        if (deuda)
+            ventas = await Task.FromResult(ventas.Where(x => x.Saldo > 0));
+        if (!string.IsNullOrEmpty(clienteFiltro))
+            ventas = await Task.FromResult(ventas.Where(x => x.Cliente.Nombre.ToUpper().Contains(clienteFiltro.ToUpper())));
+        if (!string.IsNullOrEmpty(empleadoFiltro))
+            ventas = await Task.FromResult(ventas.Where(x => x.Empleado.Nombre.ToUpper().Contains(empleadoFiltro.ToUpper())));
+
+        ventas = await Task.FromResult(ventas.Where(x => x.Fecha > FechaDesde));
+        ventas = await Task.FromResult(ventas.Where(x => x.Fecha < FechaHasta));
 
         int cantidadPorPagina = 10;
         registros = ventas.Count();
@@ -291,21 +325,34 @@ else
         ventas = ventas.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
     }
 
-    //async Task RecargarGrilla()
-    //{
-    //    ventas = await VentaService.GetAll();
-    //    //articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
-    //}
-
-    async Task FiltroNombre(ChangeEventArgs e)
+    async Task FiltroEmpleado(ChangeEventArgs e)
     {
-        nombreFiltro = e.Value.ToString();
-        await Paginar(false);
+        empleadoFiltro = e.Value.ToString();
+        await Paginar();
     }
 
-    async Task FiltroActivos()
+    async Task FiltroCliente(ChangeEventArgs e)
     {
-        activos = !activos;
-        await Paginar(false);
+        clienteFiltro = e.Value.ToString();
+        await Paginar();
+    }
+
+    async Task Filtros(bool activosB, bool inactivosB, bool sinDeudaB, bool deudaB)
+    {
+        activos = activosB; deuda = deudaB;
+        inactivos = inactivosB; sindeuda = sinDeudaB;
+        await Paginar();
+    }
+
+    async Task FiltroFechaDesde(ChangeEventArgs e)
+    {
+        FechaDesde = Convert.ToDateTime(e.Value.ToString());
+        await Paginar();
+    }
+
+    async Task FiltroFechaHasta(ChangeEventArgs e)
+    {
+        FechaHasta = Convert.ToDateTime(e.Value.ToString());
+        await Paginar();
     }
 }
