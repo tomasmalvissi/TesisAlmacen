@@ -36,13 +36,13 @@
     {
         var respuesta = await CajaService.Editar(caja);
 
-        if (respuesta.Cierre != 0)
+        if (respuesta.IsSuccessStatusCode)
         {
             NavigationManager.NavigateTo("/caja");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Caja cerrada con éxito!", "success");
         }
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo cerrar la caja.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo cerrar la caja.", "error");
     }
 
     private void Volver()

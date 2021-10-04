@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MiAlmacen.Blazor.Services
@@ -29,12 +30,12 @@ namespace MiAlmacen.Blazor.Services
         {
             return await _httpClient.GetFromJsonAsync<UsuarioModel>($"api/usuarios/{id}");
         }
-
-        public async Task<UsuarioModel> Alta(UsuarioModel usuario)
+        public async Task<HttpResponseMessage> Alta(UsuarioModel usuario)
         {
-            var respuesta = await _httpClient.PostAsJsonAsync("api/usuarios/", usuario);
-            var obj = respuesta.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<UsuarioModel>(await obj);
+            string userSerealizado = JsonConvert.SerializeObject(usuario);
+            var respuesta = await _httpClient.PostAsync("api/usuarios/",
+                      new StringContent(userSerealizado, UnicodeEncoding.UTF8, "application/json"));
+            return respuesta;
         }
 
         public async Task<UsuarioModel> Editar(UsuarioModel usuario)

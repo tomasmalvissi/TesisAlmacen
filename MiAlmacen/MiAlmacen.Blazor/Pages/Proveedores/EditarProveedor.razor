@@ -37,13 +37,15 @@
     {
         var respuesta = await ProveedorService.Editar(proveedor);
 
-        if (respuesta != null)
+        if (respuesta.IsSuccessStatusCode)
         {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            var objDeserealizado = JsonConvert.DeserializeObject<ProveedorModel>(content);
             NavigationManager.NavigateTo("/proveedores");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Proveedor {respuesta.Nombre} actualizado con éxito!", "success");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El proveedor {objDeserealizado.Nombre} fue actualizado con éxito!", "success");
         }
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo actualizar el proveedor.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo actualizar el proveedor.", "error");
     }
 
     private void Volver()

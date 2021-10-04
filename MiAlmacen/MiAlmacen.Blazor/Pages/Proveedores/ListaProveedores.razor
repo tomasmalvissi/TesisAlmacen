@@ -122,22 +122,22 @@ else
 
     private async Task BorrarProv(int id)
     {
-        var cliente = ProveedorService.GetUn(id);
+        var cliente = await ProveedorService.GetUn(id);
 
         var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
             $"¿Desea eliminar proveedor?", "warning");
         if (confirmacion)
         {
-            var respuesta = ProveedorService.Eliminar(id);
+            var respuesta = await ProveedorService.Eliminar(id);
 
-            if (!respuesta.Equals(0))
+            if (respuesta.IsSuccessStatusCode)
             {
                 await JS.InvokeVoidAsync("simple", "¡Éxito!", "Proveedor eliminado", "success");
                 await Paginar(false);
             }
             else
             {
-                await JS.InvokeVoidAsync("simple", "Error", "No se pudo eliminar proveedor", "error");
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo eliminar proveedor", "error");
             }
         }
     }

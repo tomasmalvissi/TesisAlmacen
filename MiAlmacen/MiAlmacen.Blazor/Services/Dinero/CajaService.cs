@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -44,18 +45,20 @@ namespace MiAlmacen.Blazor.Services
             return await _httpClient.GetFromJsonAsync<CajaModel>($"api/caja/", options);
         }
 
-        public async Task<CajaModel> Alta(CajaModel caja)
+        public async Task<HttpResponseMessage> Alta(CajaModel caja)
         {
-            var respuesta = await _httpClient.PostAsJsonAsync("api/caja/", caja);
-            var obj = respuesta.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<CajaModel>(await obj);
+            string cajaSerealizada = JsonConvert.SerializeObject(caja);
+            var respuesta = await _httpClient.PostAsync("api/caja/",
+                            new StringContent(cajaSerealizada, UnicodeEncoding.UTF8, "application/json"));
+            return respuesta;
         }
 
-        public async Task<CajaModel> Editar(CajaModel caja)
+        public async Task<HttpResponseMessage> Editar(CajaModel caja)
         {
-            var respuesta = await _httpClient.PutAsJsonAsync($"api/caja/{caja.Id}", caja);
-            var obj = respuesta.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<CajaModel>(await obj);
+            string cajaSerealizada = JsonConvert.SerializeObject(caja);
+            var respuesta = await _httpClient.PutAsync($"api/caja/{caja.Id}", 
+                            new StringContent(cajaSerealizada, UnicodeEncoding.UTF8, "application/json"));
+            return respuesta;
         }
     }
 }

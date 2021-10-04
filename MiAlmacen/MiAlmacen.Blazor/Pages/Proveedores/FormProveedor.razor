@@ -79,19 +79,21 @@
     [Parameter] public bool OcultaAlta { get; set; }
 
 
-    void DarAlta()
+    async void DarAlta()
     {
         proveedor.FechaBaja = null;
 
-        var respuesta = ProveedorService.Editar(proveedor);
+        var respuesta = await ProveedorService.Editar(proveedor);
 
-        if (respuesta != null)
+        if (respuesta.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/clientes");
-            JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente dado de alta con éxito!", "success");
+            var content = await respuesta.Content.ReadAsStringAsync();
+            var objDeserealizado = JsonConvert.DeserializeObject<ProveedorModel>(content);
+            NavigationManager.NavigateTo("/proveedores");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El proveedor {objDeserealizado.Nombre} fue dado de alta con éxito!", "success");
         }
         else
-            JS.InvokeVoidAsync("simple", "Error", $"No se pudo dar de alta el cliente.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo dar de alta el proveedor.", "error");
     }
 
 }

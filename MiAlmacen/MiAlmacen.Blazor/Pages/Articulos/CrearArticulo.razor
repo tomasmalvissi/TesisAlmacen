@@ -33,13 +33,15 @@
     {
         var respuesta = await ArticuloService.Alta(articulo);
 
-        if (respuesta.Id != 0)
+        if (respuesta.IsSuccessStatusCode)
         {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            var objDeserealizado = JsonConvert.DeserializeObject<ArticuloModel>(content);
             NavigationManager.NavigateTo("/articulos");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Producto creado", "success");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El producto {objDeserealizado.Nombre} fue creado", "success");
         }
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo crear producto.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear producto.", "error");
     }
 
     private void Volver()

@@ -123,22 +123,22 @@ else
 
     private async Task BorrarCliente(int id)
     {
-        var cliente = ClienteService.GetUnCliente(id);
+        var cliente = await ClienteService.GetUnCliente(id);
 
         var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
             $"¿Desea eliminar cliente?", "warning");
         if (confirmacion)
         {
-            var respuesta = ClienteService.Eliminar(id);
+            var respuesta = await ClienteService.Eliminar(id);
 
-            if (!respuesta.Equals(0))
+            if (respuesta.IsSuccessStatusCode)
             {
                 await JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente eliminado", "success");
                 await Paginar(false);
             }
             else
             {
-                await JS.InvokeVoidAsync("simple", "Error", "No se pudo eliminar cliente", "error");
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo eliminar cliente", "error");
             }
         }
     }

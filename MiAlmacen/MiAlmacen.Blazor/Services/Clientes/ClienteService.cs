@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MiAlmacen.Blazor.Services
@@ -25,28 +26,26 @@ namespace MiAlmacen.Blazor.Services
             return await _httpClient.GetFromJsonAsync<ClienteModel>($"api/clientes/{id}");
         }
 
-        public async Task<ClienteModel> Alta(ClienteModel cliente)
+        public async Task<HttpResponseMessage> Alta(ClienteModel cliente)
         {
-            var respuesta = await _httpClient.PostAsJsonAsync("api/clientes/", cliente);
-            var obj = respuesta.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<ClienteModel>(await obj);
+            string clienteSerealizado = JsonConvert.SerializeObject(cliente);
+            var respuesta = await _httpClient.PostAsync("api/clientes/", 
+                        new StringContent(clienteSerealizado, UnicodeEncoding.UTF8, "application/json"));
+            return respuesta;
         }
 
-        public async Task<ClienteModel> Editar(ClienteModel cliente)
+        public async Task<HttpResponseMessage> Editar(ClienteModel cliente)
         {
-            var respuesta = await _httpClient.PutAsJsonAsync($"api/clientes/{cliente.Id}", cliente);
-            var obj = respuesta.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<ClienteModel>(await obj);
+            string clienteSerealizado = JsonConvert.SerializeObject(cliente);
+            var respuesta = await _httpClient.PutAsync($"api/clientes/{cliente.Id}",
+                        new StringContent(clienteSerealizado, UnicodeEncoding.UTF8, "application/json"));
+            return respuesta;
         }
 
-        public async Task<int> Eliminar(int id)
+        public async Task<HttpResponseMessage> Eliminar(int id)
         {
             var respuesta = await _httpClient.DeleteAsync($"api/clientes/{id}");
-            if (!respuesta.IsSuccessStatusCode)
-            {
-                id = 0;
-            }
-            return id;
+            return respuesta;
         }
     }
 }

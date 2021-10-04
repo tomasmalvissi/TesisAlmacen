@@ -30,7 +30,7 @@
         }
         else
         {
-            articulo = await ArticuloService.GetUn(idArticulo);    
+            articulo = await ArticuloService.GetUn(idArticulo);
         }
     }
 
@@ -38,13 +38,15 @@
     {
         var respuesta = await ArticuloService.Editar(articulo);
 
-        if (respuesta != null)
+        if (respuesta.IsSuccessStatusCode)
         {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            var objDeserealizado = JsonConvert.DeserializeObject<ArticuloModel>(content);
             NavigationManager.NavigateTo("/articulos");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El producto {respuesta.Nombre} actualizado con éxito!", "success");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El producto {objDeserealizado.Nombre} fue actualizado con éxito!", "success");
         }
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo actualizar el producto.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo actualizar el producto.", "error");
     }
 
     private void Volver()

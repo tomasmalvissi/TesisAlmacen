@@ -24,13 +24,15 @@
     {
         var respuesta = await UsuarioService.Alta(usuario);
 
-        if (respuesta.Usuario != null)
+        if (respuesta.IsSuccessStatusCode)
         {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            var objDeserealizado = JsonConvert.DeserializeObject<UsuarioModel>(content);
             NavigationManager.NavigateTo("/");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", "Usuario creado", "success");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El usuario {objDeserealizado.Nombre} fue creado", "success");
         }
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo crear usuario.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear usuario.", "error");
     }
 
     private void Volver()

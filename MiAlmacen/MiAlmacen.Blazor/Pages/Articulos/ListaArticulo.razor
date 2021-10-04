@@ -124,22 +124,22 @@ else
 
     private async Task BorrarProd(int id)
     {
-        var articulo = ArticuloService.GetUn(id);
+        var articulo = await ArticuloService.GetUn(id);
 
         var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
             $"¿Desea eliminar este producto?", "warning");
         if (confirmacion)
         {
-            var respuesta = ArticuloService.Eliminar(id);
+            var respuesta = await ArticuloService.Eliminar(id);
 
-            if (!respuesta.Equals(0))
+            if (respuesta.IsSuccessStatusCode)
             {
                 await JS.InvokeVoidAsync("simple", "¡Éxito!", "Producto eliminado", "success");
                 await Paginar(false);
             }
             else
             {
-                await JS.InvokeVoidAsync("simple", "Error", "No se pudo eliminar el producto", "error");
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo eliminar el producto", "error");
             }
         }
     }

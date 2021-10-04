@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MiAlmacen.Blazor.Services
@@ -25,28 +26,26 @@ namespace MiAlmacen.Blazor.Services
             return await _httpClient.GetFromJsonAsync<ProveedorModel>($"api/proveedores/{id}");
         }
 
-        public async Task<ProveedorModel> Alta(ProveedorModel proveedor)
+        public async Task<HttpResponseMessage> Alta(ProveedorModel proveedor)
         {
-            var respuesta = await _httpClient.PostAsJsonAsync("api/proveedores/", proveedor);
-            var obj = respuesta.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<ProveedorModel>(await obj);
+            string provSerealizado = JsonConvert.SerializeObject(proveedor);
+            var respuesta = await _httpClient.PostAsync("api/proveedores/",
+                      new StringContent(provSerealizado, UnicodeEncoding.UTF8, "application/json"));
+            return respuesta;
         }
 
-        public async Task<ProveedorModel> Editar(ProveedorModel proveedor)
+        public async Task<HttpResponseMessage> Editar(ProveedorModel proveedor)
         {
-            var respuesta = await _httpClient.PutAsJsonAsync($"api/proveedores/{proveedor.Id}", proveedor);
-            var obj = respuesta.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<ProveedorModel>(await obj);
+            string provSerealizado = JsonConvert.SerializeObject(proveedor);
+            var respuesta = await _httpClient.PutAsync($"api/proveedores/{proveedor.Id}",
+                      new StringContent(provSerealizado, UnicodeEncoding.UTF8, "application/json"));
+            return respuesta;
         }
 
-        public async Task<int> Eliminar(int id)
+        public async Task<HttpResponseMessage> Eliminar(int id)
         {
             var respuesta = await _httpClient.DeleteAsync($"api/proveedores/{id}");
-            if (!respuesta.IsSuccessStatusCode)
-            {
-                id = 0;
-            }
-            return id;
+            return respuesta;
         }
     }
 }

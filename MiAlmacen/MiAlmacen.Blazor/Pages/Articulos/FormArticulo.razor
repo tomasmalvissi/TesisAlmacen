@@ -88,18 +88,20 @@
     [Parameter] public EventCallback OnValidSubmit { get; set; }
     [Parameter] public bool OcultaAlta { get; set; }
 
-    void DarAlta()
+    async void DarAlta()
     {
         articulo.FechaBaja = null;
 
-        var respuesta = ArticuloService.Editar(articulo);
+        var respuesta = await ArticuloService.Editar(articulo);
 
-        if (respuesta != null)
+        if (respuesta.IsSuccessStatusCode)
         {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            var objDeserealizado = JsonConvert.DeserializeObject<ArticuloModel>(content);
             NavigationManager.NavigateTo("/articulos");
-            JS.InvokeVoidAsync("simple", "¡Éxito!", "Producto dado de alta con éxito!", "success");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El Producto {objDeserealizado.Nombre} fue dado de alta con éxito!", "success");
         }
         else
-            JS.InvokeVoidAsync("simple", "Error", $"No se pudo dar de alta el producto.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo dar de alta el producto.", "error");
     }
 }

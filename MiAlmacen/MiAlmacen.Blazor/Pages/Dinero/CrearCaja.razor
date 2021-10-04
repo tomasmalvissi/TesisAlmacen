@@ -39,13 +39,13 @@
     {
         var respuesta = await CajaService.Alta(caja);
 
-        if (respuesta.Apertura != 0)
+        if (respuesta.IsSuccessStatusCode)
         {
             NavigationManager.NavigateTo("/caja");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", "Caja Abierta", "success");
         }
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo abrir la caja.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo abrir la caja.", "error");
     }
 
     private void Volver()

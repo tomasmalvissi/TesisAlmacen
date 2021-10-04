@@ -78,20 +78,22 @@
     [Parameter] public EventCallback OnValidSubmit { get; set; }
     [Parameter] public bool OcultaAlta { get; set; }
 
-    
-    void DarAlta()
+
+    async void DarAlta()
     {
         cliente.FechaBaja = null;
 
-        var respuesta = ClienteService.Editar(cliente);
+        var respuesta = await ClienteService.Editar(cliente);
 
-        if (respuesta != null)
+        if (respuesta.IsSuccessStatusCode)
         {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            var objDeserealizado = JsonConvert.DeserializeObject<ClienteModel>(content);
             NavigationManager.NavigateTo("/clientes");
-             JS.InvokeVoidAsync("simple", "¡Éxito!", "Cliente dado de alta con éxito!", "success");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El cliente {objDeserealizado.Nombre} fue dado de alta con éxito!", "success");
         }
         else
-             JS.InvokeVoidAsync("simple", "Error", $"No se pudo dar de alta el cliente.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo dar de alta el cliente.", "error");
     }
 
 }
