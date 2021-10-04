@@ -19,7 +19,7 @@ namespace MiAlmacen.Model.Models
         [StringLength(20, MinimumLength = 1, ErrorMessage = "Máximo 20 dígitos")]
         public string Direccion { get; set; }
         [Required]
-        [Phone(ErrorMessage = "Solo números")]
+        [Range(1, 9999999999, ErrorMessage = "Máximo 11 dígitos")]
         public long Telefono { get; set; }
         public DateTime? FechaBaja { get; set; }
     }

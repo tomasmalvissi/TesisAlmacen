@@ -20,12 +20,13 @@ namespace MiAlmacen.Data.Repositories
             ca.Empleado_Id = model.Empleado_Id;
             ca.Apertura = model.Apertura;
             ca.Cierre = model.Cierre;
-            //ca.Empleado.Id = model.Empleado.Id;
-            //ca.Empleado.Nombre = model.Empleado.Nombre;
-            //ca.Empleado.Email = model.Empleado.Email;
-            //ca.Empleado.Usuario = model.Empleado.Usuario;
-            //ca.Empleado.Contraseña = model.Empleado.Contraseña;
-
+            Usuarios emp = new();
+            emp.Id = model.Empleado.Id;
+            emp.Nombre = model.Empleado.Nombre;
+            emp.Email = model.Empleado.Email;
+            emp.Usuario = model.Empleado.Usuario;
+            emp.Contraseña = model.Empleado.Contraseña;
+            ca.Empleado = emp;
             return ca;
         }
 
