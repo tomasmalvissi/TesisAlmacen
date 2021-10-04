@@ -13,8 +13,9 @@
     </div>
 </div>
 
-<div class="d-flex justify-content-between mb-1" id="filtros">
+<div class="input-group d-flex justify-content-between mb-1" id="filtros">
     <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
+    <input class="form-control form-control-sm" type="text" placeholder="Busque por CUIL" @oninput="FiltroCUIL" />
 </div>
 <div class="form-group form-check m-1">
     <input type="checkbox" class="form-check-input" @onchange="FiltroActivos">
@@ -98,6 +99,8 @@ else
 
     public string nombreFiltro { get; set; } = string.Empty;
 
+    public string cuilFiltro { get; set; } = string.Empty;
+
     public int pagina { get; set; } = 1;
 
     public int registros { get; set; }
@@ -177,6 +180,13 @@ else
     void FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
+        Paginar(false);
+    }
+
+    void FiltroCUIL(ChangeEventArgs e)
+    {
+        proveedores = proveedores.Where(x => x.CUIL.ToString().Contains(cuilFiltro.ToUpper()));
+        cuilFiltro = e.Value.ToString();
         Paginar(false);
     }
 

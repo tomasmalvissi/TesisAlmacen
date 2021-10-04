@@ -275,6 +275,7 @@ else
             var content = await respuesta.Content.ReadAsStringAsync();
             var objDeserealizado = JsonConvert.DeserializeObject<float>(content);
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Saldo venta actualizado! Nuevo saldo: ${objDeserealizado}", "success");
+            await JS.InvokeVoidAsync("ocultaModal", "#modalSaldo");
             await GetVentas();
             await Filtrar();
             await Paginar();

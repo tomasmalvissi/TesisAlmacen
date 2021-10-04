@@ -15,6 +15,7 @@
 
 <div class="d-flex justify-content-between mb-1" id="filtros">
     <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
+    <input class="form-control form-control-sm" type="text" placeholder="Busque por código" @oninput="FiltroCodigo" />
 </div>
 <div class="form-group form-check m-1">
     <input type="checkbox" class="form-check-input" @onchange="FiltroActivos">
@@ -100,6 +101,7 @@ else
     public IEnumerable<ArticuloModel> articulos { get; set; }
 
     public string nombreFiltro { get; set; } = string.Empty;
+    public string codigoFiltro { get; set; } = string.Empty;
 
     public int pagina { get; set; } = 1;
 
@@ -180,6 +182,13 @@ else
     void FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
+        Paginar(false);
+    }
+
+    void FiltroCodigo(ChangeEventArgs e)
+    {
+        articulos = articulos.Where(x => x.Codigo_Art.ToString().Contains(codigoFiltro.ToUpper()));
+        codigoFiltro = e.Value.ToString();
         Paginar(false);
     }
 

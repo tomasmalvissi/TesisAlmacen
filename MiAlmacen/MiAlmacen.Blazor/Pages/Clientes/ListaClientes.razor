@@ -13,9 +13,11 @@
     </div>
 </div>
 
-<div class="d-flex justify-content-between mb-1" id="filtros">
+<div class="imput-group d-flex justify-content-between mb-1" id="filtros">
     <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
+    <input class="form-control form-control-sm" type="number" placeholder="Busque por DNI" @oninput="FiltroDNI" />
 </div>
+
 <div class="form-group form-check m-1">
     <input type="checkbox" class="form-check-input" @onchange="FiltroActivos">
     <label class="form-check-label">Sólo activos</label>
@@ -98,6 +100,8 @@ else
 
     public string nombreFiltro { get; set; } = string.Empty;
 
+    public string dniFiltro { get; set; } = string.Empty;
+
     public int pagina { get; set; } = 1;
 
     public int registros { get; set; }
@@ -177,6 +181,13 @@ else
     void FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
+        Paginar(false);
+    }
+
+    void FiltroDNI(ChangeEventArgs e)
+    {
+        clientes = clientes.Where(x => x.DNI.ToString().Contains(dniFiltro.ToUpper()));
+        dniFiltro = e.Value.ToString();
         Paginar(false);
     }
 

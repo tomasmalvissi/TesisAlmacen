@@ -29,7 +29,7 @@ namespace MiAlmacen.Data.Repositories
 
         public List<Articulos> GetAll() 
         {
-            orden = $"SELECT * FROM Articulos ORDER BY Nombre ASC";
+            orden = $"SELECT * FROM Articulos ORDER BY Ultima_Modif DESC";
             List <Articulos> articulos = new();
 
             SqlCommand sqlcmd = new(orden, conexion);
