@@ -63,7 +63,10 @@ namespace MiAlmacen.Data.Repositories
                 detventa.SubTotal = item.SubTotal;
                 venta.Detalle.Add(detventa);
             }
-
+            double saldo = venta.Saldo;
+            double total = venta.Total;
+            venta.Saldo = (float)(Math.Truncate((double)saldo * 100.0) / 100.0);
+            venta.Total = (float)(Math.Truncate((double)total * 100.0) / 100.0);
             return venta;
         }
 
@@ -207,16 +210,16 @@ namespace MiAlmacen.Data.Repositories
             return venta;
         }
 
-        public Ventas Post(VentaModel venta)
+        public Ventas Post(VentaModel model)
         {
-            if (venta == null)
+            if (model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
             }
             else
             {
                 AbrirConex();
-
+                Ventas venta = IniciarObjeto(model);
                 SqlTransaction transaction;
                 transaction = conexion.BeginTransaction();
                 SqlCommand sqlcmd = new(orden, conexion, transaction);
@@ -307,8 +310,7 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Dispose();
                 }
 
-                var ventaEntity = IniciarObjeto(venta);
-                return ventaEntity;
+                return venta;
             }
         }
 

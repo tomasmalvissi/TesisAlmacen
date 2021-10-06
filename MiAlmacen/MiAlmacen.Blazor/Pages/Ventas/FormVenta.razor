@@ -302,7 +302,24 @@
                 venta.Total += venta.Detalle[i].SubTotal;
             }
         }
+        double total = venta.Total;
+        venta.Total = (float)(Math.Truncate((double)total * 100.0) / 100.0);
         return venta.Total;
+    }
+
+    float CalcularPago()
+    {
+        venta.Saldo = venta.Total;
+        if (venta.FormasPago.Count > 0)
+        {
+            @for (int i = 0; i < venta.FormasPago.Count; i++)
+            {
+                venta.Saldo -= venta.FormasPago[i].Importe;
+            }
+        }
+        double saldo = venta.Saldo;
+        venta.Saldo = (float)(Math.Truncate((double)saldo * 100.0) / 100.0);
+        return venta.Saldo;
     }
 
     #region Validaciones
@@ -347,8 +364,8 @@
     {
         AsignarCliente();
         CalcularTotal();
+        CalcularPago();
         var empleado = await UsuarioService.GetSesion();
-        venta.Saldo = venta.Total - pago;
         venta.Empleado_Id = empleado.Id;
         venta.Cliente_Id = clienteSeleccionado.Id;
 

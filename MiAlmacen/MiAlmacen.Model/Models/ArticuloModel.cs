@@ -11,7 +11,7 @@ namespace MiAlmacen.Model.Models
     {
         public int Id { get; set; }
         [Required]
-        [StringLength(20, MinimumLength = 1, ErrorMessage = "Máximo 20 caracteres")]
+        [StringLength(100, MinimumLength = 1, ErrorMessage = "Máximo 100 caracteres")]
         public string Nombre { get; set; }
         [Required]
         [Range(0, 99999999999999, ErrorMessage = "Solo números de hasta 13 dígitos")]

@@ -53,6 +53,10 @@
         else
         {
             caja = await CajaService.GetUltimo();
+            if (caja.Id == 0)
+            {
+                NavigationManager.NavigateTo("/caja/abrir");
+            }
         }
     }
 }

@@ -16,7 +16,7 @@ namespace MiAlmacen.Model.Models
         [Range(1, 99999999999, ErrorMessage = "Máximo 11 caracteres")]
         public long CUIL { get; set; }
         [Required]
-        [StringLength(20, MinimumLength = 1, ErrorMessage = "Máximo 20 dígitos")]
+        [StringLength(100, MinimumLength = 1, ErrorMessage = "Máximo 100 dígitos")]
         public string Direccion { get; set; }
         [Required]
         [Range(1, 9999999999, ErrorMessage = "Máximo 11 dígitos")]
