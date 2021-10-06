@@ -25,7 +25,8 @@ namespace MiAlmacen.Blazor
                             .AddScoped<ProveedorService>()
                             .AddScoped<UsuarioService>()
                             .AddScoped<VentaService>()
-                            .AddScoped<CajaService>();
+                            .AddScoped<CajaService>()
+                            .AddScoped<FormasPagoService>();
 
             await builder.Build().RunAsync();
         }

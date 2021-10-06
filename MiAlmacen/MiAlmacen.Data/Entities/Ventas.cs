@@ -10,7 +10,6 @@ namespace MiAlmacen.Data.Entities
     {
         public int Id { get; set; }
         public DateTime Fecha { get; set; }
-        public string FormaPago { get; set; }
         public int Cliente_Id { get; set; }
         public int Empleado_Id { get; set; }
         public float Total { get; set; }
@@ -20,5 +19,6 @@ namespace MiAlmacen.Data.Entities
         public List<DetalleVentas> Detalle { get; set; } = new();
         public Clientes Cliente { get; set; } = new ();
         public Usuarios Empleado { get; set; } = new ();
+        public List<FormaPagoVentas> FormasPago { get; set; } = new();
     }
 }

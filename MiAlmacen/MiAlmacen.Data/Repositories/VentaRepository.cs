@@ -18,7 +18,6 @@ namespace MiAlmacen.Data.Repositories
             Ventas venta = new();
             venta.Id = model.Id;
             venta.Fecha = model.Fecha;
-            venta.FormaPago = model.FormaPago;
             venta.Cliente_Id = model.Cliente_Id;
             venta.Empleado_Id = model.Empleado_Id;
             venta.Cliente.Id =  model.Cliente.Id;
@@ -30,6 +29,22 @@ namespace MiAlmacen.Data.Repositories
             venta.Total = model.Total;
             venta.Saldo = model.Saldo;
             venta.Fecha_Baja = model.Fecha_Baja;
+
+            foreach (var item in model.FormasPago)
+            {
+                FormaPagoVentas fpagoXventas = new();
+                fpagoXventas.Id = item.Id;
+                fpagoXventas.Fecha = item.Fecha;
+                fpagoXventas.Importe = item.Importe;
+
+                FormaPago fpago = new();
+                fpago.Id = item.FormaPago.Id;
+                fpago.Descripcion = item.FormaPago.Descripcion;
+
+                fpagoXventas.FormaPago = fpago;
+                fpagoXventas.FormaPago_Id = fpago.Id;
+                venta.FormasPago.Add(fpagoXventas);
+            }
 
             foreach (var item in model.Detalle)
             {
@@ -71,7 +86,6 @@ namespace MiAlmacen.Data.Repositories
                     Ventas venta = new();
                     venta.Id = Convert.ToInt32(reader["Id"].ToString());
                     venta.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
-                    venta.FormaPago = reader["FormaPago"].ToString();
                     venta.Cliente_Id = Convert.ToInt32(reader["Cliente_Id"].ToString());
                     venta.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
                     venta.Total = Convert.ToSingle(reader["Total"].ToString());
@@ -117,7 +131,6 @@ namespace MiAlmacen.Data.Repositories
                 {
                     venta.Id = Convert.ToInt32(reader["Id"].ToString());
                     venta.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
-                    venta.FormaPago = reader["FormaPago"].ToString();
                     venta.Cliente_Id = Convert.ToInt32(reader["Cliente_Id"].ToString());
                     venta.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
                     venta.Total = Convert.ToSingle(reader["Total"].ToString());
@@ -132,6 +145,8 @@ namespace MiAlmacen.Data.Repositories
                     UsuarioRepository usuarioRepository = new UsuarioRepository();
                     usuario = usuarioRepository.GetOne(Convert.ToInt32(reader["Empleado_Id"].ToString()));
                     venta.Empleado = usuario;
+                    FormaPagoRepository fPagoRepository = new FormaPagoRepository();
+                    venta = fPagoRepository.GetAllFormasPagoXVenta(venta);
                 }
 
                 CerrarConex();
@@ -211,11 +226,10 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Connection = conexion;
                     sqlcmd.Transaction = transaction;
 
-                    orden = @"INSERT INTO Ventas (FormaPago, Fecha, Cliente_Id, Empleado_Id, Total, Saldo)
-                            VALUES (@FormaPago, @Fecha, @Cliente_Id, @Empleado_Id, @Total, @Saldo) ";
+                    orden = @"INSERT INTO Ventas (Fecha, Cliente_Id, Empleado_Id, Total, Saldo)
+                            VALUES (@Fecha, @Cliente_Id, @Empleado_Id, @Total, @Saldo) ";
 
                     sqlcmd.CommandText = orden;
-                    sqlcmd.Parameters.AddWithValue("@FormaPago", venta.FormaPago);
                     sqlcmd.Parameters.AddWithValue("@Fecha", venta.Fecha);
                     sqlcmd.Parameters.AddWithValue("@Cliente_Id", venta.Cliente_Id);
                     sqlcmd.Parameters.AddWithValue("@Empleado_Id", venta.Empleado_Id);
@@ -224,7 +238,21 @@ namespace MiAlmacen.Data.Repositories
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
-                    
+
+                    foreach (var fpago in venta.FormasPago)
+                    {
+                        orden = @"INSERT INTO FormasPagoVentas (Fecha, Importe, FormaPago_Id, Venta_Id)
+                            VALUES (@Fecha, @Importe, @FormaPago_Id, (SELECT IDENT_CURRENT ('Ventas')))";
+
+                        sqlcmd.CommandText = orden;
+                        sqlcmd.Parameters.AddWithValue("@Fecha", fpago.Fecha);
+                        sqlcmd.Parameters.AddWithValue("@Importe", fpago.Importe);
+                        sqlcmd.Parameters.AddWithValue("@FormaPago_Id", fpago.FormaPago_Id);
+
+                        sqlcmd.ExecuteNonQuery();
+                        sqlcmd.Parameters.Clear();
+                    }
+
                     foreach (var detalle in venta.Detalle)
                     {
                         orden = @"INSERT INTO DetalleVentas (Articulo_Id, Precio, Cantidad, SubTotal, Venta_Id)
@@ -297,7 +325,7 @@ namespace MiAlmacen.Data.Repositories
                 float nuevoSaldo = venta.Saldo - pago;
                 try
                 {
-                    orden = $"UPDATE Ventas SET Saldo=@Saldo WHERE Id=@Id";
+                    orden = @"UPDATE Ventas SET Saldo=@Saldo WHERE Id=@Id";
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Id", venta.Id);
@@ -305,6 +333,21 @@ namespace MiAlmacen.Data.Repositories
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
+
+                    foreach (var fpago in venta.FormasPago.Where(x => x.Id.Equals(0)))
+                    {
+                        orden = @"INSERT INTO FormasPagoVentas (Fecha, Importe, FormaPago_Id, Venta_Id)
+                                  VALUES (@Fecha, @Importe, @FormaPago_Id, @Venta_Id)";
+
+                        sqlcmd.CommandText = orden;
+                        sqlcmd.Parameters.AddWithValue("@Fecha", fpago.Fecha);
+                        sqlcmd.Parameters.AddWithValue("@Importe", fpago.Importe);
+                        sqlcmd.Parameters.AddWithValue("@FormaPago_Id", fpago.FormaPago_Id);
+                        sqlcmd.Parameters.AddWithValue("@Venta_Id", fpago.Venta_Id);
+
+                        sqlcmd.ExecuteNonQuery();
+                        sqlcmd.Parameters.Clear();
+                    }
 
                     transaction.Commit();
                 }

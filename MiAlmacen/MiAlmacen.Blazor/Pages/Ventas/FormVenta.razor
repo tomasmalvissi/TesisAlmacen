@@ -3,6 +3,7 @@
 @inject ArticuloService ArticuloService
 @inject ClienteService ClienteService
 @inject UsuarioService UsuarioService
+@inject FormasPagoService FormasPagoService
 @inject IJSRuntime JS
 
 
@@ -22,7 +23,7 @@
     <div id="buscador-clientes" class="form-group col-md-6">
         <label>Cliente</label>
         <BlazoredTypeahead SearchMethod="BuscarClientes" @bind-Value="clienteSeleccionado" placeholder="Seleccione cliente" class="form-control">
-            <SelectedTemplate>@context.Nombre | @context.DNI</SelectedTemplate>
+            <SelectedTemplate>@context.Nombre</SelectedTemplate>
             <ResultTemplate>@context.Nombre | @context.DNI</ResultTemplate>
         </BlazoredTypeahead>
     </div>
@@ -35,7 +36,7 @@
         <div id="buscador-articulos" class="form-group col-md-3">
             <label>Producto</label>
             <BlazoredTypeahead SearchMethod="BuscarArticulos" @bind-Value="articuloSeleccionado" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Seleccione producto" class="form-control">
-                <SelectedTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act</SelectedTemplate>
+                <SelectedTemplate>@context.Nombre</SelectedTemplate>
                 <ResultTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act</ResultTemplate>
             </BlazoredTypeahead>
         </div>
@@ -94,7 +95,7 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th> </th>
+                <th>#</th>
                 <th>Articulo</th>
                 <th>Precio</th>
                 <th>Cantidad</th>
@@ -103,16 +104,18 @@
             </tr>
         </thead>
         <tbody>
+            @{int contador = 1;}
             @foreach (var item in venta.Detalle)
             {
                 <tr>
-                    <td>#</td>
+                    <td>@contador</td>
                     <td>@item.Articulo.Nombre</td>
                     <td>$@item.Precio</td>
                     <td>@item.Cantidad</td>
                     <td>$@item.SubTotal</td>
                     <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => venta.Detalle.Remove(item)"><i class="oi oi-trash"></i></button></td>
                 </tr>
+                contador++;
             }
         </tbody>
     </table>
@@ -121,10 +124,14 @@
 
 <div class="d-flex justify-content-end py-2">
     <button @onclick="@(() => CalcularTotal())" type="button" class="btn btn-outline-dark" style="border:none">
-        <h4><b>TOTAL</b></h4>
-        @if (venta.Total != 0)
+
+        @if (venta.Total == 0)
         {
-            <h3><b>$@venta.Total</b></h3>
+            <h4><b>TOTAL $0,00</b></h4>
+        }
+        else
+        {
+            <h4><b>TOTAL $@venta.Total</b></h4>
         }
     </button>
 </div>
@@ -135,7 +142,7 @@
 
 <!-- Modal Saldo y Forma Pago -->
 <div class="modal fade" id="modalFinalizaVenta" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title">Ingrese pago </h6>
@@ -149,21 +156,59 @@
                     <b> Error! </b> @erroresModal
                 </div>
             }
-            <div class="modal-body form-row">
-                <div class="form-group col-md-6">
-                    <label>Ingrese el pago del cliente en $(pesos)</label>
-                    <input class="form-control form-control" @bind="pago" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label>Ingrese el pago en $(pesos)</label>
+                        <input class="form-control" @bind="pago" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
+                    </div>
+
+                    <div id="buscador-fpago" class="form-group col-md-5">
+                        <label>Forma de pago</label>
+                        <BlazoredTypeahead SearchMethod="BuscarFormasPago" @bind-Value="fPagoSeleccionada" placeholder="Seleccione forma de pago" class="form-control">
+                            <SelectedTemplate>@context.Descripcion</SelectedTemplate>
+                            <ResultTemplate>@context.Descripcion</ResultTemplate>
+                        </BlazoredTypeahead>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label><b>Total = $@venta.Total</b></label>
+                        <div>
+                            <button class="btn btn-primary" @onclick="AsignarFormasPago"><i class="oi oi-plus"></i> Agregar</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group col-md-6">
-                    <label>Forma de pago</label>
-                    <select @bind="@venta.FormaPago" class="form-control">
-                        <option value="Efectivo">Efectivo</option>
-                        <option value="Tarjeta de crédito">Tarjeta de crédito</option>
-                        <option value="Tarjeta de débito">Tarjeta de débito</option>
-                    </select>
-                </div>
+                @if (venta.FormasPago.Count > 0)
+                {
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha</th>
+                                <th>Forma de Pago</th>
+                                <th>Importe</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{int contadorFp = 1;}
+                            @foreach (var item in venta.FormasPago)
+                            {
+                                <tr>
+                                    <td>@contadorFp</td>
+                                    <td>@item.Fecha</td>
+                                    <td>@item.FormaPago.Descripcion</td>
+                                    <td>$@item.Importe</td>
+                                    <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => venta.FormasPago.Remove(item)"><i class="oi oi-trash"></i></button></td>
+                                </tr>
+                                contadorFp++;
+                            }
+                        </tbody>
+                    </table>
+                }
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-outline-success" @onclick="@(() => CrearVenta())">Registrar</button>
@@ -182,6 +227,9 @@
     private ClienteModel clienteSeleccionado;
     private IEnumerable<ClienteModel> clientes;
 
+    private FormaPagoModel fPagoSeleccionada;
+    private IEnumerable<FormaPagoModel> formasPago;
+
     #region Detalle
     private int cantidad { get; set; } = 1;
     private float precio { get; set; }
@@ -193,7 +241,7 @@
     {
         articulos = await ArticuloService.GetAll();
         clientes = await ClienteService.GetAllClientes();
-        venta.FormaPago = "Efectivo";
+        formasPago = await FormasPagoService.GetAll();
         venta.Fecha = DateTime.Now;
     }
 
@@ -228,6 +276,19 @@
         {
             venta.Cliente = clienteSeleccionado;
             venta.Cliente_Id = clienteSeleccionado.Id;
+        }
+    }
+
+    void AsignarFormasPago()
+    {
+        if (fPagoSeleccionada != null)
+        {
+            FormaPagoVentaModel fpago = new();
+            fpago.FormaPago = fPagoSeleccionada;
+            fpago.FormaPago_Id = fPagoSeleccionada.Id;
+            fpago.Importe = pago;
+            fpago.Fecha = venta.Fecha;
+            venta.FormasPago.Add(fpago);
         }
     }
 
@@ -272,10 +333,12 @@
     void ValidacionModal()
     {
         erroresModal = string.Empty;
-        if (venta.FormaPago == null)
-            erroresModal += "Ingrese una forma de pago válida. \r\n";
+        if (venta.FormasPago.Count == 0)
+            erroresModal += "Agregue una forma de pago válida. \r\n";
         if (pago < 0)
-            erroresModal += "El pago debe ser mayor o igual a 0. \r\n";
+            erroresModal += "El pago debe ser mayor o igual a 0 en caso de no pagar el cliente. \r\n";
+        if (pago > venta.Total)
+            erroresModal += "El importe del pago no puede ser superior al de la venta. \r\n";
     }
 
     #endregion
@@ -323,5 +386,10 @@
     private async Task<IEnumerable<ClienteModel>> BuscarClientes(string busqueda)
     {
         return await Task.FromResult(clientes.Where(x => x.Nombre.ToUpper().Contains(busqueda.ToUpper())).ToList());
+    }
+
+    private async Task<IEnumerable<FormaPagoModel>> BuscarFormasPago(string busqueda)
+    {
+        return await Task.FromResult(formasPago.Where(x => x.Descripcion.ToUpper().Contains(busqueda.ToUpper())).ToList());
     }
 }

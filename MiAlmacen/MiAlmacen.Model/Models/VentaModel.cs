@@ -12,8 +12,6 @@ namespace MiAlmacen.Model.Models
         public int Id { get; set; }
         [Required]
         public DateTime Fecha { get; set; }
-        [Required]
-        public string FormaPago { get; set; }
         public int Cliente_Id { get; set; }
         public int Empleado_Id { get; set; }
         [Required]
@@ -25,5 +23,6 @@ namespace MiAlmacen.Model.Models
         public List<DetalleVentaModel> Detalle { get; set; } = new ();
         public ClienteModel Cliente { get; set; }
         public UsuarioModel Empleado { get; set; }
+        public List<FormaPagoVentaModel> FormasPago { get; set; } = new();
     }
 }
