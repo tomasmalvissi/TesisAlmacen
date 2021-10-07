@@ -48,11 +48,11 @@ namespace MiAlmacen.Data.Repositories
                     ca.Id = Convert.ToInt32(reader["Id"].ToString());
                     ca.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
                     ca.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
-                    ca.Apertura = Convert.ToSingle(reader["Apertura"].ToString());
-                    ca.Cierre = Convert.ToSingle(reader["Cierre"].ToString());
+                    ca.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
+                    ca.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
 
                     Usuarios usuario = new();
-                    UsuarioRepository usuarioRepository = new UsuarioRepository();
+                    UsuarioRepository usuarioRepository = new();
                     usuario = usuarioRepository.GetOne(Convert.ToInt32(reader["Empleado_Id"].ToString()));
                     ca.Empleado = usuario;
 
@@ -88,11 +88,11 @@ namespace MiAlmacen.Data.Repositories
                     caja.Id = Convert.ToInt32(reader["Id"].ToString());
                     caja.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
                     caja.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
-                    caja.Apertura = Convert.ToSingle(reader["Apertura"].ToString());
-                    caja.Cierre = Convert.ToSingle(reader["Cierre"].ToString());
+                    caja.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
+                    caja.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
 
                     Usuarios usuario = new();
-                    UsuarioRepository usuarioRepository = new UsuarioRepository();
+                    UsuarioRepository usuarioRepository = new();
                     usuario = usuarioRepository.GetOne(Convert.ToInt32(reader["Empleado_Id"].ToString()));
                     caja.Empleado = usuario;
                 }
@@ -127,11 +127,11 @@ namespace MiAlmacen.Data.Repositories
                     caja.Id = Convert.ToInt32(reader["Id"].ToString());
                     caja.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
                     caja.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
-                    caja.Apertura = Convert.ToSingle(reader["Apertura"].ToString());
-                    caja.Cierre = Convert.ToSingle(reader["Cierre"].ToString());
+                    caja.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
+                    caja.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
 
                     Usuarios usuario = new();
-                    UsuarioRepository usuarioRepository = new UsuarioRepository();
+                    UsuarioRepository usuarioRepository = new();
                     usuario = usuarioRepository.GetOne(Convert.ToInt32(reader["Empleado_Id"].ToString()));
                     caja.Empleado = usuario;
                 }

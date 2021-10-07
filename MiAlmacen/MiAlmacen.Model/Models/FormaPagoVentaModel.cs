@@ -11,7 +11,7 @@ namespace MiAlmacen.Model.Models
         [Required]
         public int FormaPago_Id { get; set; }
         [Required]
-        public float Importe { get; set; }
+        public decimal Importe { get; set; }
         [Required]
         public DateTime Fecha { get; set; }
 

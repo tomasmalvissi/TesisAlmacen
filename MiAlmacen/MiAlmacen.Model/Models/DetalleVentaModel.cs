@@ -12,12 +12,12 @@ namespace MiAlmacen.Model.Models
         public int Id { get; set; }
         public int Articulo_Id { get; set; }
         [Required]
-        public float Precio { get; set; }
+        public decimal Precio { get; set; }
         [Required]
         [Range(0, 1000, ErrorMessage = "Solo números")]
         public int Cantidad { get; set; }
 
-        public float SubTotal { get; set; }
+        public decimal SubTotal { get; set; }
         public int Venta_Id { get; set; }
 
         public ArticuloModel Articulo { get; set; }

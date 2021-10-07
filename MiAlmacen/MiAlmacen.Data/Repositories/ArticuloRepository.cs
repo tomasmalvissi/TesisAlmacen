@@ -45,8 +45,8 @@ namespace MiAlmacen.Data.Repositories
                     art.Id = Convert.ToInt32(reader["Id"].ToString());
                     art.Nombre = reader["Nombre"].ToString();
                     art.Codigo_Art = Convert.ToInt64(reader["Codigo_Art"].ToString());
-                    art.Precio_Unit = Convert.ToSingle(reader["Precio_Unit"].ToString());
-                    art.Precio_Mayor = Convert.ToSingle(reader["Precio_Mayor"].ToString());
+                    art.Precio_Unit = Convert.ToDecimal(reader["Precio_Unit"].ToString());
+                    art.Precio_Mayor = Convert.ToDecimal(reader["Precio_Mayor"].ToString());
                     art.Stock_Act = Convert.ToInt32(reader["Stock_Act"].ToString());
                     art.Ultima_Modif = Convert.ToDateTime(reader["Ultima_Modif"].ToString());
                     art.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
@@ -70,7 +70,7 @@ namespace MiAlmacen.Data.Repositories
         {
             orden = $@"SELECT * FROM Articulos WHERE Id ={id}";
 
-            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
+            SqlCommand sqlcmd = new(orden, conexion);
             Articulos articulo = new();
             try
             {
@@ -83,8 +83,8 @@ namespace MiAlmacen.Data.Repositories
                     articulo.Id = Convert.ToInt32(reader["Id"].ToString());
                     articulo.Nombre = reader["Nombre"].ToString();
                     articulo.Codigo_Art = Convert.ToInt64(reader["Codigo_Art"].ToString());
-                    articulo.Precio_Unit = Convert.ToSingle(reader["Precio_Unit"].ToString());
-                    articulo.Precio_Mayor = Convert.ToSingle(reader["Precio_Mayor"].ToString());
+                    articulo.Precio_Unit = Convert.ToDecimal(reader["Precio_Unit"].ToString());
+                    articulo.Precio_Mayor = Convert.ToDecimal(reader["Precio_Mayor"].ToString());
                     articulo.Stock_Act = Convert.ToInt32(reader["Stock_Act"].ToString());
                     articulo.Ultima_Modif = Convert.ToDateTime(reader["Ultima_Modif"].ToString());
                     articulo.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);

@@ -16,7 +16,7 @@ namespace MiAlmacen.Data.Repositories
 
             FormaPago fpago = null;
 
-            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
+            SqlCommand sqlcmd = new(orden, conexion);
             try
             {
                 AbrirConex();
@@ -49,7 +49,7 @@ namespace MiAlmacen.Data.Repositories
 
             List<FormaPago> formaPagos = new();
 
-            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
+            SqlCommand sqlcmd = new(orden, conexion);
             try
             {
                 AbrirConex();
@@ -82,7 +82,7 @@ namespace MiAlmacen.Data.Repositories
 
             List<FormaPagoVentas> formaPagos = new();
 
-            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
+            SqlCommand sqlcmd = new(orden, conexion);
             try
             {
                 AbrirConex();
@@ -96,7 +96,7 @@ namespace MiAlmacen.Data.Repositories
                     fpago.Id = Convert.ToInt32(reader["Id"].ToString());
                     fpago.Venta_Id = Convert.ToInt32(reader["Venta_Id"].ToString());
                     fpago.FormaPago_Id = Convert.ToInt32(reader["FormaPago_Id"].ToString());
-                    fpago.Importe = Convert.ToSingle(reader["Importe"].ToString());
+                    fpago.Importe = Convert.ToDecimal(reader["Importe"].ToString());
                     fpago.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
                     formaPagos.Add(fpago);
                 }

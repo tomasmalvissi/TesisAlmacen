@@ -232,9 +232,9 @@
 
     #region Detalle
     private int cantidad { get; set; } = 1;
-    private float precio { get; set; }
-    private float subtotal { get; set; }
-    private float pago { get; set; }
+    private decimal precio { get; set; }
+    private decimal subtotal { get; set; }
+    private decimal pago { get; set; }
     #endregion
 
     protected override async Task OnInitializedAsync()
@@ -292,7 +292,7 @@
         }
     }
 
-    float CalcularTotal()
+    decimal CalcularTotal()
     {
         venta.Total = 0;
         if (venta.Detalle.Count > 0)
@@ -302,11 +302,11 @@
                 venta.Total += venta.Detalle[i].SubTotal;
             }
         }
-        venta.Total = Convert.ToSingle(venta.Total);
+        venta.Total = Convert.ToDecimal(venta.Total);
         return venta.Total;
     }
 
-    float CalcularPago()
+    decimal CalcularPago()
     {
         venta.Saldo = venta.Total;
         if (venta.FormasPago.Count > 0)

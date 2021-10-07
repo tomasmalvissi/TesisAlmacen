@@ -16,10 +16,10 @@ namespace MiAlmacen.Model.Models
         public int Cantidad { get; set; }
         [Required]
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
-        public float Precio_Mayor { get; set; }
+        public decimal Precio_Mayor { get; set; }
         [Required]
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
-        public float Precio_Unit { get; set; }
+        public decimal Precio_Unit { get; set; }
         public int Compra_Id { get; set; }
 
         public ArticuloModel Articulo { get; set; }

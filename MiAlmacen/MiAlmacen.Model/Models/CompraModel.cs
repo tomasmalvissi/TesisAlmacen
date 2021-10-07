@@ -19,10 +19,10 @@ namespace MiAlmacen.Model.Models
         public int Empleado_Id { get; set; }
         [Required]
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
-        public float Total { get; set; }
+        public decimal Total { get; set; }
         [Required]
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
-        public float Saldo { get; set; }
+        public decimal Saldo { get; set; }
         public DateTime Fecha_Baja { get; set; }
 
         public ProveedorModel Proveedor { get; set; }

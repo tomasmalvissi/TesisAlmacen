@@ -16,13 +16,13 @@ namespace MiAlmacen.Model.Models
         public string FormaPago { get; set; }
         [Required]
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
-        public float Ingreso { get; set; }
+        public decimal Ingreso { get; set; }
         [Required]
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
-        public float Egreso { get; set; }
+        public decimal Egreso { get; set; }
         [Required]
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
-        public float Total { get; set; }
+        public decimal Total { get; set; }
         public int Venta_Id { get; set; }
         public int Compra_Id { get; set; }
 

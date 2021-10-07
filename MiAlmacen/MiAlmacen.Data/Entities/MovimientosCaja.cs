@@ -12,9 +12,9 @@ namespace MiAlmacen.Data.Entities
         public int Caja_Id { get; set; }
         public string Descripción { get; set; }
         public string FormaPago { get; set; }
-        public float Ingreso { get; set; }
-        public float Egreso { get; set; }
-        public float Total { get; set; }
+        public decimal Ingreso { get; set; }
+        public decimal Egreso { get; set; }
+        public decimal Total { get; set; }
         public int Venta_Id { get; set; }
         public int Compra_Id { get; set; }
 

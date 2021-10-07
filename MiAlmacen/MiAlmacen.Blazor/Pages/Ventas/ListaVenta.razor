@@ -330,7 +330,7 @@ else
     public bool deuda { get; set; }
     public bool sindeuda { get; set; }
 
-    public float saldoVenta { get; set; }
+    public decimal saldoVenta { get; set; }
 
     private FormaPagoModel fPagoSeleccionada;
     private IEnumerable<FormaPagoModel> formasPago;
@@ -427,7 +427,8 @@ else
     async Task Paginar(bool next = false)
     {
         await Filtrar();
-        int cantidadPorPagina = 10; decimal total;
+        int cantidadPorPagina = 10; 
+        decimal total;
         registros = ventas.Count();
 
         if (registros < cantidadPorPagina)

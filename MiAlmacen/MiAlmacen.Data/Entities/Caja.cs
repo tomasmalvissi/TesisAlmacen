@@ -11,8 +11,8 @@ namespace MiAlmacen.Data.Entities
         public int Id { get; set; }
         public DateTime Fecha { get; set; }
         public int Empleado_Id { get; set; }
-        public float Apertura { get; set; }
-        public float Cierre { get; set; }
+        public decimal Apertura { get; set; }
+        public decimal Cierre { get; set; }
         public Usuarios Empleado { get; set; }
     }
 }

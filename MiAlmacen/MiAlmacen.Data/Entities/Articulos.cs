@@ -11,8 +11,8 @@ namespace MiAlmacen.Data.Entities
         public int Id { get; set; }
         public string Nombre { get; set; }
         public long Codigo_Art { get; set; }
-        public float Precio_Unit { get; set; }
-        public float Precio_Mayor { get; set; }
+        public decimal Precio_Unit { get; set; }
+        public decimal Precio_Mayor { get; set; }
         public int Stock_Act { get; set; }
         public DateTime Ultima_Modif { get; set; }
         public DateTime? FechaBaja { get; set; }

@@ -88,16 +88,16 @@ namespace MiAlmacen.Data.Repositories
                     venta.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
                     venta.Cliente_Id = Convert.ToInt32(reader["Cliente_Id"].ToString());
                     venta.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
-                    venta.Total = Convert.ToSingle(reader["Total"].ToString());
-                    venta.Saldo = Convert.ToSingle(reader["Saldo"].ToString());
+                    venta.Total = Convert.ToDecimal(reader["Total"].ToString());
+                    venta.Saldo = Convert.ToDecimal(reader["Saldo"].ToString());
                     venta.Fecha_Baja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
 
                     Clientes cliente = new();
-                    ClienteRepository clienteRepository = new ClienteRepository();
+                    ClienteRepository clienteRepository = new();
                     cliente = clienteRepository.GetOne(Convert.ToInt32(reader["Cliente_Id"].ToString()));
                     venta.Cliente = cliente;
                     Usuarios usuario = new();
-                    UsuarioRepository usuarioRepository = new UsuarioRepository();
+                    UsuarioRepository usuarioRepository = new();
                     usuario = usuarioRepository.GetOne(Convert.ToInt32(reader["Empleado_Id"].ToString()));
                     venta.Empleado = usuario;
 
@@ -133,19 +133,19 @@ namespace MiAlmacen.Data.Repositories
                     venta.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
                     venta.Cliente_Id = Convert.ToInt32(reader["Cliente_Id"].ToString());
                     venta.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
-                    venta.Total = Convert.ToSingle(reader["Total"].ToString());
-                    venta.Saldo = Convert.ToSingle(reader["Saldo"].ToString());
+                    venta.Total = Convert.ToDecimal(reader["Total"].ToString());
+                    venta.Saldo = Convert.ToDecimal(reader["Saldo"].ToString());
                     venta.Fecha_Baja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
 
                     Clientes cliente = new();
-                    ClienteRepository clienteRepository  = new ClienteRepository();
+                    ClienteRepository clienteRepository  = new();
                     cliente = clienteRepository.GetOne(Convert.ToInt32(reader["Cliente_Id"].ToString()));
                     venta.Cliente = cliente;
                     Usuarios usuario = new();
-                    UsuarioRepository usuarioRepository = new UsuarioRepository();
+                    UsuarioRepository usuarioRepository = new();
                     usuario = usuarioRepository.GetOne(Convert.ToInt32(reader["Empleado_Id"].ToString()));
                     venta.Empleado = usuario;
-                    FormaPagoRepository fPagoRepository = new FormaPagoRepository();
+                    FormaPagoRepository fPagoRepository = new();
                     venta = fPagoRepository.GetAllFormasPagoXVenta(venta);
                 }
 
@@ -184,12 +184,12 @@ namespace MiAlmacen.Data.Repositories
                     detVenta.Id = Convert.ToInt32(reader["Id"].ToString());
                     detVenta.Articulo_Id = Convert.ToInt32(reader["Articulo_Id"].ToString());
                     detVenta.Cantidad = Convert.ToInt32(reader["Cantidad"].ToString());
-                    detVenta.Precio = Convert.ToSingle(reader["Precio"].ToString());
-                    detVenta.SubTotal = string.IsNullOrEmpty(reader["SubTotal"].ToString()) ? 0 : Convert.ToSingle(reader["SubTotal"].ToString());
+                    detVenta.Precio = Convert.ToDecimal(reader["Precio"].ToString());
+                    detVenta.SubTotal = string.IsNullOrEmpty(reader["SubTotal"].ToString()) ? 0 : Convert.ToDecimal(reader["SubTotal"].ToString());
                     detVenta.Venta_Id = Convert.ToInt32(reader["Venta_Id"].ToString());
 
                     Articulos articulo = new();
-                    ArticuloRepository articuloRepository = new ArticuloRepository();
+                    ArticuloRepository articuloRepository = new();
                     articulo = articuloRepository.GetOne(Convert.ToInt32(reader["Articulo_Id"].ToString()));
                     detVenta.Articulo = articulo;   
                     venta.Detalle.Add(detVenta);
@@ -311,7 +311,7 @@ namespace MiAlmacen.Data.Repositories
             }
         }
 
-        public float PutSaldo(VentaModel venta, float pago)
+        public decimal PutSaldo(VentaModel venta, decimal pago)
         {
             if (venta != null)
             {
@@ -321,7 +321,7 @@ namespace MiAlmacen.Data.Repositories
                 transaction = conexion.BeginTransaction();
                 SqlCommand sqlcmd = new(orden, conexion, transaction);
 
-                float nuevoSaldo = venta.Saldo - pago;
+                decimal nuevoSaldo = venta.Saldo - pago;
                 try
                 {
                     orden = @"UPDATE Ventas SET Saldo=@Saldo WHERE Id=@Id";
