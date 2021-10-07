@@ -123,17 +123,7 @@
 
 
 <div class="d-flex justify-content-end py-2">
-    <button @onclick="@(() => CalcularTotal())" type="button" class="btn btn-outline-dark" style="border:none">
-
-        @if (venta.Total == 0)
-        {
-            <h4><b>TOTAL $0,00</b></h4>
-        }
-        else
-        {
-            <h4><b>TOTAL $@venta.Total</b></h4>
-        }
-    </button>
+    <h4><b>TOTAL $@CalcularTotal()</b></h4>
 </div>
 
 <button type="submit" class="btn btn-block btn-success" @onclick="LevantaModal">
@@ -210,6 +200,7 @@
             </div>
 
             <div class="modal-footer">
+                <h6 class="form-group col-md-9"><b>Saldo = $@CalcularPago()</b></h6>
                 <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-outline-success" @onclick="@(() => CrearVenta())">Registrar</button>
             </div>

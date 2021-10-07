@@ -141,6 +141,36 @@ else
 
                     <hr />
 
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Código Articulo</th>
+                                <th>Articulo</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>SubTotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{int contador = 1;}
+                            @foreach (var det in ventaSeleccionada.Detalle)
+                            {
+                                <tr>
+                                    <td>@contador</td>
+                                    <td>@det.Articulo.Codigo_Art</td>
+                                    <td>@det.Articulo.Nombre</td>
+                                    <td>@det.Cantidad</td>
+                                    <td>$@det.Precio</td>
+                                    <td>$@det.SubTotal</td>
+                                </tr>
+                                contador++;
+                            }
+                        </tbody>
+                    </table>
+
+                    <hr />
+
                     @if (ventaSeleccionada.FormasPago.Count > 0)
                     {
                         <table class="table table-sm table-hover">
@@ -170,34 +200,6 @@ else
 
                     <hr />
 
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Código Articulo</th>
-                                <th>Articulo</th>
-                                <th>Cantidad</th>
-                                <th>Precio</th>
-                                <th>SubTotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{int contador = 1;}
-                            @foreach (var det in ventaSeleccionada.Detalle)
-                            {
-                                <tr>
-                                    <td>@contador</td>
-                                    <td>@det.Articulo.Codigo_Art</td>
-                                    <td>@det.Articulo.Nombre</td>
-                                    <td>@det.Cantidad</td>
-                                    <td>$@det.Precio</td>
-                                    <td>$@det.SubTotal</td>
-                                </tr>
-                                contador++;
-                            }
-                        </tbody>
-                    </table>
-                    <hr />
                     <div class="d-flex justify-content-between m-1">
                         <div>
                             <h4><b>Saldo: $@ventaSeleccionada.Saldo</b></h4>
@@ -284,6 +286,7 @@ else
                     }
                 </div>
                 <div class="modal-footer">
+                    <h6 class="form-group col-md-9"><b>Saldo = $@ventaSeleccionada.Saldo</b></h6>
                     <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-outline-success" @onclick="ModificarSaldo">Aceptar</button>
                 </div>
@@ -427,7 +430,7 @@ else
     async Task Paginar(bool next = false)
     {
         await Filtrar();
-        int cantidadPorPagina = 10; 
+        int cantidadPorPagina = 10;
         decimal total;
         registros = ventas.Count();
 
