@@ -17,10 +17,8 @@ namespace MiAlmacen.Model.Models
         [Range(0, 99999999999999, ErrorMessage = "Solo números de hasta 13 dígitos")]
         public long Codigo_Art { get; set; }
         [Required]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public float Precio_Unit { get; set; }
         [Required]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public float Precio_Mayor { get; set; }
         [Required]
         [Range(-30, 1000, ErrorMessage = "Solo números de entre -30 y 1000")]

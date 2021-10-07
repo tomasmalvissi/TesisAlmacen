@@ -43,8 +43,8 @@ CREATE TABLE Ventas
 	Fecha DATETIME NOT NULL,
 	Cliente_Id INT NOT NULL,
 	Empleado_Id INT NOT NULL,
-	Total FLOAT NOT NULL,
-	Saldo FLOAT,
+	Total FLOAT(16,2) NOT NULL,
+	Saldo FLOAT(16,2),
 	FechaBaja DATETIME,
 	FOREIGN KEY (Cliente_Id) REFERENCES Clientes(Id),
 	FOREIGN KEY (Empleado_Id) REFERENCES Usuarios(Id)
@@ -57,8 +57,8 @@ CREATE TABLE Articulos
 	Id INT PRIMARY KEY IDENTITY,
 	Nombre VARCHAR(100) NOT NULL,
 	Codigo_Art BIGINT NOT NULL,
-	Precio_Unit FLOAT NOT NULL,
-	Precio_Mayor FLOAT NOT NULL,
+	Precio_Unit FLOAT(16,2) NOT NULL,
+	Precio_Mayor FLOAT(16,2) NOT NULL,
 	Stock_Act INT NOT NULL,
 	Ultima_Modif DATETIME NOT NULL,
 	FechaBaja DATETIME 
@@ -72,7 +72,7 @@ CREATE TABLE DetalleVentas
 	Precio INT NOT NULL,
 	Cantidad INT NOT NULL,
 	Venta_Id INT NOT NULL,
-	SubTotal FLOAT,
+	SubTotal FLOAT(16,2),
 	FOREIGN KEY (Venta_Id) REFERENCES Ventas(Id),
 	FOREIGN KEY (Articulo_Id) REFERENCES Articulos(Id)
 )
@@ -85,7 +85,7 @@ CREATE TABLE Compras
 	Proveedor_Id INT NOT NULL,
 	NroRecibo BIGINT NOT NULL,
 	Empleado_Id INT NOT NULL,
-	Total FLOAT NOT NULL,
+	Total FLOAT(16,2) NOT NULL,
 	FechaBaja DATETIME,
 	FOREIGN KEY (Proveedor_Id) REFERENCES Proveedores(Id),
 	FOREIGN KEY (Empleado_Id) REFERENCES Usuarios(Id)
@@ -97,9 +97,9 @@ CREATE TABLE DetalleCompras
 	Id INT PRIMARY KEY IDENTITY,
 	Articulo_Id INT NOT NULL,
 	Cantidad INT NOT NULL,
-	Precio_Mayor FLOAT NOT NULL,
-	Precio_Unit FLOAT NOT NULL,
-	SubTotal FLOAT,
+	Precio_Mayor FLOAT(16,2) NOT NULL,
+	Precio_Unit FLOAT(16,2) NOT NULL,
+	SubTotal FLOAT(16,2),
 	Compra_Id INT NOT NULL,
 	FOREIGN KEY (Compra_Id) REFERENCES Compras(Id),
 	FOREIGN KEY (Articulo_Id) REFERENCES Articulos(Id)
@@ -111,8 +111,8 @@ CREATE TABLE Caja
 	Id INT PRIMARY KEY IDENTITY,
 	Fecha DATETIME NOT NULL,
 	Empleado_Id INT NOT NULL,
-	Apertura FLOAT NOT NULL,
-	Cierre FLOAT NOT NULL,
+	Apertura FLOAT(16,2) NOT NULL,
+	Cierre FLOAT(16,2) NOT NULL,
 	FechaBaja DATETIME,
 	FOREIGN KEY (Empleado_Id) REFERENCES Usuarios(Id)
 )
@@ -123,9 +123,9 @@ CREATE TABLE MovimientosCaja
 	Id INT PRIMARY KEY IDENTITY,
 	Caja_Id INT NOT NULL,
 	Descripcion VARCHAR(100) NULL,
-	Ingreso FLOAT NOT NULL,
-	Egreso FLOAT NOT NULL,
-	Total FLOAT NOT NULL,
+	Ingreso FLOAT(16,2) NOT NULL,
+	Egreso FLOAT(16,2) NOT NULL,
+	Total FLOAT(16,2) NOT NULL,
 	FechaBaja DATETIME NULL,
 	Venta_Id INT NULL, 
 	Compra_Id INT NULL,
@@ -148,7 +148,7 @@ CREATE TABLE FormasPagoVentas
 	Id INT PRIMARY KEY IDENTITY,
 	Venta_Id INT NOT NULL, 
 	FormaPago_Id INT NOT NULL,
-	Importe FLOAT NOT NULL,
+	Importe FLOAT(16,2) NOT NULL,
 	Fecha DATETIME NOT NULL
 )
 GO

@@ -302,8 +302,7 @@
                 venta.Total += venta.Detalle[i].SubTotal;
             }
         }
-        double total = venta.Total;
-        venta.Total = (float)(Math.Truncate((double)total * 100.0) / 100.0);
+        venta.Total = Convert.ToSingle(venta.Total);
         return venta.Total;
     }
 
@@ -317,8 +316,6 @@
                 venta.Saldo -= venta.FormasPago[i].Importe;
             }
         }
-        double saldo = venta.Saldo;
-        venta.Saldo = (float)(Math.Truncate((double)saldo * 100.0) / 100.0);
         return venta.Saldo;
     }
 

@@ -63,10 +63,7 @@ namespace MiAlmacen.Data.Repositories
                 detventa.SubTotal = item.SubTotal;
                 venta.Detalle.Add(detventa);
             }
-            double saldo = venta.Saldo;
-            double total = venta.Total;
-            venta.Saldo = (float)(Math.Truncate((double)saldo * 100.0) / 100.0);
-            venta.Total = (float)(Math.Truncate((double)total * 100.0) / 100.0);
+
             return venta;
         }
 

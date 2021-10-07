@@ -29,7 +29,7 @@
         <label class="col-3 col-form-label">Precio Por Unidad</label>
         <div class="col">
             <div class="input-group">
-                <InputNumber @bind-Value="@articulo.Precio_Unit" class="form-control" placeholder="Precio unidad" />
+                <input @bind="@articulo.Precio_Unit" step="0.01" class="form-control" placeholder="Precio unidad" />
             </div>
             <ValidationMessage For="@(() => articulo.Precio_Unit)" />
         </div>
@@ -39,7 +39,7 @@
         <label class="col-3 col-form-label">Precio Mayorista</label>
         <div class="col">
             <div class="input-group">
-                <InputNumber @bind-Value="@articulo.Precio_Mayor" class="form-control" placeholder="Precio mayor" />
+                <input @bind="@articulo.Precio_Mayor" step="0.01" class="form-control" placeholder="Precio mayor" />
             </div>
             <ValidationMessage For="@(() => articulo.Precio_Mayor)" />
         </div>
