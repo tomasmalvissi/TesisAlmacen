@@ -10,18 +10,18 @@ namespace MiAlmacen.Model.Models
     public class ArticuloModel
     {
         public int Id { get; set; }
-        [Required]
-        [StringLength(100, MinimumLength = 1, ErrorMessage = "Máximo 100 caracteres")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "El campo debe tener 3 carácteres como mínimo.")]
         public string Nombre { get; set; }
-        [Required]
-        [Range(0, 99999999999999, ErrorMessage = "Solo números de hasta 13 dígitos")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
+        [RegularExpression(@"^(?!00000)[0-9]{3,13}$", ErrorMessage = "El campo debe tener 3 carácteres como mínimo y 13 como máximo.")]
         public long Codigo_Art { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo obligatorio.")]
         public decimal Precio_Unit { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo obligatorio.")]
         public decimal Precio_Mayor { get; set; }
-        [Required]
-        [Range(-30, 1000, ErrorMessage = "Solo números de entre -30 y 1000")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
+        [Range(-30, 1000, ErrorMessage = "Solo números de entre -30 y 1000.")]
         public int Stock_Act { get; set; }
         public DateTime Ultima_Modif { get; set; }
         public DateTime? FechaBaja { get; set; }

@@ -10,16 +10,17 @@ namespace MiAlmacen.Model.Models
     public class ProveedorModel
     {
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo obligatorio")]
+        [MaxLength(100, ErrorMessage = "Máximo 100 carácteres"), MinLength(3, ErrorMessage = "Minimo 3 carácteres.")]
         public string Nombre { get; set; }
-        [Required]
-        [Range(1, 99999999999, ErrorMessage = "Máximo 11 caracteres")]
+        [Required(ErrorMessage = "Campo obligatorio")]
+        [RegularExpression(@"^(\d{11})$", ErrorMessage = "Ingrese sólo los 11 números del CUIL/CUIT.")]
         public long CUIL { get; set; }
-        [Required]
-        [StringLength(100, MinimumLength = 1, ErrorMessage = "Máximo 100 dígitos")]
+        [Required(ErrorMessage = "Campo obligatorio")]
+        [MaxLength(100, ErrorMessage = "Máximo 100 carácteres"), MinLength(3, ErrorMessage = "Minimo 3 carácteres.")]
         public string Direccion { get; set; }
-        [Required]
-        [Range(1, 9999999999, ErrorMessage = "Máximo 11 dígitos")]
+        [Required(ErrorMessage = "Campo obligatorio")]
+        [Range(1, 9999999999, ErrorMessage = "Ingrese un teléfono válido.")]
         public long Telefono { get; set; }
         public DateTime? FechaBaja { get; set; }
     }

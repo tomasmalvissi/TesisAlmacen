@@ -11,14 +11,14 @@ namespace MiAlmacen.Model.Models
     {
         public int Id { get; set; }
         public int Articulo_Id { get; set; }
-        [Required]
-        [Range(0, 1000, ErrorMessage = "Solo números")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
+        [Range(0, 1000, ErrorMessage = "El campo admite cantidades menores a 1000.")]
         public int Cantidad { get; set; }
-        [Required]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números.")]
         public decimal Precio_Mayor { get; set; }
-        [Required]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números.")]
         public decimal Precio_Unit { get; set; }
         public int Compra_Id { get; set; }
 

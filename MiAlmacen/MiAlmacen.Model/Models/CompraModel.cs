@@ -10,18 +10,18 @@ namespace MiAlmacen.Model.Models
     public class CompraModel
     {
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo obligatorio.")]
         public DateTime Fecha { get; set; }
         public int Proveedor_Id { get; set; }
-        [Required]
-        [RegularExpression("^[0-9]+$", ErrorMessage = "Solo números")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
+        [RegularExpression(@"^(?!00000)[0-9]{3,13}$", ErrorMessage = "El campo debe tener 3 carácteres como mínimo y 13 como máximo.")]
         public long NroRecibo { get; set; }
         public int Empleado_Id { get; set; }
-        [Required]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números.")]
         public decimal Total { get; set; }
-        [Required]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
+        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números.")]
         public decimal Saldo { get; set; }
         public DateTime Fecha_Baja { get; set; }
 

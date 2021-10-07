@@ -3,6 +3,7 @@
 @inject IJSRuntime JS
 
 <EditForm Model="@caja" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
     <div class="form-field mt-2 mb-2">
         <div class="form-group row">
             <label class="col-3 col-form-label">Fecha</label>

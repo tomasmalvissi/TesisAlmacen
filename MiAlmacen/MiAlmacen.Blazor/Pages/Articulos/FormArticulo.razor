@@ -3,6 +3,7 @@
 @inject IJSRuntime JS
 
 <EditForm Model="@articulo" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
     <div class="form-field mt-2 mb-2">
         <div class="form-group row">
             <label class="col-3 col-form-label">Nombre</label>
@@ -74,12 +75,10 @@
             </div>
         </div>
     }
-
     <button type="submit" class="btn btn-block btn-success">
         <i class="oi oi-check "></i>
         <text style="color:white"> @TextBotonSubmit</text>
     </button>
-
 </EditForm>
 
 @code {

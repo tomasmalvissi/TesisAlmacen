@@ -11,9 +11,9 @@ namespace MiAlmacen.Model.Models
     {
         public int Id { get; set; }
         public int Articulo_Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo obligatorio.")]
         public decimal Precio { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo obligatorio.")]
         [Range(0, 1000, ErrorMessage = "Solo números")]
         public int Cantidad { get; set; }
 

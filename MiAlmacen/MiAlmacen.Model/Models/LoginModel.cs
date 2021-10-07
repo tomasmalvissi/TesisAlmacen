@@ -9,11 +9,9 @@ namespace MiAlmacen.Model.Models
 {
     public class LoginModel
     {
-        [Required]
-        [StringLength(20, MinimumLength = 1, ErrorMessage = "Máximo 20 dígitos")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
         public string Usuario { get; set; }
-        [Required]
-        [StringLength(20, MinimumLength = 1, ErrorMessage = "Máximo 20 dígitos")]
+        [Required(ErrorMessage = "Campo obligatorio.")]
         public string Contraseña { get; set; }
     }
 }
