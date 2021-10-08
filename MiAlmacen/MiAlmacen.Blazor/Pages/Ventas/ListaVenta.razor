@@ -272,7 +272,7 @@ else
                                         <td>$@item.Importe</td>
                                         @if (item.Id == 0)
                                         {
-                                            <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => ventaSeleccionada.FormasPago.Remove(item)"><i class="oi oi-trash"></i></button></td>
+                                            <td><button type="button" class="btn btn-danger btn-sm" @onclick="@(() => QuitaFormasPago(item))"><i class="oi oi-trash"></i></button></td>
                                         }
                                         else
                                         {
@@ -520,6 +520,13 @@ else
             fpago.Fecha = DateTime.Now;
             fpago.Venta_Id = ventaSeleccionada.Id;
             ventaSeleccionada.FormasPago.Add(fpago);
+            ventaSeleccionada.Saldo -= fpago.Importe;
         }
+    }
+
+    void QuitaFormasPago(FormaPagoVentaModel formaPagoVenta)
+    {
+        ventaSeleccionada.FormasPago.Remove(formaPagoVenta);
+        ventaSeleccionada.Saldo += formaPagoVenta.Importe;
     }
 }
