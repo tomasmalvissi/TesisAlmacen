@@ -155,11 +155,28 @@ CREATE TABLE FormasPagoVentas
 )
 GO
 
+CREATE TABLE FormasPagoCompras
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Compra_Id INT NOT NULL, 
+	FormaPago_Id INT NOT NULL,
+	Importe DECIMAL(16,2) NOT NULL,
+	Fecha DATETIME NOT NULL
+	FOREIGN KEY (FormaPago_Id) REFERENCES FormasPago(Id),
+	FOREIGN KEY (Compra_Id) REFERENCES Compras(Id)
+)
+GO
+
+
 INSERT INTO FormasPago VALUES('Efectivo')
 GO
 INSERT INTO FormasPago VALUES('Tarjeta Debito')
 GO
 INSERT INTO FormasPago VALUES('Tarjeta Credito')
+GO
+INSERT INTO FormasPago VALUES('Transferencia Bancaria')
+GO
+INSERT INTO FormasPago VALUES('Cheque')
 GO
 
 INSERT INTO Clientes VALUES ('CLIENTE', 11111111, 'DIRECCION 123', '1234567890', NULL)

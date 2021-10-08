@@ -1,0 +1,36 @@
+﻿@page "/compras/crear"
+@inject NavigationManager NavigationManager
+@inject CompraService CompraService
+@inject UsuarioService UsuarioService 
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h3><b>Nueva compra</b></h3>
+    </div>
+    <div>
+        <button @onclick="@Volver" class="btn btn-sm btn-secondary">
+            <i class="oi oi-arrow-circle-left"></i> Volver al listado
+        </button>
+    </div>
+</div>
+
+<FormCompra></FormCompra>
+
+@code {
+    public CompraModel venta = new CompraModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private void Volver()
+    {
+        NavigationManager.NavigateTo("/compras");
+    }
+}

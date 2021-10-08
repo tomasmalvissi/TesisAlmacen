@@ -39,6 +39,7 @@ namespace MiAlmacen.API
             services.AddTransient<ArticuloRepository>();
             services.AddTransient<ProveedorRepository>();
             services.AddTransient<VentaRepository>();
+            services.AddTransient<CompraRepository>();
             services.AddTransient<CajaRepository>();
             services.AddTransient<FormaPagoRepository>();
             services.AddCors(options =>

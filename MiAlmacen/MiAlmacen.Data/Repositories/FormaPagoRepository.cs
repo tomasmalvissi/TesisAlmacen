@@ -121,5 +121,51 @@ namespace MiAlmacen.Data.Repositories
             }
             return venta;
         }
+
+        public Compras GetAllFormasPagoXCompra(Compras compra)
+        {
+            orden = @"SELECT * FROM FormasPagoCompras WHERE Compra_Id = @Compra_Id";
+
+            List<FormaPagoCompra> formaPagos = new();
+
+            SqlCommand sqlcmd = new(orden, conexion);
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                sqlcmd.Parameters.AddWithValue("@Compra_Id", compra.Id);
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    FormaPagoCompra fpago = new();
+                    fpago.Id = Convert.ToInt32(reader["Id"].ToString());
+                    fpago.Compra_Id = Convert.ToInt32(reader["Compra_Id"].ToString());
+                    fpago.FormaPago_Id = Convert.ToInt32(reader["FormaPago_Id"].ToString());
+                    fpago.Importe = Convert.ToDecimal(reader["Importe"].ToString());
+                    fpago.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
+                    formaPagos.Add(fpago);
+                }
+
+                CerrarConex();
+
+                compra.FormasPago = formaPagos;
+
+                foreach (var item in compra.FormasPago)
+                {
+                    item.FormaPago = GetOne(item.FormaPago_Id);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return compra;
+        }
     }
 }

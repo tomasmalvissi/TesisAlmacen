@@ -15,14 +15,13 @@ namespace MiAlmacen.Model.Models
         [Range(0, 1000, ErrorMessage = "El campo admite cantidades menores a 1000.")]
         public int Cantidad { get; set; }
         [Required(ErrorMessage = "Campo obligatorio.")]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números.")]
         public decimal Precio_Mayor { get; set; }
         [Required(ErrorMessage = "Campo obligatorio.")]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números.")]
         public decimal Precio_Unit { get; set; }
+        public decimal SubTotal { get; set; }
         public int Compra_Id { get; set; }
 
-        public ArticuloModel Articulo { get; set; }
+        public ArticuloModel Articulo { get; set; } = new();
         public CompraModel Compra { get; set; }
     }
 }

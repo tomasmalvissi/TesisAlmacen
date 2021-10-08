@@ -25,6 +25,7 @@ namespace MiAlmacen.Blazor
                             .AddScoped<ProveedorService>()
                             .AddScoped<UsuarioService>()
                             .AddScoped<VentaService>()
+                            .AddScoped<CompraService>()
                             .AddScoped<CajaService>()
                             .AddScoped<FormasPagoService>();
 

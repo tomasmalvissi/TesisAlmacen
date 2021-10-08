@@ -51,6 +51,7 @@ namespace MiAlmacen.Data.Repositories
                 DetalleVentas detventa = new();
                 detventa.Venta_Id = item.Venta_Id;
                 detventa.Articulo_Id = item.Articulo_Id;
+                detventa.Articulo.Id = item.Articulo.Id;
                 detventa.Articulo.Codigo_Art = item.Articulo.Codigo_Art;
                 detventa.Articulo.FechaBaja = item.Articulo.FechaBaja;
                 detventa.Articulo.Nombre = item.Articulo.Nombre;

@@ -13,9 +13,10 @@ namespace MiAlmacen.Data.Entities
         public int Cantidad { get; set; }
         public decimal Precio_Mayor { get; set; }
         public decimal Precio_Unit { get; set; }
+        public decimal SubTotal { get; set; }
         public int Compra_Id { get; set; }
 
-        public Articulos Articulo { get; set; }
+        public Articulos Articulo { get; set; } = new();
         public Compras Compra { get; set; }
     }
 }

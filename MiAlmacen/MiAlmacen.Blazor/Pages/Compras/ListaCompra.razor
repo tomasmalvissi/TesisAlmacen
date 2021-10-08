@@ -1,17 +1,17 @@
-﻿@page "/ventas"
-@inject VentaService VentaService
+﻿@page "/compras"
+@inject CompraService CompraService
 @inject NavigationManager NavigationManager
 @inject UsuarioService UsuarioService
 @inject FormasPagoService FormasPagoService
 @inject IJSRuntime JS
 
-<h3>Ventas</h3>
+<h3>Compras</h3>
 <div class="d-flex justify-content-between mb-1" id="header">
     <button class="btn btn-sm btn-secondary" @onclick="LevantaCollapse" type="button" data-toggle="collapse" data-target="#collapseFiltros" role="button" aria-expanded="false" aria-controls="collapseFiltros">
         <i class="oi oi-eye"></i> Mostrar filtros
     </button>
     <div>
-        <a href="ventas/crear" class="btn btn-sm btn-primary">
+        <a href="compras/crear" class="btn btn-sm btn-primary">
             <i class="oi oi-plus"></i> Nueva
         </a>
     </div>
@@ -20,7 +20,7 @@
 <div class="collapse" id="collapseFiltros">
     <div class="card card-body">
         <div class="input-group d-flex justify-content-between mb-1" id="filtros">
-            <input class="form-control form-control-sm" type="text" placeholder="Buscar por cliente" @oninput="FiltroCliente" />
+            <input class="form-control form-control-sm" type="text" placeholder="Buscar por proveedor" @oninput="FiltroProveedor" />
             <input class="form-control form-control-sm" type="text" placeholder="Buscar por empleado" @oninput="FiltroEmpleado" />
         </div>
         <div class="input-group d-flex justify-content-between mb-1" id="filtros2">
@@ -31,14 +31,11 @@
             <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, false, false, false))"> Todos</button>
             <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(true, false, false, false))"> Solo activos</button>
             <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, true, false, false))"> Solo inactivos</button>
-            <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, false, false, true))"> Con deuda</button>
-            <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(true, false, false, true))"> Activos con deuda</button>
-            <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, true, false, true))"> Inactivos con deuda</button>
         </div>
     </div>
 </div>
 
-@if (ventas == null)
+@if (compras == null)
 {
     <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
         <div class="spinner-grow text-primary" role="status">
@@ -46,11 +43,11 @@
         </div>
     </div>
 }
-else if (ventas.Count() == 0)
+else if (compras.Count() == 0)
 {
     <div>
         <div class="alert alert-info alert-dismissible fade show" role="alert">
-            <b> No hay ventas registradas.</b> Cargue una haciendo click en el botón "Nueva".
+            <b> No hay compras registradas.</b> Cargue una haciendo click en el botón "Nueva".
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -63,25 +60,25 @@ else
         <thead>
             <tr>
                 <th>#</th>
+                <th>Nro. Recibo</th>
                 <th>Fecha</th>
-                <th>Cliente</th>
+                <th>Proveedor</th>
                 <th>Empleado</th>
                 <th>Total</th>
-                <th>Saldo</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in ventas)
+            @foreach (var item in compras)
             {
                 <tr>
                     <td>@item.Id</td>
+                    <td>@item.NroRecibo</td>
                     <td>@item.Fecha</td>
-                    <td>@item.Cliente.Nombre</td>
+                    <td>@item.Proveedor.Nombre</td>
                     <td>@item.Empleado.Nombre</td>
                     <td>$@item.Total</td>
-                    <td>$@item.Saldo</td>
                     <td>
                         @if (item.Fecha_Baja == null)
                         {
@@ -101,9 +98,6 @@ else
                             <button @onclick="@(() => Borrar(item.Id))" class="btn btn-sm btn-outline-danger m-1" data-toggle="tooltip" data-placement="bottom" title="Anular">
                                 <i class="oi oi-arrow-thick-bottom"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary m-1" @onclick="@(() => LevantaModalSaldo(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Modificar saldo">
-                                <i class="oi oi-pencil"></i>
-                            </button>
                         }
                     </td>
                 </tr>
@@ -113,24 +107,24 @@ else
 }
 
 <!-- Modal Detalle -->
-@if (ventaSeleccionada != null)
+@if (compraSeleccionada != null)
 {
     <div class="modal fade" id="modalDetalle" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><b>Venta #@ventaSeleccionada.Id</b></h5>
+                    <h5 class="modal-title"><b>Compra #@compraSeleccionada.Id</b></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex justify-content-between">
-                        <h5 style="color:midnightblue"><b>Fecha: @ventaSeleccionada.Fecha</b></h5>
-                        <h5 style="color:midnightblue"><b>Cliente: @ventaSeleccionada.Cliente.Nombre</b></h5>
+                        <h5 style="color:midnightblue"><b>Fecha: @compraSeleccionada.Fecha</b></h5>
+                        <h5 style="color:midnightblue"><b>Proveedor: @compraSeleccionada.Proveedor.Nombre</b></h5>
                         <div class="d-flex justify-content-between">
 
-                            @if (ventaSeleccionada.Fecha_Baja == null)
+                            @if (compraSeleccionada.Fecha_Baja == null)
                             {
                                 <h5 style="color:midnightblue"><b>Estado: <i class="oi oi-check" style="color:green"></i></b></h5>
                             }
@@ -150,20 +144,22 @@ else
                                 <th>Código Articulo</th>
                                 <th>Articulo</th>
                                 <th>Cantidad</th>
-                                <th>Precio</th>
+                                <th>Precio Mayorista</th>
+                                <th>Precio Unitario</th>
                                 <th>SubTotal</th>
                             </tr>
                         </thead>
                         <tbody>
                             @{int contador = 1;}
-                            @foreach (var det in ventaSeleccionada.Detalle)
+                            @foreach (var det in compraSeleccionada.Detalle)
                             {
                                 <tr>
                                     <td>@contador</td>
                                     <td>@det.Articulo.Codigo_Art</td>
                                     <td>@det.Articulo.Nombre</td>
                                     <td>@det.Cantidad</td>
-                                    <td>$@det.Precio</td>
+                                    <td>$@det.Precio_Mayor</td>
+                                    <td>$@det.Precio_Unit</td>
                                     <td>$@det.SubTotal</td>
                                 </tr>
                                 contador++;
@@ -173,7 +169,7 @@ else
 
                     <hr />
 
-                    @if (ventaSeleccionada.FormasPago.Count > 0)
+                    @if (compraSeleccionada.FormasPago.Count > 0)
                     {
                         <table class="table table-sm table-hover">
                             <thead>
@@ -186,7 +182,7 @@ else
                             </thead>
                             <tbody>
                                 @{int contadorFp = 1;}
-                                @foreach (var item in ventaSeleccionada.FormasPago)
+                                @foreach (var item in compraSeleccionada.FormasPago)
                                 {
                                     <tr>
                                         <td>@contadorFp</td>
@@ -202,95 +198,11 @@ else
 
                     <hr />
 
-                    <div class="d-flex justify-content-between m-1">
+                    <div class="d-flex justify-content-end m-1">
                         <div>
-                            <h4><b>Saldo: $@ventaSeleccionada.Saldo</b></h4>
-                        </div>
-                        <div>
-                            <h4><b>TOTAL: $@ventaSeleccionada.Total</b></h4>
+                            <h4><b>TOTAL: $@compraSeleccionada.Total</b></h4>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
-@if (ventaSeleccionada != null)
-{
-    <!-- Modal Saldo y Forma Pago -->
-    <div class="modal fade" id="modalSaldo" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6 class="modal-title">Ingrese pago </h6>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label>Ingrese el pago en $(pesos)</label>
-                            <input class="form-control" @bind="saldoVenta" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
-                        </div>
-
-                        <div id="buscador-fpago" class="form-group col-md-5">
-                            <label>Forma de pago</label>
-                            <BlazoredTypeahead SearchMethod="BuscarFormasPago" @bind-Value="fPagoSeleccionada" placeholder="Seleccione forma de pago" class="form-control">
-                                <SelectedTemplate>@context.Descripcion</SelectedTemplate>
-                                <ResultTemplate>@context.Descripcion</ResultTemplate>
-                            </BlazoredTypeahead>
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label><b>Total = $@ventaSeleccionada.Total</b></label>
-                            <div>
-                                <button class="btn btn-primary" @onclick="AsignarFormasPago"><i class="oi oi-plus"></i> Agregar</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if (ventaSeleccionada.FormasPago.Count > 0)
-                    {
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Fecha</th>
-                                    <th>Forma de Pago</th>
-                                    <th>Importe</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @{int contadorFp = 1;}
-                                @foreach (var item in ventaSeleccionada.FormasPago)
-                                {
-                                    <tr>
-                                        <td>@contadorFp</td>
-                                        <td>@item.Fecha</td>
-                                        <td>@item.FormaPago.Descripcion</td>
-                                        <td>$@item.Importe</td>
-                                        @if (item.Id == 0)
-                                        {
-                                            <td><button type="button" class="btn btn-danger btn-sm" @onclick="@(() => QuitaFormasPago(item))"><i class="oi oi-trash"></i></button></td>
-                                        }
-                                        else
-                                        {
-                                            <td><i class="oi oi-check" style="color:green"></i></td>
-                                        }
-                                    </tr>
-                                    contadorFp++;
-                                }
-                            </tbody>
-                        </table>
-                    }
-                </div>
-                <div class="modal-footer">
-                    <h6 class="form-group col-md-9"><b>Saldo = $@ventaSeleccionada.Saldo</b></h6>
-                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-outline-success" @onclick="ModificarSaldo">Aceptar</button>
                 </div>
             </div>
         </div>
@@ -312,11 +224,11 @@ else
 
 
 @code {
-    public IEnumerable<VentaModel> ventas { get; set; }
+    public IEnumerable<CompraModel> compras { get; set; }
 
-    public IEnumerable<VentaModel> ventasTemp { get; set; }
+    public IEnumerable<CompraModel> comprasTemp { get; set; }
 
-    public VentaModel ventaSeleccionada { get; set; }
+    public CompraModel compraSeleccionada { get; set; }
 
     public int pagina { get; set; } = 1;
 
@@ -324,7 +236,7 @@ else
 
     public string empleadoFiltro { get; set; } = string.Empty;
 
-    public string clienteFiltro { get; set; } = string.Empty;
+    public string proveedorFiltro { get; set; } = string.Empty;
 
     public DateTime FechaDesde { get; set; }
 
@@ -335,7 +247,7 @@ else
     public bool deuda { get; set; }
     public bool sindeuda { get; set; }
 
-    public decimal saldoVenta { get; set; }
+    public decimal saldoCompra { get; set; }
 
     private FormaPagoModel fPagoSeleccionada;
     private IEnumerable<FormaPagoModel> formasPago;
@@ -359,27 +271,20 @@ else
         else
         {
             formasPago = await FormasPagoService.GetAll();
-            await GetVentas();
+            await GetCompras();
             await Paginar();
         }
     }
 
-    private async Task GetVentas()
+    private async Task GetCompras()
     {
-        ventas = await VentaService.GetAll();
-        ventasTemp = ventas;
-    }
-
-    private async Task LevantaModalSaldo(int id)
-    {
-        ventaSeleccionada = await VentaService.GetUn(id);
-        saldoVenta = ventaSeleccionada.Saldo;
-        await JS.InvokeVoidAsync("levantaModal", "#modalSaldo");
+        compras = await CompraService.GetAll();
+        comprasTemp = compras;
     }
 
     private async Task LevantaModalDetalle(int id)
     {
-        ventaSeleccionada = await VentaService.GetUn(id);
+        compraSeleccionada = await CompraService.GetUn(id);
         await JS.InvokeVoidAsync("levantaModal", "#modalDetalle");
     }
 
@@ -388,44 +293,26 @@ else
         await JS.InvokeVoidAsync("levantaCollapse", "#collapseFiltros");
     }
 
-    private async Task ModificarSaldo()
-    {
-        var respuesta = await VentaService.EditarSaldo(ventaSeleccionada, saldoVenta);
-
-        if (respuesta.IsSuccessStatusCode)
-        {
-            var content = await respuesta.Content.ReadAsStringAsync();
-            var objDeserealizado = JsonConvert.DeserializeObject<float>(content);
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Saldo venta actualizado! Nuevo saldo: ${objDeserealizado}", "success");
-            await JS.InvokeVoidAsync("ocultaModal", "#modalSaldo");
-            await GetVentas();
-            await Filtrar();
-            await Paginar();
-        }
-        else
-            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo actualizar venta", "error");
-    }
-
     private async Task Borrar(int id)
     {
-        var venta = await VentaService.GetUn(id);
+        var compra = await CompraService.GetUn(id);
 
         var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
-            $"¿Seguro desea anular la venta seleccionada?", "warning");
+            $"¿Seguro desea anular la compra seleccionada?", "warning");
         if (confirmacion)
         {
-            var respuesta = await VentaService.Eliminar(id);
+            var respuesta = await CompraService.Eliminar(id);
 
             if (respuesta.IsSuccessStatusCode)
             {
                 var content = await respuesta.Content.ReadAsStringAsync();
                 var objDeserealizado = JsonConvert.DeserializeObject<int>(content);
-                await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Venta #{objDeserealizado} anulada correctamente", "success");
-                await GetVentas();
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Compra #{objDeserealizado} anulada correctamente", "success");
+                await GetCompras();
                 await Paginar();
             }
             else
-                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo anular venta", "error");
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo anular compra", "error");
         }
     }
 
@@ -434,7 +321,7 @@ else
         await Filtrar();
         int cantidadPorPagina = 10;
         decimal total;
-        registros = ventas.Count();
+        registros = compras.Count();
 
         if (registros < cantidadPorPagina)
             total = pagina;
@@ -450,24 +337,22 @@ else
 
         if (next && pagina < total) pagina++;
 
-        ventas = await Task.FromResult(ventas.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina));
+        compras = await Task.FromResult(compras.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina));
     }
 
     async Task Filtrar()
     {
-        ventas = ventasTemp;
+        compras = comprasTemp;
 
         if (activos)
-            ventas = await Task.FromResult(ventas.Where(x => x.Fecha_Baja == null));
-        if (deuda)
-            ventas = await Task.FromResult(ventas.Where(x => x.Saldo > 0));
-        if (!string.IsNullOrEmpty(clienteFiltro))
-            ventas = await Task.FromResult(ventas.Where(x => x.Cliente.Nombre.ToUpper().Contains(clienteFiltro.ToUpper())));
+            compras = await Task.FromResult(compras.Where(x => x.Fecha_Baja == null));
+        if (!string.IsNullOrEmpty(proveedorFiltro))
+            compras = await Task.FromResult(compras.Where(x => x.Proveedor.Nombre.ToUpper().Contains(proveedorFiltro.ToUpper())));
         if (!string.IsNullOrEmpty(empleadoFiltro))
-            ventas = await Task.FromResult(ventas.Where(x => x.Empleado.Nombre.ToUpper().Contains(empleadoFiltro.ToUpper())));
+            compras = await Task.FromResult(compras.Where(x => x.Empleado.Nombre.ToUpper().Contains(empleadoFiltro.ToUpper())));
 
-        ventas = await Task.FromResult(ventas.Where(x => x.Fecha > FechaDesde));
-        ventas = await Task.FromResult(ventas.Where(x => x.Fecha < FechaHasta));
+        compras = await Task.FromResult(compras.Where(x => x.Fecha > FechaDesde));
+        compras = await Task.FromResult(compras.Where(x => x.Fecha < FechaHasta));
     }
 
     async Task FiltroEmpleado(ChangeEventArgs e)
@@ -477,17 +362,16 @@ else
         await Paginar();
     }
 
-    async Task FiltroCliente(ChangeEventArgs e)
+    async Task FiltroProveedor(ChangeEventArgs e)
     {
-        clienteFiltro = e.Value.ToString();
+        proveedorFiltro = e.Value.ToString();
         await Filtrar();
         await Paginar();
     }
 
     async Task Filtros(bool activosB, bool inactivosB, bool sinDeudaB, bool deudaB)
     {
-        activos = activosB; deuda = deudaB;
-        inactivos = inactivosB; sindeuda = sinDeudaB;
+        activos = activosB; inactivos = inactivosB; 
         await Filtrar();
         await Paginar();
     }
@@ -515,20 +399,18 @@ else
     {
         if (fPagoSeleccionada != null)
         {
-            FormaPagoVentaModel fpago = new();
+            FormaPagoCompraModel fpago = new();
             fpago.FormaPago = fPagoSeleccionada;
             fpago.FormaPago_Id = fPagoSeleccionada.Id;
-            fpago.Importe = saldoVenta;
+            fpago.Importe = saldoCompra;
             fpago.Fecha = DateTime.Now;
-            fpago.Venta_Id = ventaSeleccionada.Id;
-            ventaSeleccionada.FormasPago.Add(fpago);
-            ventaSeleccionada.Saldo -= fpago.Importe;
+            fpago.Compra_Id = compraSeleccionada.Id;
+            compraSeleccionada.FormasPago.Add(fpago);
         }
     }
 
-    void QuitaFormasPago(FormaPagoVentaModel formaPagoVenta)
+    void QuitaFormasPago(FormaPagoCompraModel formaPagoCompra)
     {
-        ventaSeleccionada.FormasPago.Remove(formaPagoVenta);
-        ventaSeleccionada.Saldo += formaPagoVenta.Importe;
+        compraSeleccionada.FormasPago.Remove(formaPagoCompra);
     }
 }

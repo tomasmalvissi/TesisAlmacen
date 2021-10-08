@@ -18,14 +18,12 @@ namespace MiAlmacen.Model.Models
         public long NroRecibo { get; set; }
         public int Empleado_Id { get; set; }
         [Required(ErrorMessage = "Campo obligatorio.")]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números.")]
         public decimal Total { get; set; }
-        [Required(ErrorMessage = "Campo obligatorio.")]
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números.")]
-        public decimal Saldo { get; set; }
-        public DateTime Fecha_Baja { get; set; }
+        public DateTime? Fecha_Baja { get; set; }
 
         public ProveedorModel Proveedor { get; set; }
-        public UsuarioModel Empleado { get; set; }
+        public UsuarioModel Empleado { get; set; } 
+        public List<DetalleCompraModel> Detalle { get; set; } = new();
+        public List<FormaPagoCompraModel> FormasPago { get; set; } = new();
     }
 }

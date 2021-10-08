@@ -1,7 +1,7 @@
 ﻿@inject NavigationManager NavigationManager
-@inject VentaService VentaService
+@inject CompraService CompraService
 @inject ArticuloService ArticuloService
-@inject ClienteService ClienteService
+@inject ProveedorService ProveedorService
 @inject UsuarioService UsuarioService
 @inject FormasPagoService FormasPagoService
 @inject IJSRuntime JS
@@ -15,16 +15,21 @@
 }
 
 <div id="header" class="form-row">
-    <div class="form-group col-md-6">
+    <div class="form-group col-md-4">
         <label>Fecha</label>
-        <input type="date" @bind="@venta.Fecha" class="form-control" />
+        <input type="date" @bind="@compra.Fecha" class="form-control" />
     </div>
 
-    <div id="buscador-clientes" class="form-group col-md-6">
-        <label>Cliente</label>
-        <BlazoredTypeahead SearchMethod="BuscarClientes" @bind-Value="clienteSeleccionado" placeholder="Seleccione cliente" class="form-control">
+    <div class="form-group col-md-4">
+        <label>Número Recibo</label>
+        <input type="number" @bind="@compra.NroRecibo" class="form-control" />
+    </div>
+
+    <div id="buscador-proveedores" class="form-group col-md-4">
+        <label>Proveedor</label>
+        <BlazoredTypeahead SearchMethod="BuscarProveedores" @bind-Value="proveedorSeleccionado" placeholder="Seleccione proveedor" class="form-control">
             <SelectedTemplate>@context.Nombre</SelectedTemplate>
-            <ResultTemplate>@context.Nombre | @context.DNI</ResultTemplate>
+            <ResultTemplate>@context.Nombre | @context.CUIL</ResultTemplate>
         </BlazoredTypeahead>
     </div>
 </div>
@@ -33,7 +38,7 @@
 
 <div class="mb-1" id="detalle">
     <div class="form-row p-2">
-        <div id="buscador-articulos" class="form-group col-md-3">
+        <div id="buscador-articulos" class="form-group col-md-4">
             <label>Producto</label>
             <BlazoredTypeahead SearchMethod="BuscarArticulos" @bind-Value="articuloSeleccionado" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Seleccione producto" class="form-control">
                 <SelectedTemplate>@context.Nombre</SelectedTemplate>
@@ -41,24 +46,29 @@
             </BlazoredTypeahead>
         </div>
 
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
             <label>Cantidad</label>
             <input type="number" @bind="@cantidad" class="form-control" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Ingrese cantidad" />
         </div>
 
-        <div class="form-group col-md-3">
-            <label>Precio</label>
-            <input type="number" @bind="precio" class="form-control" placeholder="Ingrese precio" readonly="readonly" />
+        <div class="form-group col-md-2">
+            <label>Precio Mayorista</label>
+            <input type="number" @bind="precioMayor" class="form-control" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Ingrese precio" data-toggle="tooltip" data-placement="bottom" title="Precio que pagó por producto al proveedor" />
         </div>
 
-        <div class="form-group col-md-3">
+        <div class="form-group col-md-2">
+            <label>Precio Unitario</label>
+            <input type="number" @bind="precioUnit" class="form-control" placeholder="Ingrese precio" data-toggle="tooltip" data-placement="bottom" title="Precio al que venderá el producto" />
+        </div>
+
+        <div class="form-group col-md-2">
             <label>SubTotal</label>
-            <input type="number" @bind="subtotal" class="form-control" placeholder="Subtotal" />
+            <input type="number" @bind="subtotal" class="form-control" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Subtotal" readonly="readonly" />
         </div>
     </div>
 
 
-    @if (venta.Detalle.Count == 0)
+    @if (compra.Detalle.Count == 0)
     {
         <div class="row">
             <div class="col-md-9">
@@ -90,14 +100,15 @@
 </div>
 
 
-@if (venta.Detalle.Count > 0)
+@if (compra.Detalle.Count > 0)
 {
     <table class="table table-hover">
         <thead>
             <tr>
                 <th>#</th>
                 <th>Articulo</th>
-                <th>Precio</th>
+                <th>Precio Mayorista</th>
+                <th>Precio Unitario</th>
                 <th>Cantidad</th>
                 <th>Subtotal</th>
                 <th></th>
@@ -105,15 +116,16 @@
         </thead>
         <tbody>
             @{int contador = 1;}
-            @foreach (var item in venta.Detalle)
+            @foreach (var item in compra.Detalle)
             {
                 <tr>
                     <td>@contador</td>
                     <td>@item.Articulo.Nombre</td>
-                    <td>$@item.Precio</td>
+                    <td>$@item.Precio_Mayor</td>
+                    <td>$@item.Precio_Unit</td>
                     <td>@item.Cantidad</td>
                     <td>$@item.SubTotal</td>
-                    <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => venta.Detalle.Remove(item)"><i class="oi oi-trash"></i></button></td>
+                    <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => compra.Detalle.Remove(item)"><i class="oi oi-trash"></i></button></td>
                 </tr>
                 contador++;
             }
@@ -127,11 +139,11 @@
 </div>
 
 <button type="submit" class="btn btn-block btn-success" @onclick="LevantaModal">
-    <i class="oi oi-check"></i> Finalizar Venta
+    <i class="oi oi-check"></i> Finalizar Compra
 </button>
 
-<!-- Modal Saldo y Forma Pago -->
-<div class="modal fade" id="modalFinalizaVenta" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- Modal Forma Pago -->
+<div class="modal fade" id="modalFinalizaCompra" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -150,7 +162,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label>Ingrese el pago en $(pesos)</label>
-                        <input class="form-control" @bind="pago" type="number" step="0.01" placeholder="Ingrese pago del cliente en $">
+                        <input class="form-control" @bind="pago" type="number" step="0.01" placeholder="Ingrese pago al proveedor en $">
                     </div>
 
                     <div id="buscador-fpago" class="form-group col-md-5">
@@ -162,14 +174,14 @@
                     </div>
 
                     <div class="form-group col-md-3">
-                        <label><b>Total = $@venta.Total</b></label>
+                        <label><b>Total = $@compra.Total</b></label>
                         <div>
                             <button class="btn btn-primary" @onclick="AsignarFormasPago"><i class="oi oi-plus"></i> Agregar</button>
                         </div>
                     </div>
                 </div>
 
-                @if (venta.FormasPago.Count > 0)
+                @if (compra.FormasPago.Count > 0)
                 {
                     <table class="table table-hover">
                         <thead>
@@ -183,14 +195,14 @@
                         </thead>
                         <tbody>
                             @{int contadorFp = 1;}
-                            @foreach (var item in venta.FormasPago)
+                            @foreach (var item in compra.FormasPago)
                             {
                                 <tr>
                                     <td>@contadorFp</td>
                                     <td>@item.Fecha</td>
                                     <td>@item.FormaPago.Descripcion</td>
                                     <td>$@item.Importe</td>
-                                    <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => venta.FormasPago.Remove(item)"><i class="oi oi-trash"></i></button></td>
+                                    <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => compra.FormasPago.Remove(item)"><i class="oi oi-trash"></i></button></td>
                                 </tr>
                                 contadorFp++;
                             }
@@ -200,9 +212,8 @@
             </div>
 
             <div class="modal-footer">
-                <h6 class="form-group col-md-9"><b>Saldo = $@CalcularPago()</b></h6>
                 <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-outline-success" @onclick="@(() => CrearVenta())">Registrar</button>
+                <button type="button" class="btn btn-outline-success" @onclick="@(() => CrearCompra())">Registrar</button>
             </div>
         </div>
     </div>
@@ -210,20 +221,21 @@
 
 @code {
 
-    public VentaModel venta { get; set; } = new VentaModel();
+    public CompraModel compra { get; set; } = new CompraModel();
 
     private ArticuloModel articuloSeleccionado;
     private IEnumerable<ArticuloModel> articulos;
 
-    private ClienteModel clienteSeleccionado;
-    private IEnumerable<ClienteModel> clientes;
+    private ProveedorModel proveedorSeleccionado;
+    private IEnumerable<ProveedorModel> proveedores;
 
     private FormaPagoModel fPagoSeleccionada;
     private IEnumerable<FormaPagoModel> formasPago;
 
     #region Detalle
     private int cantidad { get; set; } = 1;
-    private decimal precio { get; set; }
+    private decimal precioMayor { get; set; }
+    private decimal precioUnit { get; set; }
     private decimal subtotal { get; set; }
     private decimal pago { get; set; }
     #endregion
@@ -231,17 +243,16 @@
     protected override async Task OnInitializedAsync()
     {
         articulos = await ArticuloService.GetAll();
-        clientes = await ClienteService.GetAllClientes();
+        proveedores = await ProveedorService.GetAll();
         formasPago = await FormasPagoService.GetAll();
-        venta.Fecha = DateTime.Now;
+        compra.Fecha = DateTime.Now;
     }
 
     void AgregarArticulo()
     {
         if (articuloSeleccionado != null)
         {
-            precio = articuloSeleccionado.Precio_Unit;
-            subtotal = precio * cantidad;
+            subtotal = precioMayor * cantidad;
         }
     }
 
@@ -250,23 +261,24 @@
         ValidacionDetalle();
         if (string.IsNullOrEmpty(errores))
         {
-            DetalleVentaModel detalle = new();
+            DetalleCompraModel detalle = new();
             detalle.Cantidad = cantidad;
-            detalle.Precio = precio;
+            detalle.Precio_Mayor = precioMayor;
+            detalle.Precio_Unit = precioUnit;
             detalle.Articulo_Id = articuloSeleccionado.Id;
             detalle.Articulo = articuloSeleccionado;
             detalle.SubTotal = subtotal;
-            venta.Detalle.Add(detalle);
-            venta.Total = CalcularTotal();
+            compra.Detalle.Add(detalle);
+            compra.Total = CalcularTotal();
         }
     }
 
-    void AsignarCliente()
+    void AsignarProveedor()
     {
-        if (clienteSeleccionado != null)
+        if (proveedorSeleccionado != null)
         {
-            venta.Cliente = clienteSeleccionado;
-            venta.Cliente_Id = clienteSeleccionado.Id;
+            compra.Proveedor = proveedorSeleccionado;
+            compra.Proveedor_Id = proveedorSeleccionado.Id;
         }
     }
 
@@ -274,40 +286,27 @@
     {
         if (fPagoSeleccionada != null)
         {
-            FormaPagoVentaModel fpago = new();
+            FormaPagoCompraModel fpago = new();
             fpago.FormaPago = fPagoSeleccionada;
             fpago.FormaPago_Id = fPagoSeleccionada.Id;
             fpago.Importe = pago;
-            fpago.Fecha = venta.Fecha;
-            venta.FormasPago.Add(fpago);
+            fpago.Fecha = compra.Fecha;
+            compra.FormasPago.Add(fpago);
         }
     }
 
     decimal CalcularTotal()
     {
-        venta.Total = 0;
-        if (venta.Detalle.Count > 0)
+        compra.Total = 0;
+        if (compra.Detalle.Count > 0)
         {
-            @for (int i = 0; i < venta.Detalle.Count; i++)
+            @for (int i = 0; i < compra.Detalle.Count; i++)
             {
-                venta.Total += venta.Detalle[i].SubTotal;
+                compra.Total += compra.Detalle[i].SubTotal;
             }
         }
-        venta.Total = Convert.ToDecimal(venta.Total);
-        return venta.Total;
-    }
-
-    decimal CalcularPago()
-    {
-        venta.Saldo = venta.Total;
-        if (venta.FormasPago.Count > 0)
-        {
-            @for (int i = 0; i < venta.FormasPago.Count; i++)
-            {
-                venta.Saldo -= venta.FormasPago[i].Importe;
-            }
-        }
-        return venta.Saldo;
+        compra.Total = Convert.ToDecimal(compra.Total);
+        return compra.Total;
     }
 
     #region Validaciones
@@ -315,13 +314,15 @@
     private string errores { get; set; }
     private string erroresModal { get; set; }
 
-    void ValidacionVenta()
+    void ValidacionCompra()
     {
         errores = string.Empty;
-        if (clienteSeleccionado == null)
-            errores += "Seleccione un cliente. \r\n";
-        if (venta.Detalle.Count == 0)
-            errores += "La venta no posee detalles, agregue productos a la lista. \r\n";
+        if (proveedorSeleccionado == null)
+            errores += "Seleccione un proveedor. \r\n";
+        if (compra.NroRecibo == 0)
+            errores += "Ingrese un Numero de Recibo válido. \r\n";
+        if (compra.Detalle.Count == 0)
+            errores += "La compra no posee detalles, agregue productos a la lista. \r\n";
     }
 
     void ValidacionDetalle()
@@ -329,6 +330,10 @@
         errores = string.Empty;
         if (articuloSeleccionado == null)
             errores += "Seleccione un producto. \r\n";
+        if (precioUnit <= 0)
+            errores += "Ingrese un precio unitario válido. Mayor a 0. \r\n";
+        if (precioMayor <= 0)
+            errores += "Ingrese un precio mayorista válido. Mayor a 0. \r\n";
         if (cantidad <= 0)
             errores += "Ingrese una cantidad válida. Mayor a 0. \r\n";
         if (subtotal < 0)
@@ -338,47 +343,44 @@
     void ValidacionModal()
     {
         erroresModal = string.Empty;
-        if (venta.FormasPago.Count == 0)
+        if (compra.FormasPago.Count == 0)
             erroresModal += "Agregue una forma de pago válida. \r\n";
-        if (pago < 0)
-            erroresModal += "El pago debe ser mayor o igual a 0 en caso de no pagar el cliente. \r\n";
-        if (pago > venta.Total)
-            erroresModal += "El importe del pago no puede ser superior al de la venta. \r\n";
+        if (Math.Truncate(pago) != Math.Truncate(compra.Total))
+            erroresModal += "El importe del pago debe ser igual al total. Al proveedor no se le puede deber. \r\n";
     }
 
     #endregion
 
-    async Task CrearVenta()
+    async Task CrearCompra()
     {
-        AsignarCliente();
+        AsignarProveedor();
         CalcularTotal();
-        CalcularPago();
         var empleado = await UsuarioService.GetSesion();
-        venta.Empleado_Id = empleado.Id;
-        venta.Cliente_Id = clienteSeleccionado.Id;
+        compra.Empleado_Id = empleado.Id;
+        compra.Proveedor_Id = proveedorSeleccionado.Id;
 
         ValidacionModal();
 
         if (string.IsNullOrEmpty(errores) && string.IsNullOrEmpty(erroresModal))
         {
-            var respuesta = await VentaService.Alta(venta);
+            var respuesta = await CompraService.Alta(compra);
             if (respuesta.IsSuccessStatusCode)
             {
-                await JS.InvokeVoidAsync("ocultaModal", "#modalFinalizaVenta");
-                NavigationManager.NavigateTo("/ventas");
-                await JS.InvokeVoidAsync("simple", "¡Éxito!", "Venta cargada correctamente!", "success");
+                await JS.InvokeVoidAsync("ocultaModal", "#modalFinalizaCompra");
+                NavigationManager.NavigateTo("/compras");
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", "Compra cargada correctamente!", "success");
             }
             else
-                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo cargar venta.", "error");
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo cargar compra.", "error");
         }
     }
 
     void LevantaModal()
     {
-        ValidacionVenta();
+        ValidacionCompra();
         if (string.IsNullOrEmpty(errores))
         {
-            JS.InvokeVoidAsync("levantaModal", "#modalFinalizaVenta");
+            JS.InvokeVoidAsync("levantaModal", "#modalFinalizaCompra");
         }
     }
 
@@ -388,9 +390,9 @@
         return await Task.FromResult(articulos.Where(x => x.Nombre.ToUpper().Contains(busqueda.ToUpper())));
     }
 
-    private async Task<IEnumerable<ClienteModel>> BuscarClientes(string busqueda)
+    private async Task<IEnumerable<ProveedorModel>> BuscarProveedores(string busqueda)
     {
-        return await Task.FromResult(clientes.Where(x => x.Nombre.ToUpper().Contains(busqueda.ToUpper())).ToList());
+        return await Task.FromResult(proveedores.Where(x => x.Nombre.ToUpper().Contains(busqueda.ToUpper())).ToList());
     }
 
     private async Task<IEnumerable<FormaPagoModel>> BuscarFormasPago(string busqueda)
