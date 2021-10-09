@@ -1,0 +1,151 @@
+﻿@page "/estadisticas"
+@inject UsuarioService UsuarioService
+@inject NavigationManager NavigationManager
+@using ChartJs.Blazor.BarChart
+@using ChartJs.Blazor.LineChart
+
+<h1>Estadisticas</h1>
+
+<div class="row h-50">
+    <div class="col-6">
+        <Chart Config="_clientesConfig"></Chart>
+    </div>
+    <div class="col-6">
+        <Chart Config="_productosConfig"></Chart>
+    </div>
+</div>
+<div class="row h-50">
+    <div class="col-12">
+        <Chart Config="_balanceConfig"></Chart>
+    </div>
+</div>
+
+@code{
+    protected override void OnInitialized()
+    {
+        var result = UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            ConfigurarCharts();
+        }
+    }
+
+    private BarConfig _productosConfig;
+    private BarConfig _clientesConfig;
+    private LineConfig _balanceConfig;
+
+    private void ConfigurarCharts()
+    {
+        #region Productos
+        _productosConfig = new BarConfig(horizontal: true)
+        {
+            Options = new BarOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Top 5 Productos más vendidos"
+                }
+            }
+        };
+
+        foreach (string color in new[] { "A", "B", "C", "D", "E" })
+        {
+            _productosConfig.Data.Labels.Add(color);
+        }
+
+        BarDataset<int> dsProductos = new BarDataset<int>(new[] { 6, 5, 4, 3, 2, 0 }, horizontal: true)
+        {
+            BackgroundColor = new[]
+            {
+            ColorUtil.ColorHexString(182, 55, 74),
+            ColorUtil.ColorHexString(162, 188, 197),
+            ColorUtil.ColorHexString(37, 74, 113),
+            ColorUtil.ColorHexString(108, 188, 197),
+            ColorUtil.ColorHexString(180, 180, 180),
+            }
+        };
+
+        _productosConfig.Data.Datasets.Add(dsProductos);
+
+        #endregion
+
+        #region Clientes
+
+        _clientesConfig = new BarConfig
+        {
+            Options = new BarOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Top 5 Clientes"
+                }
+            }
+        };
+
+        foreach (string color in new[] { "A", "B", "C", "D", "E" })
+        {
+            _clientesConfig.Data.Labels.Add(color);
+        }
+
+        BarDataset<int> dsClientes = new BarDataset<int>(new[] { 6, 5, 4, 3, 2, 0 })
+        {
+            BackgroundColor = new[]
+            {
+            ColorUtil.ColorHexString(182, 55, 74),
+            ColorUtil.ColorHexString(37, 74, 113),
+            ColorUtil.ColorHexString(162, 188, 197),
+            ColorUtil.ColorHexString(108, 188, 197),
+            ColorUtil.ColorHexString(180, 180, 180),
+            }
+        };
+
+        _clientesConfig.Data.Datasets.Add(dsClientes);
+
+        #endregion
+
+        #region Balance
+
+        _balanceConfig = new LineConfig
+        {
+            Options = new LineOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Ventas x Compras"
+                }
+            }
+        };
+
+        foreach (string meses in new[] { "Enero", "Febrero", "Marzo", "Abril", "Mayo" ,
+        "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" })
+        {
+            _balanceConfig.Data.Labels.Add(meses);
+        }
+
+        LineDataset<int> dsCompras = new LineDataset<int>(new[] { 6, 5, 4, 3, 2, 0, 7, 4, 9, 1, 5, 2 })
+        {
+            BorderColor = ColorUtil.ColorHexString(182, 55, 74),
+        };
+
+        LineDataset<int> dsVentas = new LineDataset<int>(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 })
+        {
+            BorderColor = ColorUtil.ColorHexString(37, 74, 113)
+        };
+
+
+        _balanceConfig.Data.Datasets.Add(dsCompras);
+        _balanceConfig.Data.Datasets.Add(dsVentas);
+
+        #endregion
+    }
+}
