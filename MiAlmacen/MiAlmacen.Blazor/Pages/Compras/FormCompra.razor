@@ -233,11 +233,12 @@
     private IEnumerable<FormaPagoModel> formasPago;
 
     #region Detalle
-    private int cantidad { get; set; } = 1;
+    private int cantidad { get; set; }
     private decimal precioMayor { get; set; }
     private decimal precioUnit { get; set; }
     private decimal subtotal { get; set; }
     private decimal pago { get; set; }
+    private decimal importeTotal { get; set; }
     #endregion
 
     protected override async Task OnInitializedAsync()
@@ -309,6 +310,18 @@
         return compra.Total;
     }
 
+    void CalcularTotalFormaPago()
+    {
+        importeTotal = 0;
+        if (compra.FormasPago.Count > 0)
+        {
+            @for (int i = 0; i < compra.FormasPago.Count; i++)
+            {
+                importeTotal += compra.FormasPago[i].Importe;
+            }
+        }
+    }
+
     #region Validaciones
 
     private string errores { get; set; }
@@ -345,7 +358,7 @@
         erroresModal = string.Empty;
         if (compra.FormasPago.Count == 0)
             erroresModal += "Agregue una forma de pago válida. \r\n";
-        if (Math.Truncate(pago) != Math.Truncate(compra.Total))
+        if (Math.Truncate(importeTotal) != Math.Truncate(compra.Total))
             erroresModal += "El importe del pago debe ser igual al total. Al proveedor no se le puede deber. \r\n";
     }
 
@@ -355,6 +368,7 @@
     {
         AsignarProveedor();
         CalcularTotal();
+        CalcularTotalFormaPago();
         var empleado = await UsuarioService.GetSesion();
         compra.Empleado_Id = empleado.Id;
         compra.Proveedor_Id = proveedorSeleccionado.Id;

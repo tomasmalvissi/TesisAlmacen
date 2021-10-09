@@ -56,6 +56,7 @@ namespace MiAlmacen.Data.Repositories
                 detcompra.Articulo.Precio_Unit = item.Articulo.Precio_Unit;
                 detcompra.Articulo.Stock_Act = item.Articulo.Stock_Act;
                 detcompra.Articulo.Ultima_Modif = item.Articulo.Ultima_Modif;
+                detcompra.Cantidad = item.Cantidad;
                 detcompra.Precio_Mayor = item.Precio_Mayor;
                 detcompra.Precio_Unit = item.Precio_Unit;
                 detcompra.SubTotal = item.SubTotal;
