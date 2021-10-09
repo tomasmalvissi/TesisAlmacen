@@ -459,8 +459,12 @@ else
 
         if (activos)
             ventas = await Task.FromResult(ventas.Where(x => x.Fecha_Baja == null));
+        if (inactivos)
+            ventas = await Task.FromResult(ventas.Where(x => x.Fecha_Baja != null));
         if (deuda)
             ventas = await Task.FromResult(ventas.Where(x => x.Saldo > 0));
+        if (sindeuda)
+            ventas = await Task.FromResult(ventas.Where(x => x.Saldo < 1));
         if (!string.IsNullOrEmpty(clienteFiltro))
             ventas = await Task.FromResult(ventas.Where(x => x.Cliente.Nombre.ToUpper().Contains(clienteFiltro.ToUpper())));
         if (!string.IsNullOrEmpty(empleadoFiltro))

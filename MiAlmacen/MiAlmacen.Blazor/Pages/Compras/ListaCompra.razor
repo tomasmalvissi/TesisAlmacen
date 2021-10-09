@@ -244,9 +244,6 @@ else
 
     public bool activos { get; set; } = true; public bool inactivos { get; set; }
 
-    public bool deuda { get; set; }
-    public bool sindeuda { get; set; }
-
     public decimal saldoCompra { get; set; }
 
     private FormaPagoModel fPagoSeleccionada;
@@ -346,6 +343,9 @@ else
 
         if (activos)
             compras = await Task.FromResult(compras.Where(x => x.Fecha_Baja == null));
+        if (inactivos)
+            compras = await Task.FromResult(compras.Where(x => x.Fecha_Baja != null));
+
         if (!string.IsNullOrEmpty(proveedorFiltro))
             compras = await Task.FromResult(compras.Where(x => x.Proveedor.Nombre.ToUpper().Contains(proveedorFiltro.ToUpper())));
         if (!string.IsNullOrEmpty(empleadoFiltro))
@@ -371,7 +371,7 @@ else
 
     async Task Filtros(bool activosB, bool inactivosB, bool sinDeudaB, bool deudaB)
     {
-        activos = activosB; inactivos = inactivosB; 
+        activos = activosB; inactivos = inactivosB;
         await Filtrar();
         await Paginar();
     }
