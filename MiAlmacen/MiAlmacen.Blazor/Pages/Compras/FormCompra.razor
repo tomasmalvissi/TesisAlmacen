@@ -71,7 +71,7 @@
     @if (compra.Detalle.Count == 0)
     {
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-8">
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <b> No hay productos cargados en la compra,</b> agregue un nuevo detalle.
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -80,10 +80,13 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="d-flex justify-content-end">
+            <div class="col-md-4">
+                <div class="btn-group d-flex justify-content-end">
                     <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
-                        <i class="oi oi-plus"></i> Agregar Detalle
+                        Agregar Detalle
+                    </button>
+                    <button type="button" class="btn btn-success" @onclick="NuevoProducto" data-toggle="tooltip" data-placement="bottom" title="Si no encuentra un producto agreguelo haciendo click">
+                        Nuevo Producto
                     </button>
                 </div>
             </div>
@@ -91,9 +94,12 @@
     }
     else
     {
-        <div class="d-flex justify-content-end">
+        <div class="btn-group d-flex justify-content-end">
             <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
                 <i class="oi oi-plus"></i> Agregar Detalle
+            </button>
+            <button type="button" class="btn btn-success" @onclick="NuevoProducto" data-toggle="tooltip" data-placement="bottom" title="Si no encuentra un producto agreguelo haciendo click">
+                Nuevo Producto
             </button>
         </div>
     }
@@ -219,6 +225,28 @@
     </div>
 </div>
 
+<!-- Modal Forma Pago -->
+<div class="modal fade" id="modalNuevoProducto" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nuevo Producto</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="m-3">
+                    <MiAlmacen.Blazor.Pages.Articulos.FormArticulo articulo="@nuevoArticulo"
+                                                                   TextBotonSubmit="Crear producto" OnValidSubmit="@CrearProducto" OcultaAlta=true>
+                    </MiAlmacen.Blazor.Pages.Articulos.FormArticulo>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @code {
 
     public CompraModel compra { get; set; } = new CompraModel();
@@ -231,6 +259,8 @@
 
     private FormaPagoModel fPagoSeleccionada;
     private IEnumerable<FormaPagoModel> formasPago;
+
+    private ArticuloModel nuevoArticulo { get; set; } = new ArticuloModel();
 
     #region Detalle
     private int cantidad { get; set; }
@@ -247,6 +277,27 @@
         proveedores = await ProveedorService.GetAll();
         formasPago = await FormasPagoService.GetAll();
         compra.Fecha = DateTime.Now;
+    }
+
+    async Task CrearProducto()
+    {
+        var respuesta = await ArticuloService.Alta(nuevoArticulo);
+
+        if (respuesta.IsSuccessStatusCode)
+        {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            var objDeserealizado = JsonConvert.DeserializeObject<ArticuloModel>(content);
+            articulos = await ArticuloService.GetAll();
+            await JS.InvokeVoidAsync("ocultaModal", "#modalNuevoProducto");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El producto {objDeserealizado.Nombre} fue creado", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear producto.", "error");
+    }
+
+    void NuevoProducto()
+    {
+        JS.InvokeVoidAsync("levantaModal", "#modalNuevoProducto");
     }
 
     void AgregarArticulo()
