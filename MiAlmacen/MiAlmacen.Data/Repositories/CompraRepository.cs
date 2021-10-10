@@ -281,7 +281,8 @@ namespace MiAlmacen.Data.Repositories
 
                         orden = $@"UPDATE Articulos 
                                   SET Stock_Act = @Stock_Act, Precio_Mayor = @Precio_Mayor,
-                                  Precio_Unit = @Precio_Unit WHERE Id = @Id";
+                                  Precio_Unit = @Precio_Unit, FechaBaja = NULL, Ultima_Modif = GETDATE() 
+                                  WHERE Id = @Id";
 
                         sqlcmd.CommandText = orden;
                         sqlcmd.Parameters.AddWithValue("@Id", detalle.Articulo_Id);
