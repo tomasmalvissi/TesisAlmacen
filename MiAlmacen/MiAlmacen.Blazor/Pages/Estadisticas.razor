@@ -1,27 +1,48 @@
 ﻿@page "/estadisticas"
 @inject UsuarioService UsuarioService
 @inject NavigationManager NavigationManager
+@inject EstadisticaService EstadisticaService
 @using ChartJs.Blazor.BarChart
 @using ChartJs.Blazor.LineChart
 
 <h1>Estadisticas</h1>
 
-<div class="row h-50">
-    <div class="col-6">
-        <Chart Config="_clientesConfig"></Chart>
+@if (_clientesConfig == null && _productosConfig == null && _balanceConfig == null)
+{
+    <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="sr-only">Cargando...</span>
+        </div>
     </div>
-    <div class="col-6">
-        <Chart Config="_productosConfig"></Chart>
+}
+else
+{
+    <div class="row h-50">
+        <div class="col-6">
+            <Chart Config="_clientesConfig"></Chart>
+        </div>
+        <div class="col-6">
+            <Chart Config="_productosConfig"></Chart>
+        </div>
     </div>
-</div>
-<div class="row h-50">
-    <div class="col-12">
-        <Chart Config="_balanceConfig"></Chart>
+    <div class="row h-50">
+        <div class="col-12">
+            <Chart Config="_balanceConfig"></Chart>
+        </div>
     </div>
-</div>
+}
 
 @code{
-    protected override void OnInitialized()
+    private IEnumerable<PeriodoModel> compras { get; set; }
+    private IEnumerable<PeriodoModel> ventas { get; set; }
+    private IEnumerable<TopModel> clientes { get; set; }
+    private IEnumerable<TopModel> productos { get; set; }
+
+    private BarConfig _productosConfig;
+    private BarConfig _clientesConfig;
+    private LineConfig _balanceConfig;
+
+    protected override async Task OnInitializedAsync()
     {
         var result = UsuarioService.GetSesion();
         if (result == null)
@@ -30,15 +51,16 @@
         }
         else
         {
+            productos = await EstadisticaService.GetTopProductos();
+            clientes = await EstadisticaService.GetTopClientes();
+            compras = await EstadisticaService.GetComprasXPeriodo();
+            ventas = await EstadisticaService.GetVentasXPeriodo();
+
             ConfigurarCharts();
         }
     }
 
-    private BarConfig _productosConfig;
-    private BarConfig _clientesConfig;
-    private LineConfig _balanceConfig;
-
-    private void ConfigurarCharts()
+    void ConfigurarCharts()
     {
         #region Productos
         _productosConfig = new BarConfig(horizontal: true)
@@ -54,12 +76,19 @@
             }
         };
 
-        foreach (string color in new[] { "A", "B", "C", "D", "E" })
+        foreach (var producto in productos)
         {
-            _productosConfig.Data.Labels.Add(color);
+            _productosConfig.Data.Labels.Add(producto.Clave);
         }
 
-        BarDataset<int> dsProductos = new BarDataset<int>(new[] { 6, 5, 4, 3, 2, 0 }, horizontal: true)
+        List<int> productosCantidad = new List<int>();
+
+        foreach (var item in productos)
+        {
+            productosCantidad.Add(item.Valor);
+        }
+
+        BarDataset<int> dsProductos = new BarDataset<int>(productosCantidad, horizontal: true)
         {
             BackgroundColor = new[]
             {
@@ -90,15 +119,22 @@
             }
         };
 
-        foreach (string color in new[] { "A", "B", "C", "D", "E" })
+        foreach (var cliente in clientes)
         {
-            _clientesConfig.Data.Labels.Add(color);
+            _clientesConfig.Data.Labels.Add(cliente.Clave);
         }
 
-        BarDataset<int> dsClientes = new BarDataset<int>(new[] { 6, 5, 4, 3, 2, 0 })
+        List<int> clientesCantidad = new List<int>();
+
+        foreach (var item in clientes)
+        {
+            clientesCantidad.Add(item.Valor);
+        }
+
+        BarDataset<int> dsClientes = new BarDataset<int>(clientesCantidad)
         {
             BackgroundColor = new[]
-            {
+        {
             ColorUtil.ColorHexString(182, 55, 74),
             ColorUtil.ColorHexString(37, 74, 113),
             ColorUtil.ColorHexString(162, 188, 197),
@@ -126,20 +162,33 @@
             }
         };
 
-        foreach (string meses in new[] { "Enero", "Febrero", "Marzo", "Abril", "Mayo" ,
-        "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" })
+        foreach (var periodo in ventas)
         {
-            _balanceConfig.Data.Labels.Add(meses);
+            _balanceConfig.Data.Labels.Add(periodo.Mes);
         }
 
-        LineDataset<int> dsCompras = new LineDataset<int>(new[] { 6, 5, 4, 3, 2, 0, 7, 4, 9, 1, 5, 2 })
-        {
-            BorderColor = ColorUtil.ColorHexString(182, 55, 74),
-        };
+        List<decimal> montosVentas = new List<decimal>();
 
-        LineDataset<int> dsVentas = new LineDataset<int>(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 })
+        foreach (var item in ventas)
+        {
+            montosVentas.Add(item.Monto);
+        }
+
+        LineDataset<decimal> dsVentas = new LineDataset<decimal>(montosVentas)
         {
             BorderColor = ColorUtil.ColorHexString(37, 74, 113)
+        };
+
+        List<decimal> montosCompras = new List<decimal>();
+
+        foreach (var item in compras)
+        {
+            montosCompras.Add(item.Monto);
+        }
+
+        LineDataset<decimal> dsCompras = new LineDataset<decimal>(montosCompras)
+        {
+            BorderColor = ColorUtil.ColorHexString(182, 55, 74),
         };
 
 
