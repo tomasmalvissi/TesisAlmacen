@@ -312,7 +312,7 @@ namespace MiAlmacen.Data.Repositories
             }
         }
 
-        public decimal PutSaldo(VentaModel venta, decimal pago)
+        public decimal PutSaldo(VentaModel venta)
         {
             if (venta != null)
             {
@@ -322,14 +322,13 @@ namespace MiAlmacen.Data.Repositories
                 transaction = conexion.BeginTransaction();
                 SqlCommand sqlcmd = new(orden, conexion, transaction);
 
-                decimal nuevoSaldo = venta.Saldo - pago;
                 try
                 {
                     orden = @"UPDATE Ventas SET Saldo=@Saldo WHERE Id=@Id";
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Id", venta.Id);
-                    sqlcmd.Parameters.AddWithValue("@Saldo", nuevoSaldo);
+                    sqlcmd.Parameters.AddWithValue("@Saldo", venta.Saldo);
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
@@ -361,7 +360,7 @@ namespace MiAlmacen.Data.Repositories
                     CerrarConex();
                     sqlcmd.Dispose();
                 }
-                return nuevoSaldo;
+                return venta.Saldo;
             }
             else
                 return 0;

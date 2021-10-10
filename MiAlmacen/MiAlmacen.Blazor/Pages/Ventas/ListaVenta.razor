@@ -390,7 +390,7 @@ else
 
     private async Task ModificarSaldo()
     {
-        var respuesta = await VentaService.EditarSaldo(ventaSeleccionada, saldoVenta);
+        var respuesta = await VentaService.EditarSaldo(ventaSeleccionada);
 
         if (respuesta.IsSuccessStatusCode)
         {

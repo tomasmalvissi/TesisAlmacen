@@ -36,10 +36,10 @@ namespace MiAlmacen.Blazor.Services
             return respuesta;
         }
 
-        public async Task<HttpResponseMessage> EditarSaldo(VentaModel venta, decimal nuevoSaldo)
+        public async Task<HttpResponseMessage> EditarSaldo(VentaModel venta)
         {
             string ventaSerealizada = JsonConvert.SerializeObject(venta);
-            var respuesta = await _httpClient.PutAsync($"api/ventas/{nuevoSaldo}", 
+            var respuesta = await _httpClient.PutAsync($"api/ventas/", 
                             new StringContent(ventaSerealizada, UnicodeEncoding.UTF8, "application/json"));
             return respuesta;
         }
