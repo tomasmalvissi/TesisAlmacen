@@ -1,0 +1,122 @@
+﻿@page "/movimientos"
+@inject MovimientoService MovimientoService
+@inject NavigationManager NavigationManager
+@inject UsuarioService UsuarioService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-1" id="header">
+    <h3>Ultimos Movimientos</h3>
+    <div>
+        <a href="movimientos/registrar" class="btn btn-sm btn-success">
+            <i class="oi oi-check"></i> Registrar Movimiento Eventual
+        </a>
+    </div>
+</div>
+
+@if (movimientos == null)
+{
+    <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status">
+            <span class="sr-only">Cargando...</span>
+        </div>
+    </div>
+}
+else if (movimientos.Count() == 0)
+{
+    <p>No se encontraron movimientos de dinero para listar.</p>
+}
+else
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Fecha de Caja</th>
+                <th>Descripción</th>
+                <th>Forma de Pago</th>
+                <th>Número de Venta</th>
+                <th>Número de Compra</th>
+                <th>Ingreso</th>
+                <th>Egreso</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mov in movimientos)
+            {
+                <tr>
+                    <td>@mov.Caja.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@mov.Descripción</td>
+                    <td>@mov.FormaPago</td>
+                    <td>@mov.Venta.Id</td>
+                    <td>@mov.Compras.Id</td>
+                    <td>$@mov.Ingreso</td>
+                    <td>$@mov.Egreso</td>
+                    <td>$@mov.Total</td>                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="d-flex justify-content-between mb-1" id="footer">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(false)">Anterior</button></li>
+            <li class="page-item"><button class="page-link">@pagina</button></li>
+            <li class="page-item"><button class="page-link" @onclick="() => Paginar(true)">Siguiente</button></li>
+        </ul>
+    </nav>
+    <div>
+        <b>@registros registros totales</b>
+    </div>
+</div>
+
+
+@code {
+    public IEnumerable<MovimientosCajaModel> movimientos { get; set; }
+
+
+    public int pagina { get; set; } = 1;
+
+    public int registros { get; set; }
+
+    public bool activos { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            await Paginar(false);
+        }
+    }
+
+    async Task Paginar(bool next)
+    {
+        movimientos = await MovimientoService.GetAll();
+
+        int cantidadPorPagina = 10;
+        registros = movimientos.Count();
+        decimal total;
+
+        if (registros < cantidadPorPagina)
+            total = pagina;
+        else
+        {
+            if (registros % cantidadPorPagina == 0)
+                total = registros / cantidadPorPagina;
+            else
+                total = (registros / cantidadPorPagina) + 1;
+        }
+
+        if (!next && pagina > 1) pagina--;
+
+        if (next && pagina < total) pagina++;
+
+        movimientos = movimientos.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
+    }
+}
