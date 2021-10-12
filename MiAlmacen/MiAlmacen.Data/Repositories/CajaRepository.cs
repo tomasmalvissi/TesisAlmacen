@@ -74,7 +74,7 @@ namespace MiAlmacen.Data.Repositories
         public Caja GetLast()
         {
             orden = @$"SELECT TOP 1 * FROM Caja
-                        ORDER BY Id DESC";
+                        ORDER BY Fecha DESC";
             SqlCommand sqlcmd = new(orden, conexion);
             Caja caja = new();
             try

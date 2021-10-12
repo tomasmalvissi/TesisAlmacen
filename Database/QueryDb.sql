@@ -121,7 +121,7 @@ GO
 CREATE TABLE MovimientosCaja
 (
 	Id INT PRIMARY KEY IDENTITY,
-	Caja_Id INT NOT NULL,
+	Fecha DATETIME NOT NULL,
 	Descripcion VARCHAR(100) NULL,
 	Ingreso DECIMAL(16,2) NOT NULL,
 	Egreso DECIMAL(16,2) NOT NULL,
@@ -130,8 +130,7 @@ CREATE TABLE MovimientosCaja
 	Venta_Id INT NULL, 
 	Compra_Id INT NULL,
 	FOREIGN KEY (Venta_Id) REFERENCES Ventas(Id),
-	FOREIGN KEY (Compra_Id) REFERENCES Compras(Id),
-	FOREIGN KEY (Caja_Id) REFERENCES Caja(Id)
+	FOREIGN KEY (Compra_Id) REFERENCES Compras(Id)
 )
 GO
 

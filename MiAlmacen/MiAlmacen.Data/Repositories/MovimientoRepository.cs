@@ -13,32 +13,27 @@ namespace MiAlmacen.Data.Repositories
     public class MovimientoRepository : DBConex
     {
         string orden;
-        private static CajaRepository cajaRepository = new();
         private static VentaRepository ventaRepository = new();
         private static CompraRepository compraRepository = new();
         private static MovimientosCaja IniciarObjeto(MovimientosCajaModel model)
         {
-
             MovimientosCaja mov = new();
             mov.Id = model.Id;
-            mov.Caja_Id = model.Caja_Id;
+            mov.Fecha = model.Fecha;
             mov.Descripción = model.Descripción;
-            mov.FormaPago = model.FormaPago;
             mov.Ingreso = model.Ingreso;
             mov.Egreso = model.Egreso;
             mov.Total = model.Total;
+            mov.FechaBaja = model.FechaBaja;
             mov.Venta_Id = model.Venta_Id;
             mov.Compra_Id = model.Compra_Id;
-            mov.Caja = cajaRepository.GetOne(model.Caja_Id);
-            mov.Venta = ventaRepository.GetOne(model.Venta_Id);
-            mov.Compras = compraRepository.GetOne(model.Compra_Id);
 
             return mov;
         }
 
         public List<MovimientosCaja> GetAll()
         {
-            orden = $"SELECT * FROM MovimientosCaja ORDER BY Id ASC";
+            orden = $"SELECT * FROM MovimientosCaja ORDER BY Fecha DESC";
             List<MovimientosCaja> movimientos = new();
 
             SqlCommand sqlcmd = new(orden, conexion);
@@ -52,18 +47,15 @@ namespace MiAlmacen.Data.Repositories
                 {
                     MovimientosCaja mov = new();
                     mov.Id = Convert.ToInt32(reader["Id"].ToString());
-                    mov.Caja_Id = Convert.ToInt32(reader["Caja_Id"].ToString());
-                    mov.Descripción = reader["Descripción"].ToString();
-                    mov.FormaPago = reader["FormaPago"].ToString();
+                    mov.Fecha = Convert.ToDateTime(reader["Fecha"]);
+                    mov.Descripción = reader["Descripcion"].ToString();
                     mov.Ingreso = Convert.ToDecimal(reader["Ingreso"].ToString());
                     mov.Egreso = Convert.ToDecimal(reader["Egreso"].ToString());
                     mov.Total = Convert.ToDecimal(reader["Total"].ToString());
-                    mov.Venta_Id = Convert.ToInt32(reader["Venta_Id"].ToString());
-                    mov.Compra_Id = Convert.ToInt32(reader["Compra_Id"].ToString());
+                    mov.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
+                    mov.Venta_Id = string.IsNullOrEmpty(reader["Venta_Id"].ToString()) ? null : Convert.ToInt32(reader["Venta_Id"].ToString());
+                    mov.Compra_Id = string.IsNullOrEmpty(reader["Compra_Id"].ToString()) ? null : Convert.ToInt32(reader["Compra_Id"].ToString());
 
-                    mov.Caja = cajaRepository.GetOne(Convert.ToInt32(reader["Caja_Id"].ToString()));
-                    mov.Venta = ventaRepository.GetOne(Convert.ToInt32(reader["Venta_Id"].ToString()));
-                    mov.Compras = compraRepository.GetOne(Convert.ToInt32(reader["Compra_Id"].ToString()));
 
                     movimientos.Add(mov);
                 }
@@ -94,24 +86,36 @@ namespace MiAlmacen.Data.Repositories
                 SqlTransaction transaction;
                 transaction = conexion.BeginTransaction();
                 SqlCommand sqlcmd = new(orden, conexion, transaction);
+                mov.Fecha = DateTime.Now;
 
                 try
                 {
                     sqlcmd.Connection = conexion;
                     sqlcmd.Transaction = transaction;
 
-                    orden = @"INSERT INTO MovimientosCaja (Caja_Id, Descripcion, FormaPago, Ingreso, Egreso, Total, Venta_Id, Compra_Id)
-                            VALUES (@Caja_Id, @Descripcion, @FormaPago, @Ingreso, @Egreso, @Total, @Venta_Id, @Compra_Id) ";
+                    orden = @"SELECT TOP 1 Total MovimientosCaja ORDER BY Fecha";
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.ExecuteNonQuery();
+                    SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                    decimal total = 0;
+
+                    while (reader.Read())
+                    {
+                        total = string.IsNullOrEmpty(reader["Total"].ToString()) ? 0 : Convert.ToDecimal(reader["Total"].ToString());
+                    }
+
+                    mov.Total = (total - mov.Egreso + mov.Ingreso);
+
+                    orden = @"INSERT INTO MovimientosCaja (Fecha, Descripcion, Ingreso, Egreso, Total)
+                            VALUES (@Fecha, @Descripcion, @Ingreso, @Egreso, @Total) ";
 
                     sqlcmd.CommandText = orden;
-                    sqlcmd.Parameters.AddWithValue("@Caja_Id", mov.Caja_Id);
+                    sqlcmd.Parameters.AddWithValue("@Fecha", mov.Fecha);
                     sqlcmd.Parameters.AddWithValue("@Descripcion", mov.Descripción);
-                    sqlcmd.Parameters.AddWithValue("@FormaPago", mov.FormaPago);
                     sqlcmd.Parameters.AddWithValue("@Ingreso", mov.Ingreso);
                     sqlcmd.Parameters.AddWithValue("@Egreso", mov.Egreso);
                     sqlcmd.Parameters.AddWithValue("@Total", mov.Total);
-                    sqlcmd.Parameters.AddWithValue("@Venta_Id", mov.Venta_Id);
-                    sqlcmd.Parameters.AddWithValue("@Compra_Id", mov.Compra_Id);
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();

@@ -1,6 +1,5 @@
 ﻿@inject MovimientoService MovimientoSerive
 @inject NavigationManager NavigationManager
-@inject CajaService CajaService
 @inject IJSRuntime JS
 
 <EditForm Model="@movimiento" OnValidSubmit="@OnValidSubmit">
@@ -12,16 +11,6 @@
                 <InputText @bind-Value="@movimiento.Descripción" class="form-control" placeholder="Descripción" />
             </div>
             <ValidationMessage For="@(() => movimiento.Descripción)" />
-        </div>
-    </div>
-
-    <div class="form-group row">
-        <label class="col-3 col-form-label">Forma de Pago</label>
-        <div class="col">
-            <div class="input-group">
-                <InputText @bind-Value="@movimiento.FormaPago" class="form-control" placeholder="Forma de Pago" />
-            </div>
-            <ValidationMessage For="@(() => movimiento.FormaPago)" />
         </div>
     </div>
 
