@@ -25,10 +25,10 @@ namespace MiAlmacen.API.Controllers
             return Ok(movimientos);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(MovimientosCajaModel model)
-        {
-            return Ok(_repository.Post(model));
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> Post(MovimientosCajaModel model)
+        //{
+        //    return Ok(_repository.Post(model));
+        //}
     }
 }

@@ -30,26 +30,22 @@ else
     <table class="table table-hover">
         <thead>
             <tr>
+                <th>#</th>
                 <th>Fecha</th>
-                <th>Descripción</th>
-                <th>Número de Venta</th>
-                <th>Número de Compra</th>
-                <th>Ingreso</th>
-                <th>Egreso</th>
-                <th>Total</th>
+                <th>Razon Social</th>
+                <th>Empleado</th>
+                <th>Importe</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var mov in movimientos)
             {
                 <tr>
+                    <td>@mov.Descripción #@mov.Id</td>
                     <td>@mov.Fecha.ToString("dd/MM/yyyy")</td>
-                    <td>@mov.Descripción</td>
-                    <td>@mov.Venta_Id</td>
-                    <td>@mov.Compra_Id</td>
-                    <td>$@mov.Ingreso</td>
-                    <td>$@mov.Egreso</td>
-                    <td>$@mov.Total</td>                    
+                    <td>@mov.RazonSocial</td>
+                    <td>@mov.Empleado</td>
+                    <td>$ @mov.Importe</td>
                 </tr>
             }
         </tbody>

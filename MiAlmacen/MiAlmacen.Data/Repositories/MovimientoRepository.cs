@@ -15,26 +15,42 @@ namespace MiAlmacen.Data.Repositories
         string orden;
         private static VentaRepository ventaRepository = new();
         private static CompraRepository compraRepository = new();
-        private static MovimientosCaja IniciarObjeto(MovimientosCajaModel model)
-        {
-            MovimientosCaja mov = new();
-            mov.Id = model.Id;
-            mov.Fecha = model.Fecha;
-            mov.Descripción = model.Descripción;
-            mov.Ingreso = model.Ingreso;
-            mov.Egreso = model.Egreso;
-            mov.Total = model.Total;
-            mov.FechaBaja = model.FechaBaja;
-            mov.Venta_Id = model.Venta_Id;
-            mov.Compra_Id = model.Compra_Id;
+        //private static MovimientosCaja IniciarObjeto(MovimientosCajaModel model)
+        //{
+        //    MovimientosCaja mov = new();
+        //    mov.Id = model.Id;
+        //    mov.Fecha = model.Fecha;
+        //    mov.Descripción = model.Descripción;
+        //    mov.Ingreso = model.Ingreso;
+        //    mov.Egreso = model.Egreso;
+        //    mov.Total = model.Total;
+        //    mov.FechaBaja = model.FechaBaja;
+        //    mov.Venta_Id = model.Venta_Id;
+        //    mov.Compra_Id = model.Compra_Id;
 
-            return mov;
-        }
+        //    return mov;
+        //}
 
-        public List<MovimientosCaja> GetAll()
+        public List<MovimientosCajaModel> GetAll()
         {
-            orden = $"SELECT * FROM MovimientosCaja ORDER BY Fecha DESC";
-            List<MovimientosCaja> movimientos = new();
+            orden = @"SELECT 'Venta' AS Movimiento, 
+                    Id, 
+                    Fecha, 
+                    (SELECT c.Nombre FROM Clientes c WHERE c.Id = v.Cliente_Id) AS RazonSocial, 
+                    (SELECT u.Nombre FROM Usuarios u WHERE u.Id = v.Empleado_Id) AS Empleado, 
+                    Total AS Importe
+                    FROM Ventas v
+                    UNION
+                    SELECT 'Compra' AS Movimiento, 
+                    Id, 
+                    Fecha, 
+                    (SELECT p.Nombre FROM Proveedores p WHERE p.Id = cmp.Proveedor_Id) AS RazonSocial,
+                    (SELECT u.Nombre FROM Usuarios u WHERE u.Id = cmp.Empleado_Id) AS Empleado, 
+                    -Total AS Importe
+                    FROM Compras cmp
+                    ORDER BY Fecha DESC";
+
+            List<MovimientosCajaModel> movimientos = new();
 
             SqlCommand sqlcmd = new(orden, conexion);
             try
@@ -45,17 +61,13 @@ namespace MiAlmacen.Data.Repositories
 
                 while (reader.Read())
                 {
-                    MovimientosCaja mov = new();
+                    MovimientosCajaModel mov = new();
+                    mov.Descripción = reader["Movimiento"].ToString();
                     mov.Id = Convert.ToInt32(reader["Id"].ToString());
                     mov.Fecha = Convert.ToDateTime(reader["Fecha"]);
-                    mov.Descripción = reader["Descripcion"].ToString();
-                    mov.Ingreso = Convert.ToDecimal(reader["Ingreso"].ToString());
-                    mov.Egreso = Convert.ToDecimal(reader["Egreso"].ToString());
-                    mov.Total = Convert.ToDecimal(reader["Total"].ToString());
-                    mov.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
-                    mov.Venta_Id = string.IsNullOrEmpty(reader["Venta_Id"].ToString()) ? null : Convert.ToInt32(reader["Venta_Id"].ToString());
-                    mov.Compra_Id = string.IsNullOrEmpty(reader["Compra_Id"].ToString()) ? null : Convert.ToInt32(reader["Compra_Id"].ToString());
-
+                    mov.Importe = Convert.ToDecimal(reader["Importe"].ToString());
+                    mov.RazonSocial = string.IsNullOrEmpty(reader["RazonSocial"].ToString()) ? null : reader["RazonSocial"].ToString();
+                    mov.Empleado = string.IsNullOrEmpty(reader["Empleado"].ToString()) ? null : reader["Empleado"].ToString();
 
                     movimientos.Add(mov);
                 }
@@ -72,69 +84,111 @@ namespace MiAlmacen.Data.Repositories
             return movimientos;
         }
 
-        public MovimientosCaja Post(MovimientosCajaModel model)
-        {
-            if (model == null)
-            {
-                throw new Exception("Error al tratar de ejecutar la operación");
-            }
-            else
-            {
-                MovimientosCaja mov = IniciarObjeto(model);
 
-                AbrirConex();
-                SqlTransaction transaction;
-                transaction = conexion.BeginTransaction();
-                SqlCommand sqlcmd = new(orden, conexion, transaction);
-                mov.Fecha = DateTime.Now;
+        //public List<MovimientosCaja> GetAll()
+        //{
+        //    orden = $"SELECT * FROM MovimientosCaja ORDER BY Fecha DESC";
+        //    List<MovimientosCaja> movimientos = new();
 
-                try
-                {
-                    sqlcmd.Connection = conexion;
-                    sqlcmd.Transaction = transaction;
+        //    SqlCommand sqlcmd = new(orden, conexion);
+        //    try
+        //    {
+        //        AbrirConex();
+        //        sqlcmd.CommandText = orden;
+        //        SqlDataReader reader = sqlcmd.ExecuteReader();
 
-                    orden = @"SELECT TOP 1 Total MovimientosCaja ORDER BY Fecha";
-                    sqlcmd.CommandText = orden;
-                    sqlcmd.ExecuteNonQuery();
-                    SqlDataReader reader = sqlcmd.ExecuteReader();
+        //        while (reader.Read())
+        //        {
+        //            MovimientosCaja mov = new();
+        //            mov.Id = Convert.ToInt32(reader["Id"].ToString());
+        //            mov.Fecha = Convert.ToDateTime(reader["Fecha"]);
+        //            mov.Descripción = reader["Descripcion"].ToString();
+        //            mov.Ingreso = Convert.ToDecimal(reader["Ingreso"].ToString());
+        //            mov.Egreso = Convert.ToDecimal(reader["Egreso"].ToString());
+        //            mov.Total = Convert.ToDecimal(reader["Total"].ToString());
+        //            mov.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
+        //            mov.Venta_Id = string.IsNullOrEmpty(reader["Venta_Id"].ToString()) ? null : Convert.ToInt32(reader["Venta_Id"].ToString());
+        //            mov.Compra_Id = string.IsNullOrEmpty(reader["Compra_Id"].ToString()) ? null : Convert.ToInt32(reader["Compra_Id"].ToString());
 
-                    decimal total = 0;
 
-                    while (reader.Read())
-                    {
-                        total = string.IsNullOrEmpty(reader["Total"].ToString()) ? 0 : Convert.ToDecimal(reader["Total"].ToString());
-                    }
+        //            movimientos.Add(mov);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        CerrarConex();
+        //        sqlcmd.Dispose();
+        //    }
+        //    return movimientos;
+        //}
 
-                    mov.Total = (total - mov.Egreso + mov.Ingreso);
+        //public MovimientosCaja Post(MovimientosCajaModel model)
+        //{
+        //    if (model == null)
+        //    {
+        //        throw new Exception("Error al tratar de ejecutar la operación");
+        //    }
+        //    else
+        //    {
+        //        MovimientosCaja mov = IniciarObjeto(model);
 
-                    orden = @"INSERT INTO MovimientosCaja (Fecha, Descripcion, Ingreso, Egreso, Total)
-                            VALUES (@Fecha, @Descripcion, @Ingreso, @Egreso, @Total) ";
+        //        AbrirConex();
+        //        SqlTransaction transaction;
+        //        transaction = conexion.BeginTransaction();
+        //        SqlCommand sqlcmd = new(orden, conexion, transaction);
+        //        mov.Fecha = DateTime.Now;
 
-                    sqlcmd.CommandText = orden;
-                    sqlcmd.Parameters.AddWithValue("@Fecha", mov.Fecha);
-                    sqlcmd.Parameters.AddWithValue("@Descripcion", mov.Descripción);
-                    sqlcmd.Parameters.AddWithValue("@Ingreso", mov.Ingreso);
-                    sqlcmd.Parameters.AddWithValue("@Egreso", mov.Egreso);
-                    sqlcmd.Parameters.AddWithValue("@Total", mov.Total);
+        //        try
+        //        {
+        //            sqlcmd.Connection = conexion;
+        //            sqlcmd.Transaction = transaction;
 
-                    sqlcmd.ExecuteNonQuery();
-                    sqlcmd.Parameters.Clear();
-                    transaction.Commit();
-                }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
+        //            orden = @"SELECT TOP 1 Total MovimientosCaja ORDER BY Fecha";
+        //            sqlcmd.CommandText = orden;
+        //            sqlcmd.ExecuteNonQuery();
+        //            SqlDataReader reader = sqlcmd.ExecuteReader();
 
-                    throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
-                }
-                finally
-                {
-                    CerrarConex();
-                    sqlcmd.Dispose();
-                }
+        //            decimal total = 0;
 
-                return mov;
-            }
-        }
+        //            while (reader.Read())
+        //            {
+        //                total = string.IsNullOrEmpty(reader["Total"].ToString()) ? 0 : Convert.ToDecimal(reader["Total"].ToString());
+        //            }
+
+        //            mov.Total = (total - mov.Egreso + mov.Ingreso);
+
+        //            orden = @"INSERT INTO MovimientosCaja (Fecha, Descripcion, Ingreso, Egreso, Total)
+        //                    VALUES (@Fecha, @Descripcion, @Ingreso, @Egreso, @Total) ";
+
+        //            sqlcmd.CommandText = orden;
+        //            sqlcmd.Parameters.AddWithValue("@Fecha", mov.Fecha);
+        //            sqlcmd.Parameters.AddWithValue("@Descripcion", mov.Descripción);
+        //            sqlcmd.Parameters.AddWithValue("@Ingreso", mov.Ingreso);
+        //            sqlcmd.Parameters.AddWithValue("@Egreso", mov.Egreso);
+        //            sqlcmd.Parameters.AddWithValue("@Total", mov.Total);
+
+        //            sqlcmd.ExecuteNonQuery();
+        //            sqlcmd.Parameters.Clear();
+        //            transaction.Commit();
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            transaction.Rollback();
+
+        //            throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+        //        }
+        //        finally
+        //        {
+        //            CerrarConex();
+        //            sqlcmd.Dispose();
+        //        }
+
+        //        return mov;
+        //    }
+        //}
     }
 }
