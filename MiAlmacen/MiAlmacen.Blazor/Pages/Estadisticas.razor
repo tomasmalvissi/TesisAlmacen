@@ -4,6 +4,7 @@
 @inject EstadisticaService EstadisticaService
 @using ChartJs.Blazor.BarChart
 @using ChartJs.Blazor.LineChart
+@using ChartJs.Blazor.PieChart
 
 <h1>Estadisticas</h1>
 
@@ -19,15 +20,26 @@ else
 {
     <div class="row h-50">
         <div class="col-6">
-            <Chart Config="_clientesConfig"></Chart>
+            <div class="card m-1">
+                <Chart Config="_clientesConfig"></Chart>
+            </div>
         </div>
         <div class="col-6">
-            <Chart Config="_productosConfig"></Chart>
+            <div class="card m-1">
+                <Chart Config="_productosConfig"></Chart>
+            </div>
         </div>
     </div>
     <div class="row h-50">
-        <div class="col-12">
-            <Chart Config="_balanceConfig"></Chart>
+        <div class="col-6">
+            <div class="card m-1">
+                <Chart Config="_balanceConfig"></Chart>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card m-1">
+                <Chart Config="_diasConfig"></Chart>
+            </div>
         </div>
     </div>
 }
@@ -37,10 +49,12 @@ else
     private IEnumerable<PeriodoModel> ventas { get; set; }
     private IEnumerable<TopModel> clientes { get; set; }
     private IEnumerable<TopModel> productos { get; set; }
+    private IEnumerable<TopModel> ventasXdia { get; set; }
 
     private BarConfig _productosConfig;
     private BarConfig _clientesConfig;
     private LineConfig _balanceConfig;
+    private PieConfig _diasConfig;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,6 +69,7 @@ else
             clientes = await EstadisticaService.GetTopClientes();
             compras = await EstadisticaService.GetComprasXPeriodo();
             ventas = await EstadisticaService.GetVentasXPeriodo();
+            ventasXdia = await EstadisticaService.GetVentasXDia();
 
             ConfigurarCharts();
         }
@@ -72,9 +87,23 @@ else
                 {
                     Display = true,
                     Text = "Top 5 Productos más vendidos"
+                },
+                Scales = new BarScales
+                {
+                    XAxes = new List<CartesianAxis>
+                    {
+                        new LinearCartesianAxis
+                        {
+                            Ticks = new LinearCartesianTicks
+                            {
+                                BeginAtZero = true,
+                            }
+                        }
+                    }
                 }
             }
         };
+
 
         foreach (var producto in productos)
         {
@@ -115,6 +144,19 @@ else
                 {
                     Display = true,
                     Text = "Top 5 Clientes"
+                },
+                Scales = new BarScales
+                {
+                    YAxes = new List<CartesianAxis>
+        {
+                        new LinearCartesianAxis
+                        {
+                            Ticks = new LinearCartesianTicks
+                            {
+                                BeginAtZero = true,
+                            }
+                        }
+                    }
                 }
             }
         };
@@ -134,7 +176,7 @@ else
         BarDataset<int> dsClientes = new BarDataset<int>(clientesCantidad)
         {
             BackgroundColor = new[]
-        {
+            {
             ColorUtil.ColorHexString(182, 55, 74),
             ColorUtil.ColorHexString(37, 74, 113),
             ColorUtil.ColorHexString(162, 188, 197),
@@ -164,7 +206,7 @@ else
 
         foreach (var periodo in ventas)
         {
-            _balanceConfig.Data.Labels.Add(periodo.Mes);
+            _balanceConfig.Data.XLabels.Add(periodo.Mes);
         }
 
         List<decimal> montosVentas = new List<decimal>();
@@ -194,6 +236,48 @@ else
 
         _balanceConfig.Data.Datasets.Add(dsCompras);
         _balanceConfig.Data.Datasets.Add(dsVentas);
+
+
+        _diasConfig = new PieConfig
+        {
+            Options = new PieOptions
+            {
+                Responsive = true,
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = "Ventas x Día"
+                }
+            }
+        };
+
+        foreach (var venta in ventasXdia)
+        {
+            _diasConfig.Data.Labels.Add(venta.Clave);
+        }
+
+        List<int> diasCantidad = new List<int>();
+
+        foreach (var item in ventasXdia)
+        {
+            diasCantidad.Add(item.Valor);
+        }
+
+        PieDataset<int> dsDias = new PieDataset<int>(diasCantidad)
+        {
+            BackgroundColor = new[]
+            {
+            ColorUtil.RandomColorString(),
+            ColorUtil.RandomColorString(),
+            ColorUtil.RandomColorString(),
+            ColorUtil.RandomColorString(),
+            ColorUtil.RandomColorString(),
+            ColorUtil.RandomColorString(),
+            ColorUtil.RandomColorString(),
+            }
+        };
+
+        _diasConfig.Data.Datasets.Add(dsDias);
 
         #endregion
     }

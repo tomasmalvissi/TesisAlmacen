@@ -45,5 +45,12 @@ namespace MiAlmacen.API.Controllers
             var ventas = _repository.GetTopClientes();
             return Ok(ventas);
         }
+
+        [HttpGet("ventasxdia")]
+        public async Task<IActionResult> GetVentasXDias()
+        {
+            var ventas = _repository.GetVentasXDia();
+            return Ok(ventas);
+        }
     }
 }

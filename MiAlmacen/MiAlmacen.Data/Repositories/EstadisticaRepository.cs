@@ -15,12 +15,13 @@ namespace MiAlmacen.Data.Repositories
 
         public List<Periodo> GetVentasPeriodo()
         {
-            orden = @"SELECT DATENAME(MONTH, v.Fecha) AS Mes,
+            orden = @"SELECT CONVERT(INT,MONTH(v.Fecha)) AS N,
+						DATENAME(MONTH, v.Fecha) AS Mes,
                         SUM(v.Total) AS Monto
                         FROM Ventas v
                         WHERE YEAR(v.Fecha) = YEAR(GETDATE()) AND FechaBaja IS NULL
-                        GROUP BY DATENAME(MONTH, v.Fecha)
-                        ORDER BY Mes ASC";
+                        GROUP BY CONVERT(INT,MONTH(v.Fecha)), DATENAME(MONTH, v.Fecha)
+                        ORDER BY CONVERT(INT,MONTH(v.Fecha)), DATENAME(MONTH, v.Fecha) ASC";
 
             List<Periodo> periodos = new();
 
@@ -53,12 +54,13 @@ namespace MiAlmacen.Data.Repositories
 
         public List<Periodo> GetComprasPeriodo()
         {
-            orden = @"SELECT DATENAME(MONTH, c.Fecha) AS Mes,
+            orden = @"SELECT CONVERT(INT,MONTH(c.Fecha)) AS N,
+						DATENAME(MONTH, c.Fecha) AS Mes,
                         SUM(c.Total) AS Monto
                         FROM Compras c
                         WHERE YEAR(c.Fecha) = YEAR(GETDATE()) AND FechaBaja IS NULL
-                        GROUP BY DATENAME(MONTH, c.Fecha)
-                        ORDER BY Mes ASC";
+						GROUP BY CONVERT(INT,MONTH(c.Fecha)), DATENAME(MONTH, c.Fecha)
+                        ORDER BY CONVERT(INT,MONTH(c.Fecha)), DATENAME(MONTH, c.Fecha) ASC";
 
             List<Periodo> periodos = new();
 
@@ -91,9 +93,9 @@ namespace MiAlmacen.Data.Repositories
 
         public List<Top> GetTopProductos()
         {
-            orden = @"SELECT TOP 5 a.Nombre AS Producto, SUM(Articulo_Id) CantidadVendido
+            orden = @"SELECT TOP 5 a.Nombre AS Producto, SUM(dv.Articulo_Id * Cantidad) CantidadVendido
                     FROM DetalleVentas dv
-                    INNER JOIN Articulos a on Articulo_Id = dv.Articulo_Id
+                    INNER JOIN Articulos a on a.Id = dv.Articulo_Id
                     GROUP BY a.Nombre
                     ORDER BY CantidadVendido DESC;";
 
@@ -128,7 +130,7 @@ namespace MiAlmacen.Data.Repositories
 
         public List<Top> GetTopClientes()
         {
-            orden = @"SELECT TOP 5 c.Nombre AS Cliente, SUM(Cliente_Id) CantidadVentas
+            orden = @"SELECT TOP 5 c.Nombre AS Cliente, COUNT(c.Nombre) CantidadVentas
                     FROM Ventas v
                     INNER JOIN Clientes c on c.Id = v.Cliente_Id
                     GROUP BY c.Nombre
@@ -148,6 +150,42 @@ namespace MiAlmacen.Data.Repositories
                     Top top = new();
                     top.Clave = Convert.ToString(reader["Cliente"].ToString());
                     top.Valor = Convert.ToInt32(reader["CantidadVentas"].ToString());
+                    tops.Add(top);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return tops;
+        }
+
+        public List<Top> GetVentasXDia()
+        {
+            orden = @"SELECT DATENAME(WEEKDAY, Fecha) AS Dia, COUNT(Id) AS VentasDia
+                        FROM Ventas 
+                        GROUP BY DATENAME(WEEKDAY, Fecha)
+                        ORDER BY DATENAME(WEEKDAY, Fecha);";
+
+            List<Top> tops = new();
+
+            SqlCommand sqlcmd = new(orden, conexion);
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Top top = new();
+                    top.Clave = Convert.ToString(reader["Dia"].ToString());
+                    top.Valor = Convert.ToInt32(reader["VentasDia"].ToString());
                     tops.Add(top);
                 }
             }

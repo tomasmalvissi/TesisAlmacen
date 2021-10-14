@@ -38,5 +38,11 @@ namespace MiAlmacen.Blazor.Services
             var respuesta = _httpClient.GetStringAsync($"api/estadisticas/clientes");
             return JsonConvert.DeserializeObject<IEnumerable<TopModel>>(await respuesta);
         }
+
+        public async Task<IEnumerable<TopModel>> GetVentasXDia()
+        {
+            var respuesta = _httpClient.GetStringAsync($"api/estadisticas/ventasxdia");
+            return JsonConvert.DeserializeObject<IEnumerable<TopModel>>(await respuesta);
+        }
     }
 }
