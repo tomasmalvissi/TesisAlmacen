@@ -166,6 +166,16 @@ CREATE TABLE FormasPagoCompras
 )
 GO
 
+CREATE TABLE SalidasDinero
+(
+	Id INT PRIMARY KEY IDENTITY,
+	Descripcion VARCHAR(20) NULL,
+	Importe DECIMAL(16,2) NOT NULL,
+	Caja_Id INT NOT NULL,
+	FOREIGN KEY (Caja_Id) REFERENCES Caja(Id)
+)
+GO
+
 
 INSERT INTO FormasPago VALUES('Efectivo')
 GO

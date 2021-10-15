@@ -24,11 +24,5 @@ namespace MiAlmacen.API.Controllers
             var movimientos = _repository.GetAll();
             return Ok(movimientos);
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> Post(MovimientosCajaModel model)
-        //{
-        //    return Ok(_repository.Post(model));
-        //}
     }
 }

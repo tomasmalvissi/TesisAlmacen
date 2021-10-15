@@ -2,6 +2,7 @@
 @inject CajaService CajaService
 @inject NavigationManager NavigationManager
 @inject UsuarioService UsuarioService
+@inject SalidaDineroService SalidaDineroService
 @inject IJSRuntime JS
 
 <div class="d-flex justify-content-between mb-1" id="header">
@@ -13,35 +14,104 @@
     </div>
 </div>
 
-@if (caja != null)
-{
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Empleado</th>
-                <th>Monto Apertura</th>
-                <th>Monto Cierre</th>
-                <th>Cierre de Caja</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>@caja.Fecha.ToString("dd/MM/yyyy")</td>
-                <td>@caja.Empleado.Nombre</td>
-                <td>@caja.Apertura</td>
-                <td>@caja.Cierre</td>
-                <td>
-                    <a class="btn btn-sm btn-danger" href="caja/cerrar/@caja.Id"><i class="oi oi-delete"></i></a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-}
+<div>
+    @if (caja != null)
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Empleado</th>
+                    <th>Monto Apertura</th>
+                    <th>Monto Cierre</th>
+                    <th>Cierre de Caja</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@caja.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@caja.Empleado.Nombre</td>
+                    <td>@caja.Apertura</td>
+                    <td>@caja.Cierre</td>
+                    <td>
+                        <a class="btn btn-sm btn-danger" href="caja/cerrar/@caja.Id"><i class="oi oi-delete"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</div>
 
+<div class="form-group col-md-2">
+    <label>Salida de Dinero</label>
+    <button type="button" class="btn btn-success" @onclick="NuevaSalidaDinero" data-toggle="tooltip" data-placement="bottom" title="Haga click aquí para registrar una nueva salida de dinero.">
+        Nueva Salida de Dinero
+    </button>
+</div>
+
+<div>
+    @if (salidas == null)
+    {
+        <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
+            <div class="spinner-grow text-primary" role="status">
+                <span class="sr-only">Cargando...</span>
+            </div>
+        </div>
+    }
+    else if (salidas.Count() == 0)
+    {
+        <p>No se encontraron salidas de dinero para listar.</p>
+    }
+    else
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in salidas)
+                {
+                    <tr>
+                        <td>@s.Id</td>
+                        <td>@s.Caja.Fecha.ToString("dd/MM/yyyy")</td>
+                        <td>@s.Descripción</td>
+                        <td>$ @s.Importe</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<!-- Modal Nueva SalidaDinero -->
+<div class="modal fade" id="modalNuevaSalida" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Salida de Dinero</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="m-3">
+                    <MiAlmacen.Blazor.Pages.SalidasDinero.CrearSalida salida="@nuevaSalida" OnValidSubmit="@CrearSalida()">
+                    </MiAlmacen.Blazor.Pages.SalidasDinero.CrearSalida>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     private CajaModel caja { get; set; }
+    public IEnumerable<SalidasDineroModel> salidas { get; set; }
+    private SalidasDineroModel nuevaSalida { get; set; } = new SalidasDineroModel();
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,10 +123,35 @@
         else
         {
             caja = await CajaService.GetUltimo();
+            await GetSalidas();
             if (caja.Id == 0)
             {
                 NavigationManager.NavigateTo("/caja/abrir");
             }
         }
+    }
+
+    private async Task GetSalidas()
+    {
+        salidas = await SalidaDineroService.GetAll();
+    }
+
+    void NuevaSalidaDinero()
+    {
+        JS.InvokeVoidAsync("levantaModal", "#modalNuevaSalida");
+    }
+
+    async Task CrearSalida()
+    {
+        var respuesta = await SalidaDineroService.Alta(nuevaSalida);
+
+        if (respuesta.IsSuccessStatusCode)
+        {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            await JS.InvokeVoidAsync("ocultaModal", "#modalNuevaSalida");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Registro exitoso", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo registrar.", "error");
     }
 }

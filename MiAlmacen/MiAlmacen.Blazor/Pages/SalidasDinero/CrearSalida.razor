@@ -1,0 +1,29 @@
+﻿@inject NavigationManager NavigationManager
+@inject SalidaDineroService SalidaDineroService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h3><b>Registrar Salida de Dinero</b></h3>
+    </div>
+</div>
+
+<FormSalida salida="@salida"  OnValidSubmit="@CrearSalid" />
+
+@code {
+    public SalidasDineroModel salida = new SalidasDineroModel();
+
+    async Task CrearSalid()
+    {
+        var respuesta = await SalidaDineroService.Alta(salida);
+
+        if (respuesta.IsSuccessStatusCode)
+        {
+            var content = await respuesta.Content.ReadAsStringAsync();
+            NavigationManager.NavigateTo("/caja");
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Registro exitoso", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo registrar.", "error");
+    }
+}

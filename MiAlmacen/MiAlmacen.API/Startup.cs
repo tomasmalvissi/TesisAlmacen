@@ -44,6 +44,7 @@ namespace MiAlmacen.API
             services.AddTransient<FormaPagoRepository>();
             services.AddTransient<EstadisticaRepository>();
             services.AddTransient<MovimientoRepository>();
+            services.AddTransient<SalidaDineroRepository>();
             services.AddCors(options =>
             {
                 options.AddPolicy(name: "Cors", builder =>

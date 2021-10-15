@@ -21,12 +21,5 @@ namespace MiAlmacen.Blazor.Services
             var respuesta = _httpClient.GetStringAsync($"api/movimientos/");
             return JsonConvert.DeserializeObject<IEnumerable<MovimientosCajaModel>>(await respuesta);
         }
-        //public async Task<HttpResponseMessage> Alta(MovimientosCajaModel mov)
-        //{
-        //    string movSerealizada = JsonConvert.SerializeObject(mov);
-        //    var respuesta = await _httpClient.PostAsync("api/movimientos/",
-        //                    new StringContent(movSerealizada, UnicodeEncoding.UTF8, "application/json"));
-        //    return respuesta;
-        //}
     }
 }
