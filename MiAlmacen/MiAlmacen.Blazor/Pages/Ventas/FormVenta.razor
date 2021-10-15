@@ -227,9 +227,8 @@
             </div>
             <div class="modal-body">
                 <div class="m-3">
-                    <MiAlmacen.Blazor.Pages.Clientes.FormCliente 
-                    cliente="@nuevoCliente" TextBotonSubmit="Crear cliente" OnValidSubmit="@CrearCliente" OcultaAlta=true >
-                    </MiAlmacen.Blazor.Pages.Clientes.FormCliente >
+                    <MiAlmacen.Blazor.Pages.Clientes.FormCliente cliente="@nuevoCliente" TextBotonSubmit="Crear cliente" OnValidSubmit="@CrearCliente" OcultaAlta=true>
+                    </MiAlmacen.Blazor.Pages.Clientes.FormCliente>
                 </div>
             </div>
         </div>
@@ -359,6 +358,7 @@
             {
                 venta.Saldo -= venta.FormasPago[i].Importe;
             }
+
         }
         return venta.Saldo;
     }
@@ -395,6 +395,8 @@
             erroresModal += "Agregue una forma de pago válida. \r\n";
         if (pago < 0)
             erroresModal += "El pago debe ser mayor o igual a 0 en caso de no pagar el cliente. \r\n";
+        //REVISAR IF PARA VALIDAR SALDO METODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO00000000000000000000000000
+        // CAPAZ HAY UN MATH.NEGATIVO ALGO ASI TENGO Q GOOGLEAR BIEN
         if (pago > venta.Total)
             erroresModal += "El importe del pago no puede ser superior al de la venta. \r\n";
     }
@@ -406,6 +408,10 @@
         AsignarCliente();
         CalcularTotal();
         CalcularPago();
+        if (venta.Saldo > venta.Total)
+        {
+            venta.Saldo = 0;
+        }
         var empleado = await UsuarioService.GetSesion();
         venta.Empleado_Id = empleado.Id;
         venta.Cliente_Id = clienteSeleccionado.Id;

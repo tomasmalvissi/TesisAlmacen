@@ -218,6 +218,7 @@
             </div>
 
             <div class="modal-footer">
+                <h6 class="form-group col-md-9"><b>Saldo = $@CalcularPago()</b></h6>
                 <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-outline-success" @onclick="@(() => CrearCompra())">Registrar</button>
             </div>
@@ -347,6 +348,19 @@
         }
     }
 
+    decimal CalcularPago()
+    {
+        decimal saldo = compra.Total;
+        if (compra.FormasPago.Count > 0)
+        {
+            @for (int i = 0; i < compra.FormasPago.Count; i++)
+            {
+                saldo -= compra.FormasPago[i].Importe;
+            }
+        }
+        return saldo;
+    }
+
     decimal CalcularTotal()
     {
         compra.Total = 0;
@@ -409,7 +423,8 @@
         erroresModal = string.Empty;
         if (compra.FormasPago.Count == 0)
             erroresModal += "Agregue una forma de pago válida. \r\n";
-        if (Math.Truncate(importeTotal) != Math.Truncate(compra.Total))
+        //REVISAR SEGUNDO METODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO00000000000000000000000000
+        if ((Math.Truncate(importeTotal) != Math.Truncate(compra.Total)) || (Math.Truncate(CalcularPago()) != 0))
             erroresModal += "El importe del pago debe ser igual al total. Al proveedor no se le puede deber. \r\n";
     }
 
