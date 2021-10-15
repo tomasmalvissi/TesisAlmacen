@@ -12,10 +12,10 @@ namespace MiAlmacen.Data.Conection
     {
         public SqlConnection conexion;
         //LOCAL
-        //readonly string cadenaconex = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog = Almacen; Integrated Security = True; Connect Timeout = 30; Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        readonly string cadenaconex = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog = Almacen; Integrated Security = True; Connect Timeout = 30; Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
         //AZURE
-        readonly string cadenaconex = "Server=tcp:tesis-server.database.windows.net,1433;Initial Catalog=Tesis-DB;Persist Security Info=False;User ID=TomyMauri;Password=TesisCorrea2021;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        //readonly string cadenaconex = "Server=tcp:tesis-server.database.windows.net,1433;Initial Catalog=Tesis-DB;Persist Security Info=False;User ID=TomyMauri;Password=TesisCorrea2021;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
         public DBConex()
         {

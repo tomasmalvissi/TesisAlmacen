@@ -42,9 +42,9 @@
     }
 </div>
 
-<br/>
-<br/>
-<br/>
+<br />
+<br />
+<br />
 <div class="d-flex justify-content-between mb-1">
     <h4>Salidas de Dinero</h4>
     <button type="button" class="btn btn-success" @onclick="NuevaSalidaDinero" data-toggle="tooltip" data-placement="bottom" title="Haga click aquí para registrar una nueva salida de dinero.">
@@ -74,6 +74,7 @@
                     <th>Fecha</th>
                     <th>Descripción</th>
                     <th>Importe</th>
+                    <th> </th>
                 </tr>
             </thead>
             <tbody>
@@ -126,14 +127,16 @@
         }
         else
         {
-            caja = await CajaService.GetUltimo();
             salidas = await SalidaDineroService.GetAll();
+            salidas.Select(x => x.Caja.Fecha == DateTime.Now);
+            caja = await CajaService.GetUltimo();
             if (caja.Id == 0)
             {
                 NavigationManager.NavigateTo("/caja/abrir");
             }
         }
     }
+
 
     void NuevaSalidaDinero()
     {
@@ -144,17 +147,19 @@
     {
         nuevaSalida.Caja_Id = caja.Id;
         nuevaSalida.Caja = caja;
-        var respuesta = await SalidaDineroService.Alta(nuevaSalida);
+        var altasalida = await SalidaDineroService.Alta(nuevaSalida);
+        caja.Apertura = (caja.Apertura - nuevaSalida.Importe);
+        var editcaja = await CajaService.Editar(caja);
 
-        if (respuesta.IsSuccessStatusCode)
+        if (altasalida.IsSuccessStatusCode && editcaja.IsSuccessStatusCode)
         {
-            var content = await respuesta.Content.ReadAsStringAsync();
+            var content = await altasalida.Content.ReadAsStringAsync();
             await JS.InvokeVoidAsync("ocultaModal", "#modalNuevaSalida");
+            salidas = await SalidaDineroService.GetAll();
+            salidas.Select(x => x.Caja.Fecha == DateTime.Now);
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Registro exitoso", "success");
-
-            //TODO: Actualizar saldo de apertura
         }
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo registrar.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)altasalida.StatusCode)}. No se pudo registrar.", "error");
     }
 }

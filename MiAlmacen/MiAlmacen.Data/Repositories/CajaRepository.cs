@@ -213,10 +213,11 @@ namespace MiAlmacen.Data.Repositories
                 {
                     AbrirConex();
                     orden = $@"UPDATE Caja 
-                               SET Cierre=@Cierre WHERE Id=@Id";
+                               SET Apertura=@Apertura, Cierre=@Cierre WHERE Id=@Id";
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Id", id);
+                    sqlcmd.Parameters.AddWithValue("@Apertura", caja.Apertura);
                     sqlcmd.Parameters.AddWithValue("@Cierre", caja.Cierre);
 
 
