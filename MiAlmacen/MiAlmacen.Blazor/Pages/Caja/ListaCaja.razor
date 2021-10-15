@@ -42,10 +42,13 @@
     }
 </div>
 
-<div class="form-group col-md-2">
-    <label>Salida de Dinero</label>
+<br/>
+<br/>
+<br/>
+<div class="d-flex justify-content-between mb-1">
+    <h4>Salidas de Dinero</h4>
     <button type="button" class="btn btn-success" @onclick="NuevaSalidaDinero" data-toggle="tooltip" data-placement="bottom" title="Haga click aquí para registrar una nueva salida de dinero.">
-        Nueva Salida de Dinero
+        Registrar Nueva
     </button>
 </div>
 
@@ -79,7 +82,7 @@
                     <tr>
                         <td>@s.Id</td>
                         <td>@s.Caja.Fecha.ToString("dd/MM/yyyy")</td>
-                        <td>@s.Descripción</td>
+                        <td>@s.Descripcion</td>
                         <td>$ @s.Importe</td>
                     </tr>
                 }
@@ -100,8 +103,9 @@
             </div>
             <div class="modal-body">
                 <div class="m-3">
-                    <MiAlmacen.Blazor.Pages.SalidasDinero.CrearSalida salida="@nuevaSalida" OnValidSubmit="@CrearSalida()">
-                    </MiAlmacen.Blazor.Pages.SalidasDinero.CrearSalida>
+                    <MiAlmacen.Blazor.Pages.SalidasDinero.FormSalida salida="@nuevaSalida" OnValidSubmit="@CrearSalid">
+                    </MiAlmacen.Blazor.Pages.SalidasDinero.FormSalida>
+
                 </div>
             </div>
         </div>
@@ -123,7 +127,7 @@
         else
         {
             caja = await CajaService.GetUltimo();
-            await GetSalidas();
+            salidas = await SalidaDineroService.GetAll();
             if (caja.Id == 0)
             {
                 NavigationManager.NavigateTo("/caja/abrir");
@@ -131,18 +135,15 @@
         }
     }
 
-    private async Task GetSalidas()
-    {
-        salidas = await SalidaDineroService.GetAll();
-    }
-
     void NuevaSalidaDinero()
     {
         JS.InvokeVoidAsync("levantaModal", "#modalNuevaSalida");
     }
 
-    async Task CrearSalida()
+    async Task CrearSalid()
     {
+        nuevaSalida.Caja_Id = caja.Id;
+        nuevaSalida.Caja = caja;
         var respuesta = await SalidaDineroService.Alta(nuevaSalida);
 
         if (respuesta.IsSuccessStatusCode)
@@ -150,6 +151,8 @@
             var content = await respuesta.Content.ReadAsStringAsync();
             await JS.InvokeVoidAsync("ocultaModal", "#modalNuevaSalida");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Registro exitoso", "success");
+
+            //TODO: Actualizar saldo de apertura
         }
         else
             await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo registrar.", "error");

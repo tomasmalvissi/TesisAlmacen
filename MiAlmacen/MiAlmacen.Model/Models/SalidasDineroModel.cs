@@ -10,7 +10,7 @@ namespace MiAlmacen.Model.Models
     public class SalidasDineroModel
     {
         public int Id { get; set; }
-        public string? Descripción { get; set; }
+        public string? Descripcion { get; set; }
 
         [Required(ErrorMessage = "Campo obligatorio.")]
         public decimal Importe { get; set; }

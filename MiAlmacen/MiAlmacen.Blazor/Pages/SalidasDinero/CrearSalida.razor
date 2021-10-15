@@ -8,22 +8,9 @@
     </div>
 </div>
 
-<FormSalida salida="@salida"  OnValidSubmit="@CrearSalid" />
+<FormSalida salida="@salida" />
 
 @code {
     public SalidasDineroModel salida = new SalidasDineroModel();
 
-    async Task CrearSalid()
-    {
-        var respuesta = await SalidaDineroService.Alta(salida);
-
-        if (respuesta.IsSuccessStatusCode)
-        {
-            var content = await respuesta.Content.ReadAsStringAsync();
-            NavigationManager.NavigateTo("/caja");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Registro exitoso", "success");
-        }
-        else
-            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo registrar.", "error");
-    }
 }

@@ -17,16 +17,11 @@ namespace MiAlmacen.Data.Repositories
         {
             SalidasDinero sd = new();
             sd.Id = model.Id;
-            sd.Descripción = model.Descripción;
+            sd.Descripcion = model.Descripcion;
             sd.Importe = model.Importe;
-            sd.Caja_Id = sd.Caja_Id;
+            sd.Caja_Id = model.Caja_Id;
 
-            //Caja ca = new();
-            //ca.Fecha = model.Caja.Fecha;
-            //ca.Empleado_Id = model.Caja.Empleado_Id;
-            //ca.Apertura = model.Caja.Apertura;
-            //ca.Cierre = model.Caja.Cierre;
-            //sd.Caja = ca;
+            //sd.Caja = repository caja get one(id);
 
             return sd;
         }
@@ -48,7 +43,7 @@ namespace MiAlmacen.Data.Repositories
                     SalidasDinero sa = new();
                     SalidasDinero sd = new();
                     sd.Id = Convert.ToInt32(reader["Id"].ToString());
-                    sd.Descripción = reader["Descripcion"].ToString();
+                    sd.Descripcion = reader["Descripcion"].ToString();
                     sd.Importe = Convert.ToDecimal(reader["Importe"].ToString());
                     sd.Caja_Id = Convert.ToInt32(reader["Caja_Id"].ToString());
 
@@ -96,7 +91,7 @@ namespace MiAlmacen.Data.Repositories
                             VALUES (@Descripcion, @Importe, @Caja_Id) ";
 
                     sqlcmd.CommandText = orden;
-                    sqlcmd.Parameters.AddWithValue("@Fecha", salida.Descripción);
+                    sqlcmd.Parameters.AddWithValue("@Descripcion", salida.Descripcion);
                     sqlcmd.Parameters.AddWithValue("@Importe", salida.Importe);
                     sqlcmd.Parameters.AddWithValue("@Caja_Id", salida.Caja_Id);
 
