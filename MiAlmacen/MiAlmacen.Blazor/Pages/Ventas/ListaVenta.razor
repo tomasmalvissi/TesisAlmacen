@@ -130,6 +130,12 @@ else
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                @if (!string.IsNullOrEmpty(erroresModal))
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <b> Error! </b> @erroresModal
+                    </div>
+                }
                 <div class="modal-body">
                     <div class="form-row">
                         <div class="form-group col-md-4">
@@ -292,20 +298,24 @@ else
 
     private async Task ModificarSaldo()
     {
-        var respuesta = await VentaService.EditarSaldo(ventaSeleccionada);
-
-        if (respuesta.IsSuccessStatusCode)
+        ValidacionModal();
+        if (string.IsNullOrEmpty(erroresModal))
         {
-            var content = await respuesta.Content.ReadAsStringAsync();
-            var objDeserealizado = JsonConvert.DeserializeObject<float>(content);
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Saldo venta actualizado! Nuevo saldo: ${objDeserealizado}", "success");
-            await JS.InvokeVoidAsync("ocultaModal", "#modalSaldo");
-            await GetVentas();
-            await Filtrar();
-            await Paginar();
+            var respuesta = await VentaService.EditarSaldo(ventaSeleccionada);
+
+            if (respuesta.IsSuccessStatusCode)
+            {
+                var content = await respuesta.Content.ReadAsStringAsync();
+                var objDeserealizado = JsonConvert.DeserializeObject<float>(content);
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Saldo venta actualizado! Nuevo saldo: ${objDeserealizado}", "success");
+                await JS.InvokeVoidAsync("ocultaModal", "#modalSaldo");
+                await GetVentas();
+                await Filtrar();
+                await Paginar();
+            }
+            else
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo actualizar venta", "error");
         }
-        else
-            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo actualizar venta", "error");
     }
 
     private async Task Borrar(int id)
@@ -437,4 +447,25 @@ else
         ventaSeleccionada.FormasPago.Remove(formaPagoVenta);
         ventaSeleccionada.Saldo += formaPagoVenta.Importe;
     }
+
+    #region Validaciones
+    private string erroresModal { get; set; }
+    void ValidacionModal()
+    {
+        erroresModal = string.Empty;
+        if (ventaSeleccionada.FormasPago.Count > 0)
+        {
+            @for (int i = 0; i < ventaSeleccionada.FormasPago.Count; i++)
+            {
+                if (ventaSeleccionada.FormasPago[i].Importe > ventaSeleccionada.Total)
+                {
+                    erroresModal += "El importe del pago no puede ser superior al de la venta. \r\n";
+                }
+            }
+
+        }
+        if (ventaSeleccionada.Saldo < 0)
+            erroresModal += "El importe del pago no puede ser superior al de la venta. \r\n";
+    }
+    #endregion
 }

@@ -423,8 +423,7 @@
         erroresModal = string.Empty;
         if (compra.FormasPago.Count == 0)
             erroresModal += "Agregue una forma de pago válida. \r\n";
-        //REVISAR SEGUNDO METODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO00000000000000000000000000
-        if ((Math.Truncate(importeTotal) != Math.Truncate(compra.Total)) || (Math.Truncate(CalcularPago()) != 0))
+        if ((Math.Truncate(importeTotal) != Math.Truncate(compra.Total)) || (Math.Truncate(CalcularPago()) < 0))
             erroresModal += "El importe del pago debe ser igual al total. Al proveedor no se le puede deber. \r\n";
     }
 
