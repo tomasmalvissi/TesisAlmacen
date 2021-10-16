@@ -13,13 +13,14 @@
     </div>
 </div>
 
-<div class="d-flex justify-content-between mb-1" id="filtros">
+<div class="input-group d-flex justify-content-between mb-1" id="filtros">
     <input class="form-control form-control-sm" type="text" placeholder="Busque por nombre" @oninput="FiltroNombre" />
     <input class="form-control form-control-sm" type="text" placeholder="Busque por código" @oninput="FiltroCodigo" />
 </div>
-<div class="form-group form-check m-1">
-    <input type="checkbox" class="form-check-input" @onchange="FiltroActivos">
-    <label class="form-check-label">Sólo activos</label>
+<div class="btn-group d-flex justify-content-between mb-1" id="filtros3">
+    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, false))"> Todos</button>
+    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(true, false))"> Solo activos</button>
+    <button class="btn btn-primary btn-sm" @onclick="@(() => Filtros(false, true))"> Solo inactivos</button>
 </div>
 
 @if (articulos == null)
@@ -98,6 +99,8 @@ else
 @code {
     public IEnumerable<ArticuloModel> articulos { get; set; }
 
+    public IEnumerable<ArticuloModel> articulosTemp { get; set; }
+
     public string nombreFiltro { get; set; } = string.Empty;
     public string codigoFiltro { get; set; } = string.Empty;
 
@@ -106,6 +109,8 @@ else
     public int registros { get; set; }
 
     public bool activos { get; set; } = true;
+
+    public bool inactivos { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,6 +121,7 @@ else
         }
         else
         {
+            await GetArticulos();
             await Paginar(false);
         }
     }
@@ -133,6 +139,7 @@ else
             if (respuesta.IsSuccessStatusCode)
             {
                 await JS.InvokeVoidAsync("simple", "¡Éxito!", "Producto eliminado", "success");
+                await GetArticulos();
                 await Paginar(false);
             }
             else
@@ -142,13 +149,16 @@ else
         }
     }
 
-    async Task Paginar(bool next)
+
+    private async Task GetArticulos()
     {
         articulos = await ArticuloService.GetAll();
-        if (activos)
-            articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()) && x.FechaBaja == null);
-        else
-            articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+        articulosTemp = articulos;
+    }
+
+    async Task Paginar(bool next)
+    {
+        await Filtrar();
 
         int cantidadPorPagina = 10;
         registros = articulos.Count();
@@ -171,29 +181,37 @@ else
         articulos = articulos.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
     }
 
-    async Task RecargarGrilla()
+    async Task Filtrar()
     {
-        articulos = await ArticuloService.GetAll();
-        articulos = articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper()));
+        articulos = articulosTemp;
+
+        if (activos)
+            articulos = await Task.FromResult(articulos.Where(x => x.FechaBaja == null));
+        if (inactivos)
+            articulos = await Task.FromResult(articulos.Where(x => x.FechaBaja != null));
+
+        if (!string.IsNullOrEmpty(nombreFiltro))
+            articulos = await Task.FromResult(articulos.Where(x => x.Nombre.ToUpper().Contains(nombreFiltro.ToUpper())));
+        if (!string.IsNullOrEmpty(codigoFiltro))
+            articulos = await Task.FromResult(articulos.Where(x => x.Codigo_Art.ToString().ToUpper().Contains(codigoFiltro.ToUpper())));
     }
 
     void FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
-        Paginar(false);
+        Filtrar();
     }
 
     void FiltroCodigo(ChangeEventArgs e)
     {
-        articulos = articulos.Where(x => x.Codigo_Art.ToString().Contains(codigoFiltro.ToUpper()));
         codigoFiltro = e.Value.ToString();
-        Paginar(false);
+        Filtrar();
     }
 
-    void FiltroActivos()
+    async Task Filtros(bool activosB, bool inactivosB)
     {
-        activos = !activos;
-        Paginar(false);
+        activos = activosB; inactivos = inactivosB;
+        await Filtrar();
+        await Paginar(false);
     }
-
 }
