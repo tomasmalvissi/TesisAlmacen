@@ -49,7 +49,7 @@ namespace MiAlmacen.API
             {
                 options.AddPolicy(name: "Cors", builder =>
                 {
-                    builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost").AllowAnyHeader().AllowAnyMethod();
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
             });
 
