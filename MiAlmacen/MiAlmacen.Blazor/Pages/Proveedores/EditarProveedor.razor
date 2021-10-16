@@ -14,7 +14,11 @@
     </div>
 </div>
 
-<FormProveedor proveedor="@proveedor" OnValidSubmit="@EditarProv" TextBotonSubmit="Guardar cambios" OcultaAlta=false />
+<div class="card m-1">
+    <div class="card-body">
+        <FormProveedor proveedor="@proveedor" OnValidSubmit="@EditarProv" TextBotonSubmit="Guardar cambios" OcultaAlta=false />
+    </div>
+</div>
 
 @code {
     public ProveedorModel proveedor = new ProveedorModel();

@@ -1,7 +1,7 @@
 ﻿@page "/clientes/editar/{idCliente:int}"
 @inject NavigationManager NavigationManager
 @inject ClienteService ClienteService
-@inject UsuarioService UsuarioService  
+@inject UsuarioService UsuarioService
 @inject IJSRuntime JS
 
 
@@ -14,7 +14,11 @@
     </div>
 </div>
 
-<FormCliente cliente="@cliente" OnValidSubmit="@EditarClient" TextBotonSubmit="Guardar cambios" OcultaAlta=false/>
+<div class="card m-1">
+    <div class="card-body">
+        <FormCliente cliente="@cliente" OnValidSubmit="@EditarClient" TextBotonSubmit="Guardar cambios" OcultaAlta=false />
+    </div>
+</div>
 
 @code {
     public ClienteModel cliente = new ClienteModel();

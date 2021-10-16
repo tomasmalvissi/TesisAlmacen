@@ -15,7 +15,11 @@
     </div>
 </div>
 
-<FormCliente cliente="@cliente" TextBotonSubmit="Crear cliente" OnValidSubmit="@CrearClient" OcultaAlta=true />
+<div class="card m-1">
+    <div class="card-body">
+        <FormCliente cliente="@cliente" TextBotonSubmit="Crear cliente" OnValidSubmit="@CrearClient" OcultaAlta=true />
+    </div>
+</div>
 
 @code {
     public ClienteModel cliente = new ClienteModel();

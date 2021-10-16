@@ -15,7 +15,11 @@
     </div>
 </div>
 
-<FormArticulo articulo="articulo" OnValidSubmit="@EditarProd" TextBotonSubmit="Guardar cambios" OcultaAlta=false />
+<div class="card m-1">
+    <div class="card-body">
+        <FormArticulo articulo="articulo" OnValidSubmit="@EditarProd" TextBotonSubmit="Guardar cambios" OcultaAlta=false />
+    </div>
+</div>
 
 @code {
     public ArticuloModel articulo = new ArticuloModel();
