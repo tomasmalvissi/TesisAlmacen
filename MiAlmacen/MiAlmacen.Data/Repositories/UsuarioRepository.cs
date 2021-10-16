@@ -53,17 +53,14 @@ namespace MiAlmacen.Data.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + ex.Message);
             }
             finally
             {
                 CerrarConex();
                 sqlcmd.Dispose();
             }
-            if (usuarios.Count == 0)
-            {
-                throw new Exception("No se encontraron resultados.");
-            }
+
             return usuarios;
         }
         public Usuarios GetOne(int id)
@@ -172,7 +169,7 @@ namespace MiAlmacen.Data.Repositories
 
         public Usuarios Put(int id, UsuarioModel model)
         {
-            var valoruser = GetOne(id);
+            Usuarios valoruser = GetOne(id);
             if (valoruser == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
@@ -217,7 +214,7 @@ namespace MiAlmacen.Data.Repositories
         }
         public int Delete(int id)
         {
-            var valoruser = GetOne(id);
+            Usuarios valoruser = GetOne(id);
             if (valoruser != null)
             {
                 SqlCommand sqlcmd = new(orden, conexion);

@@ -15,13 +15,14 @@ namespace MiAlmacen.Data.Repositories
         string orden;
         private static SalidasDinero IniciarObjeto(SalidasDineroModel model)
         {
+            CajaRepository cajaRepository = new();
+
             SalidasDinero sd = new();
             sd.Id = model.Id;
             sd.Descripcion = model.Descripcion;
             sd.Importe = model.Importe;
             sd.Caja_Id = model.Caja_Id;
-
-            //sd.Caja = repository caja get one(id);
+            sd.Caja = cajaRepository.GetOne(model.Caja_Id);
 
             return sd;
         }

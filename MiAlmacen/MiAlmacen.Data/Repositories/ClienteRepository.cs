@@ -135,7 +135,7 @@ namespace MiAlmacen.Data.Repositories
 
         public Clientes Put(int id, ClienteModel model)
         {
-            var cliente = GetOne(id);
+            Clientes cliente = GetOne(id);
             if (cliente == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
@@ -180,7 +180,7 @@ namespace MiAlmacen.Data.Repositories
         }
         public int Delete(int id)
         {
-            var valorcli = GetOne(id);
+            Clientes valorcli = GetOne(id);
             if (valorcli != null)
             {
                 SqlCommand sqlcmd = new(orden, conexion);

@@ -107,7 +107,7 @@ namespace MiAlmacen.Data.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + ex.Message);
             }
             finally
             {
@@ -312,15 +312,16 @@ namespace MiAlmacen.Data.Repositories
             }
         }
 
-        public decimal PutSaldo(VentaModel venta)
+        public decimal PutSaldo(VentaModel model)
         {
-            if (venta != null)
+            if (model != null)
             {
                 AbrirConex();
 
                 SqlTransaction transaction;
                 transaction = conexion.BeginTransaction();
                 SqlCommand sqlcmd = new(orden, conexion, transaction);
+                Ventas venta = IniciarObjeto(model);
 
                 try
                 {
@@ -368,7 +369,7 @@ namespace MiAlmacen.Data.Repositories
 
         public int Delete(int id)
         {
-            var venta = GetOne(id);
+            Ventas venta = GetOne(id);
             if (venta != null)
             {
                 AbrirConex();

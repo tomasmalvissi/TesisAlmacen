@@ -104,7 +104,7 @@ namespace MiAlmacen.Data.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + ex.Message);
             }
             finally
             {
@@ -118,7 +118,6 @@ namespace MiAlmacen.Data.Repositories
         {
             orden = $"SELECT * FROM Compras WHERE Id ={id}";
             SqlCommand sqlcmd = new(orden, conexion);
-
             Compras compra = new();
             try
             {
@@ -194,7 +193,7 @@ namespace MiAlmacen.Data.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + ex.Message);
             }
             finally
             {
@@ -314,7 +313,7 @@ namespace MiAlmacen.Data.Repositories
 
         public int Delete(int id)
         {
-            var compra = GetOne(id);
+            Compras compra = GetOne(id);
             if (compra != null)
             {
                 AbrirConex();

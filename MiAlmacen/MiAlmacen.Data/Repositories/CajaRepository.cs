@@ -61,7 +61,7 @@ namespace MiAlmacen.Data.Repositories
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + ex.Message);
             }
             finally
             {
@@ -163,6 +163,7 @@ namespace MiAlmacen.Data.Repositories
                 SqlTransaction transaction;
                 transaction = conexion.BeginTransaction();
                 SqlCommand sqlcmd = new(orden, conexion, transaction);
+                Caja caja = IniciarObjeto(model);
 
                 try
                 {
@@ -174,9 +175,9 @@ namespace MiAlmacen.Data.Repositories
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
-                    sqlcmd.Parameters.AddWithValue("@Empleado_Id", model.Empleado_Id);
-                    sqlcmd.Parameters.AddWithValue("@Apertura", model.Apertura);
-                    sqlcmd.Parameters.AddWithValue("@Cierre", model.Cierre);
+                    sqlcmd.Parameters.AddWithValue("@Empleado_Id", caja.Empleado_Id);
+                    sqlcmd.Parameters.AddWithValue("@Apertura", caja.Apertura);
+                    sqlcmd.Parameters.AddWithValue("@Cierre", caja.Cierre);
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
@@ -194,13 +195,12 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Dispose();
                 }
 
-                var caja = IniciarObjeto(model);
                 return caja;
             }
         }
         public Caja Put(int id, CajaModel model)
         {
-            var ca = GetOne(id);
+            Caja ca = GetOne(id);
             if (ca == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");

@@ -56,7 +56,7 @@ namespace MiAlmacen.Data.Repositories
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                throw new Exception("Error al tratar de ejecutar la operación " + ex.Message);
             }
             finally 
             {
@@ -141,14 +141,12 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Dispose();
                 }
 
-
-
                 return art;
             }
         }
         public Articulos Put(int id, ArticuloModel model)
         {
-            var articulo = GetOne(id);
+            Articulos articulo = GetOne(id);
             if (articulo == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
@@ -196,7 +194,7 @@ namespace MiAlmacen.Data.Repositories
         }
         public int Delete(int id)
         {
-            var valorart = GetOne(id);
+            Articulos valorart = GetOne(id);
             if (valorart != null)
             {
                 SqlCommand sqlcmd = new(orden, conexion);

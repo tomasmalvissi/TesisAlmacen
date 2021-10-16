@@ -25,7 +25,7 @@ namespace MiAlmacen.Data.Repositories
         {
             orden = $@"SELECT * FROM Proveedores ORDER BY Nombre ASC";
 
-            List<Proveedores> Proveedores = new();
+            List<Proveedores> proveedores = new();
 
             SqlCommand sqlcmd = new SqlCommand(orden, conexion);
             try
@@ -43,7 +43,7 @@ namespace MiAlmacen.Data.Repositories
                     prov.Direccion = reader["Direccion"].ToString();
                     prov.Telefono = Convert.ToInt64(reader["Telefono"].ToString());
                     prov.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
-                    Proveedores.Add(prov);
+                    proveedores.Add(prov);
                 }
 
             }
@@ -56,7 +56,7 @@ namespace MiAlmacen.Data.Repositories
                 CerrarConex();
                 sqlcmd.Dispose();
             }
-            return Proveedores;
+            return proveedores;
         }
         public Proveedores GetOne(int id)
         {
@@ -132,7 +132,7 @@ namespace MiAlmacen.Data.Repositories
 
         public Proveedores Put(int id, ProveedorModel model)
         {
-            var proveedor = GetOne(id);
+            Proveedores proveedor = GetOne(id);
             if (proveedor == null || model == null)
             {
                 throw new Exception("Error al tratar de ejecutar la operación");
@@ -177,7 +177,7 @@ namespace MiAlmacen.Data.Repositories
         }
         public int Delete(int id)
         {
-            var valorprov = GetOne(id);
+            Proveedores valorprov = GetOne(id);
             if (valorprov != null)
             {
                 SqlCommand sqlcmd = new(orden, conexion);
