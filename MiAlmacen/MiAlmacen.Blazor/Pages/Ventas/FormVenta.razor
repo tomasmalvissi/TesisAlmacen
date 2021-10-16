@@ -30,7 +30,7 @@
 
     <div class="form-group col-md-2">
         <label>Nuevo Cliente</label>
-        <button type="button" class="btn btn-success" @onclick="NuevoCliente" data-toggle="tooltip" data-placement="bottom" title="Si el cliente no aparece en la lista haga click aqui para darlo de alta">
+        <button type="button" class="btn btn-primary" @onclick="NuevoCliente" data-toggle="tooltip" data-placement="bottom" title="Si el cliente no aparece en la lista haga click aqui para darlo de alta">
             Nuevo Cliente
         </button>
     </div>
@@ -79,7 +79,7 @@
 
             <div class="col-md-3">
                 <div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
+                    <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
                         <i class="oi oi-plus"></i> Agregar Detalle
                     </button>
                 </div>
@@ -89,7 +89,7 @@
     else
     {
         <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
+            <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
                 <i class="oi oi-plus"></i> Agregar Detalle
             </button>
         </div>
@@ -129,13 +129,14 @@
 }
 
 
-<div class="d-flex justify-content-end py-2">
+<div class="d-flex justify-content-between py-2">
+    <button type="submit" class="btn btn-primary" @onclick="LevantaModal">
+        <i class="oi oi-check"></i> Finalizar Venta
+    </button>
     <h4><b>TOTAL $@CalcularTotal()</b></h4>
 </div>
 
-<button type="submit" class="btn btn-block btn-success" @onclick="LevantaModal">
-    <i class="oi oi-check"></i> Finalizar Venta
-</button>
+
 
 <!-- Modal Saldo y Forma Pago -->
 <div class="modal fade" id="modalFinalizaVenta" tabindex="-1" role="dialog" aria-hidden="true">

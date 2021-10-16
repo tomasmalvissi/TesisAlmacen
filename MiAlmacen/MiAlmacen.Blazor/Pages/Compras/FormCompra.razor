@@ -82,10 +82,10 @@
 
             <div class="col-md-4">
                 <div class="btn-group d-flex justify-content-end">
-                    <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
+                    <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
                         Agregar Detalle
                     </button>
-                    <button type="button" class="btn btn-success" @onclick="NuevoProducto" data-toggle="tooltip" data-placement="bottom" title="Si no encuentra un producto agreguelo haciendo click">
+                    <button type="button" class="btn btn-secondary" @onclick="NuevoProducto" data-toggle="tooltip" data-placement="bottom" title="Si no encuentra un producto agreguelo haciendo click">
                         Nuevo Producto
                     </button>
                 </div>
@@ -95,10 +95,10 @@
     else
     {
         <div class="btn-group d-flex justify-content-end">
-            <button type="button" class="btn btn-success" @onclick="AgregarDetalle">
+            <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
                 <i class="oi oi-plus"></i> Agregar Detalle
             </button>
-            <button type="button" class="btn btn-success" @onclick="NuevoProducto" data-toggle="tooltip" data-placement="bottom" title="Si no encuentra un producto agreguelo haciendo click">
+            <button type="button" class="btn btn-secondary" @onclick="NuevoProducto" data-toggle="tooltip" data-placement="bottom" title="Si no encuentra un producto agreguelo haciendo click">
                 Nuevo Producto
             </button>
         </div>
@@ -140,13 +140,13 @@
 }
 
 
-<div class="d-flex justify-content-end py-2">
+<div class="d-flex justify-content-between py-2">
+    <button type="submit" class="btn btn-primary" @onclick="LevantaModal">
+        <i class="oi oi-check"></i> Finalizar Compra
+    </button>
     <h4><b>TOTAL $@CalcularTotal()</b></h4>
 </div>
 
-<button type="submit" class="btn btn-block btn-success" @onclick="LevantaModal">
-    <i class="oi oi-check"></i> Finalizar Compra
-</button>
 
 <!-- Modal Forma Pago -->
 <div class="modal fade" id="modalFinalizaCompra" tabindex="-1" role="dialog" aria-hidden="true">
