@@ -90,13 +90,13 @@ else
                         }
                     </td>
                     <td>
-                        <button type="button" class="btn btn-sm btn-outline-warning m-1" @onclick="@(() => LevantaModalDetalle(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Ver detalle">
+                        <button type="button" class="btn btn-sm btn-outline-primary m-1" @onclick="@(() => LevantaModalDetalle(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Ver detalle">
                             <i class="oi oi-eye"></i>
                         </button>
                         @if (item.Fecha_Baja == null)
                         {
                             <button @onclick="@(() => Borrar(item.Id))" class="btn btn-sm btn-outline-danger m-1" data-toggle="tooltip" data-placement="bottom" title="Anular">
-                                <i class="oi oi-arrow-thick-bottom"></i>
+                                <i class="oi oi-trash"></i>
                             </button>
                         }
                     </td>
@@ -109,104 +109,7 @@ else
 <!-- Modal Detalle -->
 @if (compraSeleccionada != null)
 {
-    <div class="modal fade" id="modalDetalle" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><b>Compra #@compraSeleccionada.Id</b></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="d-flex justify-content-between">
-                        <h5 style="color:midnightblue"><b>Fecha: @compraSeleccionada.Fecha</b></h5>
-                        <h5 style="color:midnightblue"><b>Proveedor: @compraSeleccionada.Proveedor.Nombre</b></h5>
-                        <div class="d-flex justify-content-between">
-
-                            @if (compraSeleccionada.Fecha_Baja == null)
-                            {
-                                <h5 style="color:midnightblue"><b>Estado: <i class="oi oi-check" style="color:green"></i></b></h5>
-                            }
-                            else
-                            {
-                                <h5 style="color:midnightblue"><b>Estado: <i class="oi oi-x" style="color:red"></i></b></h5>
-                            }
-                        </div>
-                    </div>
-
-                    <hr />
-
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Código Articulo</th>
-                                <th>Articulo</th>
-                                <th>Cantidad</th>
-                                <th>Precio Mayorista</th>
-                                <th>Precio Unitario</th>
-                                <th>SubTotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{int contador = 1;}
-                            @foreach (var det in compraSeleccionada.Detalle)
-                            {
-                                <tr>
-                                    <td>@contador</td>
-                                    <td>@det.Articulo.Codigo_Art</td>
-                                    <td>@det.Articulo.Nombre</td>
-                                    <td>@det.Cantidad</td>
-                                    <td>$@det.Precio_Mayor</td>
-                                    <td>$@det.Precio_Unit</td>
-                                    <td>$@det.SubTotal</td>
-                                </tr>
-                                contador++;
-                            }
-                        </tbody>
-                    </table>
-
-                    <hr />
-
-                    @if (compraSeleccionada.FormasPago.Count > 0)
-                    {
-                        <table class="table table-sm table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Fecha</th>
-                                    <th>Forma de Pago</th>
-                                    <th>Importe</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @{int contadorFp = 1;}
-                                @foreach (var item in compraSeleccionada.FormasPago)
-                                {
-                                    <tr>
-                                        <td>@contadorFp</td>
-                                        <td>@item.Fecha</td>
-                                        <td>@item.FormaPago.Descripcion</td>
-                                        <td>$@item.Importe</td>
-                                    </tr>
-                                    contadorFp++;
-                                }
-                            </tbody>
-                        </table>
-                    }
-
-                    <hr />
-
-                    <div class="d-flex justify-content-end m-1">
-                        <div>
-                            <h4><b>TOTAL: $@compraSeleccionada.Total</b></h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <ModalDetalleCompra compraSeleccionada="@compraSeleccionada"></ModalDetalleCompra>
 }
 
 <div class="d-flex justify-content-between mb-1" id="footer">
@@ -282,7 +185,7 @@ else
     private async Task LevantaModalDetalle(int id)
     {
         compraSeleccionada = await CompraService.GetUn(id);
-        await JS.InvokeVoidAsync("levantaModal", "#modalDetalle");
+        await JS.InvokeVoidAsync("levantaModal", "#modalDetalleCompra");
     }
 
     private async Task LevantaCollapse()

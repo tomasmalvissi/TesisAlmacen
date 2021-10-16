@@ -71,10 +71,13 @@ else
                         }
                     </td>
                     <td>
-                        <button @onclick="@(() => BorrarProd(art.Id))" class="btn btn-sm btn-danger">
-                            <i class="oi oi-trash"></i>
-                        </button>
-                        <a class="btn btn-sm btn-warning" href="articulos/editar/@art.Id"><i class="oi oi-pencil"></i></a>
+                        @if (art.FechaBaja == null)
+                        {
+                            <button @onclick="@(() => BorrarProd(art.Id))" class="btn btn-sm btn-outline-danger m-1">
+                                <i class="oi oi-trash"></i>
+                            </button>
+                        }
+                        <a class="btn btn-sm btn-outline-warning m-1" href="articulos/editar/@art.Id"><i class="oi oi-pencil"></i></a>
                     </td>
                 </tr>
             }

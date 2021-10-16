@@ -1,5 +1,7 @@
 ﻿@page "/movimientos"
 @inject MovimientoService MovimientoService
+@inject VentaService VentaService
+@inject CompraService CompraService
 @inject NavigationManager NavigationManager
 @inject UsuarioService UsuarioService
 @inject IJSRuntime JS
@@ -35,6 +37,7 @@ else
                 <th>Razon Social</th>
                 <th>Empleado</th>
                 <th>Importe</th>
+                <th>Detalle</th>
             </tr>
         </thead>
         <tbody>
@@ -46,10 +49,25 @@ else
                     <td>@mov.RazonSocial</td>
                     <td>@mov.Empleado</td>
                     <td>$ @mov.Importe</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" @onclick="@(() => VerDetalle(mov))">
+                            <i class="oi oi-eye"></i>
+                        </button>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+}
+
+@if (compraSeleccionada != null)
+{
+    <MiAlmacen.Blazor.Pages.Compras.ModalDetalleCompra compraSeleccionada="@compraSeleccionada"></MiAlmacen.Blazor.Pages.Compras.ModalDetalleCompra>
+}
+
+@if (ventaSeleccionada != null)
+{
+    <MiAlmacen.Blazor.Pages.Ventas.ModalDetalleVenta ventaSeleccionada="@ventaSeleccionada"></MiAlmacen.Blazor.Pages.Ventas.ModalDetalleVenta>
 }
 
 <div class="d-flex justify-content-between mb-1" id="footer">
@@ -70,6 +88,8 @@ else
     public IEnumerable<MovimientosCajaModel> movimientos { get; set; }
     public IEnumerable<MovimientosCajaModel> movTemp { get; set; }
 
+    public CompraModel compraSeleccionada { get; set; }
+    public VentaModel ventaSeleccionada { get; set; }
 
     public int pagina { get; set; } = 1;
 
@@ -97,13 +117,27 @@ else
         movTemp = movimientos;
     }
 
-
-    async Task Paginar(bool next)
+    async Task VerDetalle(MovimientosCajaModel movimiento)
     {
+        if (movimiento.Descripción.Equals("Venta"))
+        {
+            ventaSeleccionada = await VentaService.GetUn(movimiento.Id);
+            await JS.InvokeVoidAsync("levantaModal", "#modalDetalleVenta");
+        }
+        if (movimiento.Descripción.Equals("Compra"))
+        {
+            compraSeleccionada = await CompraService.GetUn(movimiento.Id);
+            await JS.InvokeVoidAsync("levantaModal", "#modalDetalleCompra");
+        }
+    }
+
+    async Task Paginar(bool next = false)
+    {
+        movimientos = movTemp;
 
         int cantidadPorPagina = 10;
-        registros = movimientos.Count();
         decimal total;
+        registros = movimientos.Count();
 
         if (registros < cantidadPorPagina)
             total = pagina;
@@ -119,6 +153,6 @@ else
 
         if (next && pagina < total) pagina++;
 
-        movimientos = movimientos.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina);
+        movimientos = await Task.FromResult(movimientos.Skip((pagina - 1) * cantidadPorPagina).Take(cantidadPorPagina));
     }
 }

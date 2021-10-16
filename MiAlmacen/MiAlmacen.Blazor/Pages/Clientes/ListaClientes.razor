@@ -68,10 +68,13 @@ else
                         }
                     </td>
                     <td>
-                        <button @onclick="@(() => BorrarCliente(cliente.Id))" class="btn btn-sm btn-danger">
-                            <i class="oi oi-trash"></i>
-                        </button>
-                        <a class="btn btn-sm btn-warning" href="clientes/editar/@cliente.Id"><i class="oi oi-pencil"></i></a>
+                        @if (cliente.FechaBaja == null)
+                        {
+                            <button @onclick="@(() => BorrarCliente(cliente.Id))" class="btn btn-sm btn-outline-danger m-1">
+                                <i class="oi oi-trash"></i>
+                            </button>
+                        }
+                        <a class="btn btn-sm btn-outline-warning m-1" href="clientes/editar/@cliente.Id"><i class="oi oi-pencil"></i></a>
                     </td>
                 </tr>
             }

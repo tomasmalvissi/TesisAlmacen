@@ -93,15 +93,15 @@ else
                         }
                     </td>
                     <td>
-                        <button type="button" class="btn btn-sm btn-outline-warning m-1" @onclick="@(() => LevantaModalDetalle(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Ver detalle">
+                        <button type="button" class="btn btn-sm btn-outline-primary m-1" @onclick="@(() => LevantaModalDetalle(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Ver detalle">
                             <i class="oi oi-eye"></i>
                         </button>
                         @if (item.Fecha_Baja == null)
                         {
                             <button @onclick="@(() => Borrar(item.Id))" class="btn btn-sm btn-outline-danger m-1" data-toggle="tooltip" data-placement="bottom" title="Anular">
-                                <i class="oi oi-arrow-thick-bottom"></i>
+                                <i class="oi oi-trash"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary m-1" @onclick="@(() => LevantaModalSaldo(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Modificar saldo">
+                            <button type="button" class="btn btn-sm btn-outline-warning m-1" @onclick="@(() => LevantaModalSaldo(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Modificar saldo">
                                 <i class="oi oi-pencil"></i>
                             </button>
                         }
@@ -115,110 +115,12 @@ else
 <!-- Modal Detalle -->
 @if (ventaSeleccionada != null)
 {
-    <div class="modal fade" id="modalDetalle" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><b>Venta #@ventaSeleccionada.Id</b></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="d-flex justify-content-between">
-                        <h5 style="color:midnightblue"><b>Fecha: @ventaSeleccionada.Fecha</b></h5>
-                        <h5 style="color:midnightblue"><b>Cliente: @ventaSeleccionada.Cliente.Nombre</b></h5>
-                        <div class="d-flex justify-content-between">
-
-                            @if (ventaSeleccionada.Fecha_Baja == null)
-                            {
-                                <h5 style="color:midnightblue"><b>Estado: <i class="oi oi-check" style="color:green"></i></b></h5>
-                            }
-                            else
-                            {
-                                <h5 style="color:midnightblue"><b>Estado: <i class="oi oi-x" style="color:red"></i></b></h5>
-                            }
-                        </div>
-                    </div>
-
-                    <hr />
-
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Código Articulo</th>
-                                <th>Articulo</th>
-                                <th>Cantidad</th>
-                                <th>Precio</th>
-                                <th>SubTotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{int contador = 1;}
-                            @foreach (var det in ventaSeleccionada.Detalle)
-                            {
-                                <tr>
-                                    <td>@contador</td>
-                                    <td>@det.Articulo.Codigo_Art</td>
-                                    <td>@det.Articulo.Nombre</td>
-                                    <td>@det.Cantidad</td>
-                                    <td>$@det.Precio</td>
-                                    <td>$@det.SubTotal</td>
-                                </tr>
-                                contador++;
-                            }
-                        </tbody>
-                    </table>
-
-                    <hr />
-
-                    @if (ventaSeleccionada.FormasPago.Count > 0)
-                    {
-                        <table class="table table-sm table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Fecha</th>
-                                    <th>Forma de Pago</th>
-                                    <th>Importe</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @{int contadorFp = 1;}
-                                @foreach (var item in ventaSeleccionada.FormasPago)
-                                {
-                                    <tr>
-                                        <td>@contadorFp</td>
-                                        <td>@item.Fecha</td>
-                                        <td>@item.FormaPago.Descripcion</td>
-                                        <td>$@item.Importe</td>
-                                    </tr>
-                                    contadorFp++;
-                                }
-                            </tbody>
-                        </table>
-                    }
-
-                    <hr />
-
-                    <div class="d-flex justify-content-between m-1">
-                        <div>
-                            <h4><b>Saldo: $@ventaSeleccionada.Saldo</b></h4>
-                        </div>
-                        <div>
-                            <h4><b>TOTAL: $@ventaSeleccionada.Total</b></h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <ModalDetalleVenta ventaSeleccionada="@ventaSeleccionada"></ModalDetalleVenta>
 }
 
+<!-- Modal Saldo y Forma Pago -->
 @if (ventaSeleccionada != null)
 {
-    <!-- Modal Saldo y Forma Pago -->
     <div class="modal fade" id="modalSaldo" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
@@ -289,8 +191,8 @@ else
                 </div>
                 <div class="modal-footer">
                     <h6 class="form-group col-md-9"><b>Saldo = $@ventaSeleccionada.Saldo</b></h6>
-                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-outline-success" @onclick="ModificarSaldo">Aceptar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" @onclick="ModificarSaldo">Aceptar</button>
                 </div>
             </div>
         </div>
@@ -380,7 +282,7 @@ else
     private async Task LevantaModalDetalle(int id)
     {
         ventaSeleccionada = await VentaService.GetUn(id);
-        await JS.InvokeVoidAsync("levantaModal", "#modalDetalle");
+        await JS.InvokeVoidAsync("levantaModal", "#modalDetalleVenta");
     }
 
     private async Task LevantaCollapse()

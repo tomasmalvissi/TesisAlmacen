@@ -1,0 +1,103 @@
+﻿<div class="modal fade" id="modalDetalleCompra" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><b>Compra #@compraSeleccionada.Id</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between">
+                    <h5 style="color:#335171"><b>Fecha: @compraSeleccionada.Fecha</b></h5>
+                    <h5 style="color:#335171"><b>Proveedor: @compraSeleccionada.Proveedor.Nombre</b></h5>
+                    <div class="d-flex justify-content-between">
+
+                        @if (compraSeleccionada.Fecha_Baja == null)
+                        {
+                            <h5 style="color:#335171"><b>Estado: <i class="oi oi-check" style="color:green"></i></b></h5>
+                        }
+                        else
+                        {
+                            <h5 style="color:#335171"><b>Estado: <i class="oi oi-x" style="color:red"></i></b></h5>
+                        }
+                    </div>
+                </div>
+
+                <hr />
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Código Articulo</th>
+                            <th>Articulo</th>
+                            <th>Cantidad</th>
+                            <th>Precio Mayorista</th>
+                            <th>Precio Unitario</th>
+                            <th>SubTotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{int contador = 1;}
+                        @foreach (var det in compraSeleccionada.Detalle)
+                        {
+                            <tr>
+                                <td>@contador</td>
+                                <td>@det.Articulo.Codigo_Art</td>
+                                <td>@det.Articulo.Nombre</td>
+                                <td>@det.Cantidad</td>
+                                <td>$@det.Precio_Mayor</td>
+                                <td>$@det.Precio_Unit</td>
+                                <td>$@det.SubTotal</td>
+                            </tr>
+                            contador++;
+                        }
+                    </tbody>
+                </table>
+
+                <hr />
+
+                @if (compraSeleccionada.FormasPago.Count > 0)
+                {
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha</th>
+                                <th>Forma de Pago</th>
+                                <th>Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{int contadorFp = 1;}
+                            @foreach (var item in compraSeleccionada.FormasPago)
+                            {
+                                <tr>
+                                    <td>@contadorFp</td>
+                                    <td>@item.Fecha</td>
+                                    <td>@item.FormaPago.Descripcion</td>
+                                    <td>$@item.Importe</td>
+                                </tr>
+                                contadorFp++;
+                            }
+                        </tbody>
+                    </table>
+                                }
+
+                <hr />
+
+                <div class="d-flex justify-content-end m-1">
+                    <div>
+                        <h4><b>TOTAL: $@compraSeleccionada.Total</b></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public CompraModel compraSeleccionada { get; set; }
+
+}
