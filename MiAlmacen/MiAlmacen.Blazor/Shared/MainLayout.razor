@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject UsuarioService UsuarioService
+@inject CajaService CajaService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
@@ -68,6 +69,7 @@
 @code{
     private LoginModel login = new LoginModel();
     private UsuarioModel UsuarioLogueado { get; set; } = new();
+    private CajaModel caja { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -98,9 +100,17 @@
 
     async Task Logout()
     {
-        await UsuarioService.Logout();
-        UsuarioLogueado = await UsuarioService.GetSesion();
-        LevantaModal();
+        caja = await CajaService.GetUltimo();
+        if (caja.Cierre == 0)
+        {
+            NavigationManager.NavigateTo($"/caja/cerrar/{caja.Id}");
+        }
+        else
+        {
+            await UsuarioService.Logout();
+            UsuarioLogueado = await UsuarioService.GetSesion();
+            LevantaModal();
+        }
     }
 
     void LevantaModal()

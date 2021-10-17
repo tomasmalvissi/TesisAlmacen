@@ -1,11 +1,13 @@
 ﻿@page "/"
 @inject UsuarioService UsuarioService 
+@inject CajaService CajaService 
 @inject NavigationManager NavigationManager
 <h1>Mi Almacen</h1>
 
 Bienvenido a su aplicación!
 
 @code{
+    private CajaModel caja { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -13,6 +15,12 @@ Bienvenido a su aplicación!
         if (result == null)
         {
             NavigationManager.NavigateTo("/");
+        }
+
+        caja = await CajaService.GetUltimo();
+        if (caja.Fecha.Date != DateTime.Now.Date && caja.Empleado_Id != result.Id)
+        {
+            NavigationManager.NavigateTo("/caja/abrir");
         }
     }
 }

@@ -42,7 +42,7 @@
     }
 </div>
 
-<hr/>
+<hr />
 
 <br />
 <div class="d-flex justify-content-between mb-1">
@@ -127,12 +127,15 @@
         }
         else
         {
-            salidas = await SalidaDineroService.GetAll();
-            salidas.Select(x => x.Caja.Fecha == DateTime.Now);
             caja = await CajaService.GetUltimo();
-            if (caja.Id == 0)
+            if (caja.Fecha.Date != DateTime.Now.Date)
             {
                 NavigationManager.NavigateTo("/caja/abrir");
+            }
+            else
+            {
+                salidas = await SalidaDineroService.GetAll();
+                salidas.Select(x => x.Caja.Fecha == DateTime.Now);
             }
         }
     }

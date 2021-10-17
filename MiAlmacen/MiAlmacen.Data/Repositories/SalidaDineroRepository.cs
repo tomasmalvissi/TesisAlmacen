@@ -23,7 +23,6 @@ namespace MiAlmacen.Data.Repositories
             sd.Importe = model.Importe;
             sd.Caja_Id = model.Caja_Id;
             sd.Caja = cajaRepository.GetOne(model.Caja_Id);
-
             return sd;
         }
 
@@ -41,7 +40,6 @@ namespace MiAlmacen.Data.Repositories
 
                 while (reader.Read())
                 {
-                    SalidasDinero sa = new();
                     SalidasDinero sd = new();
                     sd.Id = Convert.ToInt32(reader["Id"].ToString());
                     sd.Descripcion = reader["Descripcion"].ToString();
