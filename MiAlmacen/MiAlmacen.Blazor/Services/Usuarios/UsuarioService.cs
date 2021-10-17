@@ -30,6 +30,12 @@ namespace MiAlmacen.Blazor.Services
         {
             return await _httpClient.GetFromJsonAsync<UsuarioModel>($"api/usuarios/{id}");
         }
+
+        public async Task<UsuarioModel> GetUser(string usuario)
+        {
+            return await _httpClient.GetFromJsonAsync<UsuarioModel>($"/api/usuarios/api/usuarios/{usuario}");
+        }
+
         public async Task<HttpResponseMessage> Alta(UsuarioModel usuario)
         {
             string userSerealizado = JsonConvert.SerializeObject(usuario);
@@ -113,17 +119,5 @@ namespace MiAlmacen.Blazor.Services
             result = System.Text.Encoding.Unicode.GetString(decryted);
             return result;
         }
-
-        //private string TokenGenerator()
-        //{
-        //    Random r = new Random();
-        //    string numero = "";
-        //    for (int i = 0; i < 10; i++)
-        //    {
-        //        numero += r.Next(0, 9).ToString();
-        //    }
-        //    string result = numero;
-        //    return result;
-        //}
     }
 }

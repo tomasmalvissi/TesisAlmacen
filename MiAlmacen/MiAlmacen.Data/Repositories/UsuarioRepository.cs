@@ -97,6 +97,40 @@ namespace MiAlmacen.Data.Repositories
             return usuario;
         }
 
+        public Usuarios GetUser(string user)
+        {
+            orden = $"SELECT * FROM Usuarios WHERE Usuario='{user}'";
+            SqlCommand sqlcmd = new(orden, conexion);
+            Usuarios usuario = new();
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    usuario.Id = Convert.ToInt32(reader["Id"].ToString());
+                    usuario.Nombre = reader["Nombre"].ToString();
+                    usuario.Email = reader["Email"].ToString();
+                    usuario.Usuario = reader["Usuario"].ToString();
+                    usuario.Contraseña = reader["Contraseña"].ToString();
+                    usuario.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return usuario;
+        }
+
         public int Login(string user, string pass)
         {
             orden = @"SELECT Id FROM Usuarios WHERE Usuario=@user AND Contraseña=@pass AND FechaBaja IS NULL";

@@ -22,17 +22,25 @@
 
     async Task CrearUser()
     {
-        var respuesta = await UsuarioService.Alta(usuario);
-
-        if (respuesta.IsSuccessStatusCode)
+        var username = await UsuarioService.GetUser(usuario.Usuario);
+        if (username.Usuario != null)
         {
-            var content = await respuesta.Content.ReadAsStringAsync();
-            var objDeserealizado = JsonConvert.DeserializeObject<UsuarioModel>(content);
-            NavigationManager.NavigateTo("/");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El usuario {objDeserealizado.Nombre} fue creado", "success");
+            await JS.InvokeVoidAsync("simple", "Error", "El nombre de usuario ya está en uso. Por favor elija otro.", "error");
         }
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear usuario.", "error");
+        {
+            var respuesta = await UsuarioService.Alta(usuario);
+
+            if (respuesta.IsSuccessStatusCode)
+            {
+                var content = await respuesta.Content.ReadAsStringAsync();
+                var objDeserealizado = JsonConvert.DeserializeObject<UsuarioModel>(content);
+                NavigationManager.NavigateTo("/");
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El usuario {objDeserealizado.Nombre} fue creado", "success");
+            }
+            else
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear usuario.", "error");
+        }
     }
 
     private void Volver()
