@@ -194,16 +194,17 @@ else
             proveedores = await Task.FromResult(proveedores.Where(x => x.CUIL.ToString().ToUpper().Contains(cuilFiltro.ToUpper())));
     }
 
-    void FiltroNombre(ChangeEventArgs e)
+    async Task FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
-        Filtrar();
+        await Filtrar();
+        await Paginar(false);
     }
 
-    void FiltroCUIL(ChangeEventArgs e)
+    async Task FiltroCUIL(ChangeEventArgs e)
     {
         cuilFiltro = e.Value.ToString();
-        Filtrar();
+        await Paginar(false);
     }
 
     async Task Filtros(bool activosB, bool inactivosB)

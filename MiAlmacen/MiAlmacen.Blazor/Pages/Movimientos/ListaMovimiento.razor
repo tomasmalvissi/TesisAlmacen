@@ -6,14 +6,8 @@
 @inject UsuarioService UsuarioService
 @inject IJSRuntime JS
 
-<div class="d-flex justify-content-between mb-1" id="header">
-    <h3>Últimos Movimientos</h3>
-    <div>
-        <a href="movimientos/registrar" class="btn btn-sm btn-primary">
-            <i class="oi oi-check"></i> Registrar Movimiento Eventual
-        </a>
-    </div>
-</div>
+<h3>Últimos Movimientos</h3>
+
 
 @if (movimientos == null)
 {
@@ -25,7 +19,14 @@
 }
 else if (movimientos.Count() == 0)
 {
-    <p>No se encontraron movimientos de dinero para listar.</p>
+    <div>
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            No se encontraron movimientos de dinero para listar.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
 }
 else
 {

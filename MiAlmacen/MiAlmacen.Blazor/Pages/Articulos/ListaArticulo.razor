@@ -199,16 +199,18 @@ else
             articulos = await Task.FromResult(articulos.Where(x => x.Codigo_Art.ToString().ToUpper().Contains(codigoFiltro.ToUpper())));
     }
 
-    void FiltroNombre(ChangeEventArgs e)
+    async Task FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
-        Filtrar();
+        await Filtrar();
+        await Paginar(false);
     }
 
-    void FiltroCodigo(ChangeEventArgs e)
+    async Task FiltroCodigo(ChangeEventArgs e)
     {
         codigoFiltro = e.Value.ToString();
-        Filtrar();
+        await Filtrar();
+        await Paginar(false);
     }
 
     async Task Filtros(bool activosB, bool inactivosB)

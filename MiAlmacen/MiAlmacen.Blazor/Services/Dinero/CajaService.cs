@@ -27,22 +27,14 @@ namespace MiAlmacen.Blazor.Services
 
         public async Task<CajaModel> GetUn(int id)
         {
-            var options = new JsonSerializerOptions()
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                PropertyNameCaseInsensitive = true
-            };
-            return await _httpClient.GetFromJsonAsync<CajaModel>($"api/caja/{id}", options);
+            var respuesta = _httpClient.GetStringAsync($"api/caja/{id}");
+            return JsonConvert.DeserializeObject<CajaModel>(await respuesta);
         }
 
         public async Task<CajaModel> GetUltimo()
         {
-            var options = new JsonSerializerOptions()
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                PropertyNameCaseInsensitive = true
-            };
-            return await _httpClient.GetFromJsonAsync<CajaModel>($"api/caja/", options);
+            var respuesta = _httpClient.GetStringAsync("api/caja/");
+            return JsonConvert.DeserializeObject<CajaModel>(await respuesta);
         }
 
         public async Task<HttpResponseMessage> Alta(CajaModel caja)

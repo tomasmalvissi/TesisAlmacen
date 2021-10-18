@@ -2,51 +2,58 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
-<EditForm Model="@caja" OnValidSubmit="@OnValidSubmit">
-    <DataAnnotationsValidator />
-    <div class="form-field mt-2 mb-2">
-        <div class="form-group row">
-            <label class="col-3 col-form-label">Fecha</label>
-            <div class="col">
-                <div class="input-group">
-                    <input type="date" @bind="@caja.Fecha" class="form-control" readonly />
+<div class="card m-1">
+    <div class="card-body">
+        <EditForm Model="@caja" OnValidSubmit="@OnValidSubmit">
+            <DataAnnotationsValidator />
+            <div class="form-field mt-2 mb-2">
+                <div class="form-group row">
+                    <label class="col-3 col-form-label">Fecha</label>
+                    <div class="col">
+                        <div class="input-group">
+                            <input type="date" @bind="@caja.Fecha" class="form-control" readonly />
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="form-group row">
-        <label class="col-3 col-form-label">Monto Apertura de Caja</label>
-        <div class="col">
-            <div class="input-group">
-                <InputNumber @bind-Value="@caja.Apertura" class="form-control" placeholder="Apertura" />
+            <div class="form-group row" hidden="@apertura">
+                <label class="col-3 col-form-label">Monto Apertura de Caja</label>
+                <div class="col">
+                    <div class="input-group">
+                        <InputNumber @bind-Value="@caja.Apertura" class="form-control" placeholder="Apertura" />
+                    </div>
+                    <ValidationMessage For="@(() => caja.Apertura)" />
+                </div>
             </div>
-            <ValidationMessage For="@(() => caja.Apertura)" />
-        </div>
-    </div>
 
-    <div class="form-group row">
-        <label class="col-3 col-form-label">Monto Cierre de Caja</label>
-        <div class="col">
-            <div class="input-group">
-                <InputNumber @bind-Value="@caja.Cierre" class="form-control" placeholder="Cierre" />
+            <div class="form-group row" hidden="@cierre">
+                <label class="col-3 col-form-label">Monto Cierre de Caja</label>
+                <div class="col">
+                    <div class="input-group">
+                        <InputNumber @bind-Value="@caja.Cierre" class="form-control" placeholder="Cierre" />
+                    </div>
+                    <ValidationMessage For="@(() => caja.Cierre)" />
+                </div>
             </div>
-            <ValidationMessage For="@(() => caja.Cierre)" />
-        </div>
-    </div>
 
-    <button type="submit" class="btn btn-primary">
-        <i class="oi oi-check "></i>
-        <text style="color:white"> @TextBotonSubmit</text>
-    </button>
-</EditForm>
+            <button type="submit" class="btn btn-primary">
+                <i class="oi oi-check "></i>
+                <text style="color:white"> @TextBotonSubmit</text>
+            </button>
+        </EditForm>
+    </div>
+</div>
+
 
 @code {
     [Parameter] public CajaModel caja { get; set; } = new CajaModel();
     [Parameter] public string TextBotonSubmit { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public bool apertura { get; set; }
+    [Parameter] public bool cierre { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         caja.Fecha = DateTime.Now;
     }

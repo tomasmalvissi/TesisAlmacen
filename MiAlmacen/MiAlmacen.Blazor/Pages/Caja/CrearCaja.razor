@@ -15,7 +15,7 @@
     </div>
 </div>
 
-<FormCaja caja="@caja" TextBotonSubmit="Confirmar Apertura de Caja" OnValidSubmit="@AbrirCaja" />
+<FormCaja caja="@caja" TextBotonSubmit="Confirmar Apertura de Caja" apertura="false" cierre="true" OnValidSubmit="@AbrirCaja" />
 
 @code {
     public CajaModel caja = new CajaModel();

@@ -13,9 +13,7 @@ namespace MiAlmacen.Model.Models
         [Required]
         public DateTime Fecha { get; set; }
         public int Empleado_Id { get; set; }
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public decimal Apertura { get; set; }
-        [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Solo números")]
         public decimal Cierre { get; set; }
         public UsuarioModel Empleado { get; set; }
     }

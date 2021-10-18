@@ -31,10 +31,10 @@
                 <tr>
                     <td>@caja.Fecha.ToString("dd/MM/yyyy")</td>
                     <td>@caja.Empleado.Nombre</td>
-                    <td>@caja.Apertura</td>
-                    <td>@caja.Cierre</td>
+                    <td>$@caja.Apertura</td>
+                    <td>$@caja.Cierre</td>
                     <td>
-                        <a class="btn btn-sm btn-danger" href="caja/cerrar/@caja.Id"><i class="oi oi-delete"></i></a>
+                        <a class="btn btn-sm btn-outline-danger" href="caja/cerrar/@caja.Id"><i class="oi oi-x"></i></a>
                     </td>
                 </tr>
             </tbody>
@@ -74,7 +74,6 @@
                     <th>Fecha</th>
                     <th>Descripción</th>
                     <th>Importe</th>
-                    <th> </th>
                 </tr>
             </thead>
             <tbody>
@@ -128,7 +127,7 @@
         else
         {
             caja = await CajaService.GetUltimo();
-            if (caja.Fecha.Date != DateTime.Now.Date)
+            if (caja.Fecha.Date != DateTime.Now.Date || caja.Cierre != 0)
             {
                 NavigationManager.NavigateTo("/caja/abrir");
             }

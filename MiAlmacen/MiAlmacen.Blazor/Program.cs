@@ -18,7 +18,11 @@ namespace MiAlmacen.Blazor
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
+            //LOCAL
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44330/") });
+
+            //PUBLICACION
+            //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://almacen.somee.com/") });
 
             builder.Services.AddScoped<ClienteService>()
                             .AddScoped<ArticuloService>()

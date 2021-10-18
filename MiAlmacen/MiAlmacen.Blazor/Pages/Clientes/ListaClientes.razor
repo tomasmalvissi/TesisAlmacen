@@ -195,16 +195,18 @@ else
             clientes = await Task.FromResult(clientes.Where(x => x.DNI.ToString().ToUpper().Contains(dniFiltro.ToUpper())));
     }
 
-    void FiltroNombre(ChangeEventArgs e)
+    async Task FiltroNombre(ChangeEventArgs e)
     {
         nombreFiltro = e.Value.ToString();
-        Filtrar();
+        await Filtrar();
+        await Paginar(false);
     }
 
-    void FiltroDNI(ChangeEventArgs e)
+    async Task FiltroDNI(ChangeEventArgs e)
     {
         dniFiltro = e.Value.ToString();
-        Filtrar();
+        await Filtrar();
+        await Paginar(false);
     }
 
     async Task Filtros(bool activosB, bool inactivosB)

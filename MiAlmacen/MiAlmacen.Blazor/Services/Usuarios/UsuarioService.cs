@@ -28,12 +28,14 @@ namespace MiAlmacen.Blazor.Services
 
         public async Task<UsuarioModel> GetUn(int id)
         {
-            return await _httpClient.GetFromJsonAsync<UsuarioModel>($"api/usuarios/{id}");
+            var respuesta = _httpClient.GetStringAsync($"api/usuarios/{id}");
+            return JsonConvert.DeserializeObject<UsuarioModel>(await respuesta);
         }
 
         public async Task<UsuarioModel> GetUser(string usuario)
         {
-            return await _httpClient.GetFromJsonAsync<UsuarioModel>($"/api/usuarios/api/usuarios/{usuario}");
+            var respuesta = _httpClient.GetStringAsync($"api/usuarios/get/{usuario}");
+            return JsonConvert.DeserializeObject<UsuarioModel>(await respuesta);
         }
 
         public async Task<HttpResponseMessage> Alta(UsuarioModel usuario)
@@ -73,8 +75,8 @@ namespace MiAlmacen.Blazor.Services
                 else
                 {
                     usuario = await GetUn(id);
-                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Id", Encriptar(usuario.Id.ToString()));
-                    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "Nombre", Encriptar(usuario.Nombre));
+                    await _jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "Id", Encriptar(usuario.Id.ToString()));
+                    await _jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "Nombre", Encriptar(usuario.Nombre));
                 }
             }
             return usuario;
@@ -82,15 +84,15 @@ namespace MiAlmacen.Blazor.Services
 
         public async Task Logout()
         {
-            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "Id");
-            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "Nombre");
+            await _jsRuntime.InvokeVoidAsync("sessionStorage.removeItem", "Id");
+            await _jsRuntime.InvokeVoidAsync("sessionStorage.removeItem", "Nombre");
         }
 
         public async Task<UsuarioModel> GetSesion()
         {
             UsuarioModel usuario;
-            string id = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "Id");
-            string nombre = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "Nombre");
+            string id = await _jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "Id");
+            string nombre = await _jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "Nombre");
             if (id == null)
                 return null;
             else

@@ -93,8 +93,18 @@
         }
         else
         {
+            caja = await CajaService.GetUltimo();
+
             OcultaModal();
-            NavigationManager.NavigateTo("/");
+
+            if (caja.Fecha.Date != DateTime.Now.Date || caja.Empleado_Id != UsuarioLogueado.Id || caja.Cierre != 0)
+            {
+                NavigationManager.NavigateTo("/caja/abrir");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
         }
     }
 
@@ -103,6 +113,7 @@
         caja = await CajaService.GetUltimo();
         if (caja.Cierre == 0)
         {
+            await JS.InvokeVoidAsync("simple", "Error", $"Primero debe cerrar la caja actual antes de finalizar la sesión!", "error");
             NavigationManager.NavigateTo($"/caja/cerrar/{caja.Id}");
         }
         else

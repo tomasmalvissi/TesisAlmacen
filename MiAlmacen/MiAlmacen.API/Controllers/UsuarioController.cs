@@ -33,8 +33,7 @@ namespace MiAlmacen.API.Controllers
             return Ok(user);
         }
 
-        [HttpGet]
-        [Route("api/usuarios/{username}")]
+        [HttpGet("get/{username}")]
         public async Task<IActionResult> GetUsers(string username)
         {
             var result = _repository.GetUser(username);
