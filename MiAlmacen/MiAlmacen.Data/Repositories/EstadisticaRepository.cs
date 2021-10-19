@@ -169,6 +169,7 @@ namespace MiAlmacen.Data.Repositories
         {
             orden = @"SELECT DATENAME(WEEKDAY, Fecha) AS Dia, COUNT(Id) AS VentasDia
                         FROM Ventas 
+                        WHERE DATEPART(WEEK,Fecha) = DATEPART(WEEK,GETDATE())
                         GROUP BY DATENAME(WEEKDAY, Fecha)
                         ORDER BY DATENAME(WEEKDAY, Fecha);";
 
