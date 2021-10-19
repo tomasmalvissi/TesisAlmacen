@@ -22,7 +22,8 @@ namespace MiAlmacen.Data.Repositories
                     (SELECT c.Nombre FROM Clientes c WHERE c.Id = v.Cliente_Id) AS RazonSocial, 
                     (SELECT u.Nombre FROM Usuarios u WHERE u.Id = v.Empleado_Id) AS Empleado, 
                     Total AS Importe
-                    FROM Ventas v
+                    FROM Ventas v 
+					WHERE DAY(Fecha) = DAY(GetDate())
                     UNION
                     SELECT 'Compra' AS Movimiento, 
                     Id, 
@@ -31,6 +32,7 @@ namespace MiAlmacen.Data.Repositories
                     (SELECT u.Nombre FROM Usuarios u WHERE u.Id = cmp.Empleado_Id) AS Empleado, 
                     -Total AS Importe
                     FROM Compras cmp
+					WHERE DAY(Fecha) = DAY(GetDate())
                     ORDER BY Fecha DESC";
 
             List<MovimientosCajaModel> movimientos = new();

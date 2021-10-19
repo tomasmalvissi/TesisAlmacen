@@ -252,6 +252,19 @@ namespace MiAlmacen.Data.Repositories
 
                         sqlcmd.ExecuteNonQuery();
                         sqlcmd.Parameters.Clear();
+
+                        if (fpago.FormaPago.Descripcion.Equals("Efectivo"))
+                        {
+                            orden = @"UPDATE Caja
+                                      SET Actual = (SELECT TOP 1 Actual FROM Caja) + @Actual
+                                      WHERE Id = (SELECT TOP 1 ID FROM Caja)";
+
+                            sqlcmd.CommandText = orden;
+                            sqlcmd.Parameters.AddWithValue("@Actual", fpago.Importe);
+
+                            sqlcmd.ExecuteNonQuery();
+                            sqlcmd.Parameters.Clear();
+                        }
                     }
 
                     foreach (var detalle in venta.Detalle)
@@ -347,6 +360,19 @@ namespace MiAlmacen.Data.Repositories
 
                         sqlcmd.ExecuteNonQuery();
                         sqlcmd.Parameters.Clear();
+
+                        if (fpago.FormaPago.Descripcion.Equals("Efectivo"))
+                        {
+                            orden = @"UPDATE Caja
+                                      SET Actual = (SELECT TOP 1 Actual FROM Caja) + @Actual
+                                      WHERE Id = (SELECT TOP 1 ID FROM Caja)";
+
+                            sqlcmd.CommandText = orden;
+                            sqlcmd.Parameters.AddWithValue("@Actual", fpago.Importe);
+
+                            sqlcmd.ExecuteNonQuery();
+                            sqlcmd.Parameters.Clear();
+                        }
                     }
 
                     transaction.Commit();
@@ -415,6 +441,22 @@ namespace MiAlmacen.Data.Repositories
 
                         sqlcmd.ExecuteNonQuery();
                         sqlcmd.Parameters.Clear();
+
+                        foreach(var fpago in venta.FormasPago)
+                        {
+                            if (fpago.FormaPago.Descripcion.Equals("Efectivo"))
+                            {
+                                orden = @"UPDATE Caja
+                                      SET Actual = (SELECT TOP 1 Actual FROM Caja) - @Actual
+                                      WHERE Id = (SELECT TOP 1 ID FROM Caja)";
+
+                                sqlcmd.CommandText = orden;
+                                sqlcmd.Parameters.AddWithValue("@Actual", fpago.Importe);
+
+                                sqlcmd.ExecuteNonQuery();
+                                sqlcmd.Parameters.Clear();
+                            }
+                        }
                     }
 
                     transaction.Commit();

@@ -112,8 +112,9 @@ CREATE TABLE Caja
 	Fecha DATETIME NOT NULL,
 	Empleado_Id INT NOT NULL,
 	Apertura DECIMAL(16,2) NOT NULL,
+	Actual DECIMAL(16,2) NOT NULL,
 	Cierre DECIMAL(16,2) NOT NULL,
-	FechaBaja DATETIME,
+	FechaCierre DATETIME,
 	FOREIGN KEY (Empleado_Id) REFERENCES Usuarios(Id)
 )
 GO
