@@ -136,7 +136,7 @@ namespace MiAlmacen.Data.Repositories
                     caja.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
                     caja.Actual = Convert.ToDecimal(reader["Actual"].ToString());
                     caja.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
-                    caja.FechaCierre = Convert.ToDateTime(reader["FechaCierre"].ToString());
+                    caja.FechaCierre = !string.IsNullOrEmpty(reader["FechaCierre"].ToString()) ? Convert.ToDateTime(reader["FechaCierre"].ToString()) : null;
 
                     Usuarios usuario = new();
                     UsuarioRepository usuarioRepository = new();

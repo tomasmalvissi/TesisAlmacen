@@ -28,7 +28,9 @@ namespace MiAlmacen.Data.Repositories
 
         public List<SalidasDinero> GetAll()
         {
-            orden = $"SELECT * FROM SalidasDinero ORDER BY Id ASC";
+            orden = @"SELECT * FROM SalidasDinero 
+                    WHERE Caja_Id = (SELECT TOP 1 Id FROM Caja)
+                    ORDER BY Id ASC;";
             List<SalidasDinero> salidas = new();
 
             SqlCommand sqlcmd = new(orden, conexion);
@@ -76,15 +78,14 @@ namespace MiAlmacen.Data.Repositories
             {
                 AbrirConex();
 
-                SqlTransaction transaction;
-                transaction = conexion.BeginTransaction();
-                SqlCommand sqlcmd = new(orden, conexion, transaction);
+                //SqlTransaction transaction;
+                //transaction = conexion.BeginTransaction();
+                SqlCommand sqlcmd = new(orden, conexion);
                 SalidasDinero salida = IniciarObjeto(model);
 
                 try
                 {
                     sqlcmd.Connection = conexion;
-                    sqlcmd.Transaction = transaction;
 
                     orden = @"INSERT INTO SalidasDinero (Descripcion, Importe, Caja_Id)
                             VALUES (@Descripcion, @Importe, @Caja_Id) ";
@@ -96,12 +97,9 @@ namespace MiAlmacen.Data.Repositories
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
-                    transaction.Commit();
                 }
                 catch (Exception e)
                 {
-                    transaction.Rollback();
-
                     throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
                 }
                 finally

@@ -134,7 +134,6 @@
             else
             {
                 salidas = await SalidaDineroService.GetAll();
-                salidas.Select(x => x.Caja.Fecha == DateTime.Now);
             }
         }
     }
