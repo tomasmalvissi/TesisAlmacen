@@ -80,7 +80,7 @@ namespace MiAlmacen.Data.Repositories
                     usuario.Nombre = reader["Nombre"].ToString();
                     usuario.Email = reader["Email"].ToString();
                     usuario.Usuario = reader["Usuario"].ToString();
-                    usuario.Contraseña = reader["Contraseña"].ToString();
+                    usuario.Contraseña = DesEncriptar(reader["Contraseña"].ToString());
                     usuario.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                 }
 
@@ -114,7 +114,7 @@ namespace MiAlmacen.Data.Repositories
                     usuario.Nombre = reader["Nombre"].ToString();
                     usuario.Email = reader["Email"].ToString();
                     usuario.Usuario = reader["Usuario"].ToString();
-                    usuario.Contraseña = reader["Contraseña"].ToString();
+                    usuario.Contraseña = DesEncriptar(reader["Contraseña"].ToString());
                     usuario.FechaBaja = string.IsNullOrEmpty(reader["FechaBaja"].ToString()) ? null : Convert.ToDateTime(reader["FechaBaja"]);
                 }
 
@@ -141,7 +141,7 @@ namespace MiAlmacen.Data.Repositories
                 AbrirConex();
                 sqlcmd.CommandText = orden;
                 sqlcmd.Parameters.AddWithValue("@user", user);
-                sqlcmd.Parameters.AddWithValue("@pass", pass);
+                sqlcmd.Parameters.AddWithValue("@pass", Encriptar(pass));
                 sqlcmd.ExecuteNonQuery();
                 SqlDataReader reader = sqlcmd.ExecuteReader();
 
@@ -183,7 +183,7 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Parameters.AddWithValue("@Nombre", user.Nombre);
                     sqlcmd.Parameters.AddWithValue("@Email", user.Email);
                     sqlcmd.Parameters.AddWithValue("@Usuario", user.Usuario);
-                    sqlcmd.Parameters.AddWithValue("@Contraseña", user.Contraseña);
+                    sqlcmd.Parameters.AddWithValue("@Contraseña", Encriptar(user.Contraseña));
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
@@ -223,7 +223,7 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Parameters.AddWithValue("@Nombre", user.Nombre);
                     sqlcmd.Parameters.AddWithValue("@Email", user.Email);
                     sqlcmd.Parameters.AddWithValue("@Usuario", user.Usuario);
-                    sqlcmd.Parameters.AddWithValue("@Contraseña", user.Contraseña);
+                    sqlcmd.Parameters.AddWithValue("@Contraseña", Encriptar(user.Contraseña));
 
                     if (model.FechaBaja == null)
                         sqlcmd.Parameters.AddWithValue("@FechaBaja", null);
@@ -280,6 +280,23 @@ namespace MiAlmacen.Data.Repositories
                 id = 0;
             }
             return id;
+        }
+
+
+        public string Encriptar(string _cadenaAencriptar)
+        {
+            string result = string.Empty;
+            byte[] encryted = System.Text.Encoding.Unicode.GetBytes(_cadenaAencriptar);
+            result = Convert.ToBase64String(encryted);
+            return result;
+        }
+
+        public string DesEncriptar(string _cadenaAdesencriptar)
+        {
+            string result = string.Empty;
+            byte[] decryted = Convert.FromBase64String(_cadenaAdesencriptar);
+            result = System.Text.Encoding.Unicode.GetString(decryted);
+            return result;
         }
     }
 }
