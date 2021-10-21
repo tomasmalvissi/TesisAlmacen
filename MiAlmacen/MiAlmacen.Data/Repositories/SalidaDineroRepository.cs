@@ -29,7 +29,7 @@ namespace MiAlmacen.Data.Repositories
         public List<SalidasDinero> GetAll()
         {
             orden = @"SELECT * FROM SalidasDinero 
-                      WHERE Caja_Id = (SELECT TOP 1 Id FROM Caja WHERE FechaCierre IS NOT NULL ORDER BY Id DESC);";
+                      WHERE Caja_Id = (SELECT TOP 1 Id FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC);";
             List<SalidasDinero> salidas = new();
 
             SqlCommand sqlcmd = new(orden, conexion);
