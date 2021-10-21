@@ -18,12 +18,12 @@ namespace MiAlmacen.API.Controllers
             _repository = repository;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll()
-        //{
-        //    var cajas = _repository.GetAll();
-        //    return Ok(cajas);
-        //}
+        [HttpGet("getall")]
+        public async Task<IActionResult> GetAll()
+        {
+            var cajas = _repository.GetAll();
+            return Ok(cajas);
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetLast()
@@ -39,6 +39,12 @@ namespace MiAlmacen.API.Controllers
             return Ok(caja);
         }
 
+        [HttpGet("ingresos")]
+        public async Task<IActionResult> GetIngreso()
+        {
+            return Ok(_repository.IngresosXfp());
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(CajaModel model)
         {
@@ -51,10 +57,5 @@ namespace MiAlmacen.API.Controllers
             return Ok(_repository.Put(id, model));
         }
 
-        [HttpGet("ingresos")]
-        public async Task<IActionResult> GetIngreso()
-        {
-            return Ok(_repository.IngresosXfp());
-        }
     }
 }

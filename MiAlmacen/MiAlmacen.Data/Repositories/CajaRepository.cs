@@ -34,7 +34,7 @@ namespace MiAlmacen.Data.Repositories
 
         public List<Caja> GetAll()
         {
-            orden = $"SELECT * FROM Caja ORDER BY Nombre ASC";
+            orden = $"SELECT * FROM Caja ORDER Fecha DESC";
             List<Caja> cajas = new();
 
             SqlCommand sqlcmd = new(orden, conexion);

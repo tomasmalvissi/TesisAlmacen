@@ -93,7 +93,7 @@ namespace MiAlmacen.Data.Repositories
 
         public List<Top> GetTopProductos()
         {
-            orden = @"SELECT TOP 5 a.Nombre AS Producto, SUM(dv.Articulo_Id * Cantidad) CantidadVendido
+            orden = @"SELECT TOP 5 a.Nombre AS Producto, SUM(dv.Cantidad) CantidadVendido
                     FROM DetalleVentas dv
                     INNER JOIN Articulos a on a.Id = dv.Articulo_Id
                     GROUP BY a.Nombre

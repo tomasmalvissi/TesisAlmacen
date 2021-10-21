@@ -21,7 +21,7 @@ namespace MiAlmacen.Blazor.Services
         }
         public async Task<IEnumerable<CajaModel>> GetAll()
         {
-            var respuesta = _httpClient.GetStringAsync($"api/caja/");
+            var respuesta = _httpClient.GetStringAsync($"api/caja/getall");
             return JsonConvert.DeserializeObject<IEnumerable<CajaModel>>(await respuesta);
         }
 
