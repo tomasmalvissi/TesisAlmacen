@@ -19,6 +19,7 @@ namespace MiAlmacen.Data.Repositories
             ca.Fecha = model.Fecha;
             ca.Empleado_Id = model.Empleado_Id;
             ca.Apertura = model.Apertura;
+            ca.Otros = model.Otros;
             ca.Cierre = model.Cierre;
             ca.FechaCierre = model.FechaCierre;
             ca.Actual = model.Actual;
@@ -34,7 +35,7 @@ namespace MiAlmacen.Data.Repositories
 
         public List<Caja> GetAll()
         {
-            orden = $"SELECT * FROM Caja ORDER Fecha DESC";
+            orden = $"SELECT * FROM Caja ORDER BY Fecha DESC";
             List<Caja> cajas = new();
 
             SqlCommand sqlcmd = new(orden, conexion);
@@ -52,6 +53,7 @@ namespace MiAlmacen.Data.Repositories
                     ca.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
                     ca.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
                     ca.Actual = Convert.ToDecimal(reader["Actual"].ToString());
+                    ca.Otros = Convert.ToDecimal(reader["Otros"].ToString());
                     ca.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
                     ca.FechaCierre = !string.IsNullOrEmpty(reader["FechaCierre"].ToString()) ? Convert.ToDateTime(reader["FechaCierre"].ToString()) : null;
 
@@ -94,6 +96,7 @@ namespace MiAlmacen.Data.Repositories
                     caja.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
                     caja.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
                     caja.Actual = Convert.ToDecimal(reader["Actual"].ToString());
+                    caja.Otros = Convert.ToDecimal(reader["Otros"].ToString());
                     caja.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
                     caja.FechaCierre = !string.IsNullOrEmpty(reader["FechaCierre"].ToString()) ? Convert.ToDateTime(reader["FechaCierre"].ToString()) : null;
 
@@ -135,6 +138,7 @@ namespace MiAlmacen.Data.Repositories
                     caja.Empleado_Id = Convert.ToInt32(reader["Empleado_Id"].ToString());
                     caja.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
                     caja.Actual = Convert.ToDecimal(reader["Actual"].ToString());
+                    caja.Otros = Convert.ToDecimal(reader["Otros"].ToString());
                     caja.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
                     caja.FechaCierre = !string.IsNullOrEmpty(reader["FechaCierre"].ToString()) ? Convert.ToDateTime(reader["FechaCierre"].ToString()) : null;
 
@@ -178,14 +182,15 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Connection = conexion;
                     sqlcmd.Transaction = transaction;
 
-                    orden = @"INSERT INTO Caja (Fecha, Empleado_Id, Apertura, Cierre, Actual)
-                            VALUES (@Fecha, @Empleado_Id, @Apertura, @Cierre, @Actual) ";
+                    orden = @"INSERT INTO Caja (Fecha, Empleado_Id, Apertura, Cierre, Actual, Otros)
+                            VALUES (@Fecha, @Empleado_Id, @Apertura, @Cierre, @Actual, @Otros) ";
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
                     sqlcmd.Parameters.AddWithValue("@Empleado_Id", caja.Empleado_Id);
                     sqlcmd.Parameters.AddWithValue("@Apertura", caja.Apertura);
                     sqlcmd.Parameters.AddWithValue("@Actual", caja.Apertura); //El monto de apertura es el monto actual al momento de crear
+                    sqlcmd.Parameters.AddWithValue("@Otros", 0);
                     sqlcmd.Parameters.AddWithValue("@Cierre", 0);
 
                     sqlcmd.ExecuteNonQuery();
