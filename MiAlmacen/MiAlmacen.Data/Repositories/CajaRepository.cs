@@ -207,6 +207,7 @@ namespace MiAlmacen.Data.Repositories
                 return caja;
             }
         }
+
         public Caja Put(int id, CajaModel model)
         {
             Caja ca = GetOne(id);
@@ -227,7 +228,7 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Id", id);
                     sqlcmd.Parameters.AddWithValue("@Cierre", caja.Cierre);
-                    sqlcmd.Parameters.AddWithValue("@FechaCierre", caja.Cierre);
+                    sqlcmd.Parameters.AddWithValue("@FechaCierre", DateTime.Now);
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
@@ -243,6 +244,98 @@ namespace MiAlmacen.Data.Repositories
                 }
                 return caja;
             }
+        }
+
+        public Ingreso IngresosXfp()
+        {
+            orden = @"SELECT ISNULL((SELECT SUM(fv.Importe)
+                    FROM Ventas v
+                    INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
+                    INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE 'EFECTIVO'
+                    WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
+                    - ISNULL((SELECT SUM(fc.Importe)
+                    FROM Compras c 
+                    INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
+                    INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'EFECTIVO'
+                    WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
+                    AS EFT,
+
+                    ISNULL((SELECT SUM(fv.Importe)
+                    FROM Ventas v
+                    INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
+                    INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE '%DEBITO'
+                    WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
+                    - ISNULL((SELECT SUM(fc.Importe)
+                    FROM Compras c 
+                    INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
+                    INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE '%DEBITO'
+                    WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
+                    AS TD,
+
+                    ISNULL((SELECT SUM(fv.Importe)
+                    FROM Ventas v
+                    INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
+                    INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE '%CREDITO'
+                    WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
+                    - ISNULL((SELECT SUM(fc.Importe)
+                    FROM Compras c 
+                    INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
+                    INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE '%CREDITO'
+                    WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
+                    AS TC,
+
+                    ISNULL((SELECT SUM(fv.Importe)
+                    FROM Ventas v
+                    INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
+                    INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE 'TRANSFERENCIA%'
+                    WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
+                    - ISNULL((SELECT SUM(fc.Importe)
+                    FROM Compras c 
+                    INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
+                    INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'TRANSFERENCIA%'
+                    WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
+                    AS TB,
+
+                    ISNULL((SELECT SUM(fv.Importe)
+                    FROM Ventas v
+                    INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
+                    INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE 'CHEQUE'
+                    WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
+                    - ISNULL((SELECT SUM(fc.Importe)
+                    FROM Compras c 
+                    INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
+                    INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'CHEQUE'
+                    WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
+                    AS CH";
+
+            Ingreso ingreso = new();
+
+            SqlCommand sqlcmd = new(orden, conexion);
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ingreso.Efectivo = Convert.ToDecimal(reader["EFT"].ToString());
+                    ingreso.TarjetaDebito = Convert.ToDecimal(reader["TD"].ToString());
+                    ingreso.TarjetaCredito = Convert.ToDecimal(reader["TC"].ToString());
+                    ingreso.Cheque = Convert.ToDecimal(reader["CH"].ToString());
+                    ingreso.Transferencia = Convert.ToDecimal(reader["TB"].ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al tratar de ejecutar la operación " + ex.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return ingreso;
         }
     }
 }

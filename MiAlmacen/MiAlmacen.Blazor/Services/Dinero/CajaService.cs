@@ -25,6 +25,7 @@ namespace MiAlmacen.Blazor.Services
             return JsonConvert.DeserializeObject<IEnumerable<CajaModel>>(await respuesta);
         }
 
+
         public async Task<CajaModel> GetUn(int id)
         {
             var respuesta = _httpClient.GetStringAsync($"api/caja/{id}");
@@ -51,6 +52,12 @@ namespace MiAlmacen.Blazor.Services
             var respuesta = await _httpClient.PutAsync($"api/caja/{caja.Id}", 
                             new StringContent(cajaSerealizada, UnicodeEncoding.UTF8, "application/json"));
             return respuesta;
+        }
+
+        public async Task<IngresoModel> GetIngresos()
+        {
+            var respuesta = _httpClient.GetStringAsync($"api/caja/ingresos");
+            return JsonConvert.DeserializeObject<IngresoModel>(await respuesta);
         }
     }
 }

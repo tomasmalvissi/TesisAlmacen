@@ -1,0 +1,128 @@
+﻿@inject NavigationManager NavigationManager
+@inject UsuarioService UsuarioService
+@inject SalidaDineroService SalidaDineroService
+@inject CajaService CajaService
+@inject IJSRuntime JS
+
+<div class="modal fade" id="modalSalidasDinero" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Salidas de Dinero</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body m-1">
+                <div class="d-flex justify-content-end mb-1">
+                    <button type="button" class="btn btn-sm btn-primary" @onclick="NuevaSalidaDinero" data-toggle="tooltip" data-placement="bottom" title="Haga click aquí para registrar una nueva salida de dinero.">
+                        Registrar Nueva
+                    </button>
+                </div>
+
+                <div>
+                    @if (salidas == null)
+                    {
+                        <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
+                            <div class="spinner-grow text-primary" role="status">
+                                <span class="sr-only">Cargando...</span>
+                            </div>
+                        </div>
+                    }
+                    else if (salidas.Count() == 0)
+                    {
+                        <p>No se encontraron salidas de dinero para listar.</p>
+                    }
+                    else
+                    {
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fecha</th>
+                                    <th>Descripción</th>
+                                    <th>Importe</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in salidas)
+                                {
+                                    <tr>
+                                        <td>@s.Id</td>
+                                        <td>@s.Caja.Fecha.ToString("dd/MM/yyyy")</td>
+                                        <td>@s.Descripcion</td>
+                                        <td>$ @s.Importe</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nueva SalidaDinero -->
+<div class="modal fade" id="modalNuevaSalida" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Nueva Salida de Dinero</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="m-3">
+                    <MiAlmacen.Blazor.Pages.SalidasDinero.FormSalida salida="@nuevaSalida" OnValidSubmit="@CrearSalid">
+                    </MiAlmacen.Blazor.Pages.SalidasDinero.FormSalida>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    public IEnumerable<SalidasDineroModel> salidas { get; set; }
+    private SalidasDineroModel nuevaSalida { get; set; } = new SalidasDineroModel();
+    [Parameter] public CajaModel caja { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await UsuarioService.GetSesion();
+        if (result == null)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            salidas = await SalidaDineroService.GetAll();
+        }
+    }
+
+    void NuevaSalidaDinero()
+    {
+        JS.InvokeVoidAsync("levantaModal", "#modalNuevaSalida");
+    }
+
+    async Task CrearSalid()
+
+    {
+        nuevaSalida.Caja_Id = caja.Id;
+        nuevaSalida.Caja = caja;
+        var altasalida = await SalidaDineroService.Alta(nuevaSalida);
+
+        if (altasalida.IsSuccessStatusCode)
+        {
+            await JS.InvokeVoidAsync("ocultaModal", "#modalNuevaSalida");
+            salidas = await SalidaDineroService.GetAll();
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Registro exitoso", "success");
+        }
+        else
+            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)altasalida.StatusCode)}. No se pudo registrar.", "error");
+    }
+
+}

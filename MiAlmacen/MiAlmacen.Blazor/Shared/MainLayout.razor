@@ -97,7 +97,7 @@
 
             OcultaModal();
 
-            if (caja.Fecha.Date != DateTime.Now.Date || caja.Empleado_Id != UsuarioLogueado.Id || caja.Cierre != 0)
+            if (caja.Fecha.Date != DateTime.Now.Date || caja.Empleado_Id != UsuarioLogueado.Id || caja.FechaCierre != null)
             {
                 NavigationManager.NavigateTo("/caja/abrir");
             }
@@ -111,7 +111,7 @@
     async Task Logout()
     {
         caja = await CajaService.GetUltimo();
-        if (caja.Cierre == 0)
+        if (caja.FechaCierre == null)
         {
             await JS.InvokeVoidAsync("simple", "Error", $"Primero debe cerrar la caja actual antes de finalizar la sesión!", "error");
             NavigationManager.NavigateTo($"/caja/cerrar/{caja.Id}");

@@ -18,26 +18,39 @@
 }
 else
 {
+    <style>
+        .zoom {
+            border-radius: 3px;
+            transition: transform .2s
+        }
+
+            .zoom:hover {
+                transform: scale(1.02);
+                box-shadow: 1px 8px 20px grey;
+                -webkit-transition: box-shadow .6s ease-in;
+            }
+    </style>
+
     <div class="row h-50">
         <div class="col-6">
-            <div class="card m-1">
+            <div class="card zoom m-2">
                 <Chart Config="_clientesConfig"></Chart>
             </div>
         </div>
         <div class="col-6">
-            <div class="card m-1">
+            <div class="card zoom m-2">
                 <Chart Config="_productosConfig"></Chart>
             </div>
         </div>
     </div>
     <div class="row h-50">
         <div class="col-6">
-            <div class="card m-1">
+            <div class="card zoom m-2">
                 <Chart Config="_balanceConfig"></Chart>
             </div>
         </div>
         <div class="col-6">
-            <div class="card m-1">
+            <div class="card zoom m-2">
                 <Chart Config="_diasConfig"></Chart>
             </div>
         </div>
@@ -91,7 +104,7 @@ else
                 Scales = new BarScales
                 {
                     XAxes = new List<CartesianAxis>
-                    {
+                {
                         new LinearCartesianAxis
                         {
                             Ticks = new LinearCartesianTicks
@@ -148,7 +161,7 @@ else
                 Scales = new BarScales
                 {
                     YAxes = new List<CartesianAxis>
-        {
+    {
                         new LinearCartesianAxis
                         {
                             Ticks = new LinearCartesianTicks

@@ -29,8 +29,7 @@ namespace MiAlmacen.Data.Repositories
         public List<SalidasDinero> GetAll()
         {
             orden = @"SELECT * FROM SalidasDinero 
-                    WHERE Caja_Id = (SELECT TOP 1 Id FROM Caja)
-                    ORDER BY Id ASC;";
+                      WHERE Caja_Id = (SELECT TOP 1 Id FROM Caja WHERE FechaCierre IS NOT NULL ORDER BY Id DESC);";
             List<SalidasDinero> salidas = new();
 
             SqlCommand sqlcmd = new(orden, conexion);
@@ -92,6 +91,17 @@ namespace MiAlmacen.Data.Repositories
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Descripcion", salida.Descripcion);
+                    sqlcmd.Parameters.AddWithValue("@Importe", salida.Importe);
+                    sqlcmd.Parameters.AddWithValue("@Caja_Id", salida.Caja_Id);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+
+                    orden = @"UPDATE Caja
+                            SET Actual = Actual - @Importe
+                            WHERE Id = @Caja_Id ";
+
+                    sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Importe", salida.Importe);
                     sqlcmd.Parameters.AddWithValue("@Caja_Id", salida.Caja_Id);
 

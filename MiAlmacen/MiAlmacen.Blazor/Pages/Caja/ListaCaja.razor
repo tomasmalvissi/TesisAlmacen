@@ -8,11 +8,61 @@
 <div class="d-flex justify-content-between mb-1" id="header">
     <h3>Caja</h3>
     <div>
-        <a href="caja/abrir" class="btn btn-sm btn-primary">
-            <i class="oi oi-check"></i> Abrir Nueva Caja
-        </a>
+        <div class="btn-group">
+            <a href="caja/abrir" class="btn btn-sm btn-primary">
+                <i class="oi oi-check"></i> Abrir Nueva Caja
+            </a>
+            <button class="btn btn-sm btn-secondary" @onclick="ModalListaSalidas">
+                 Salidas de Dinero
+            </button>
+        </div>
     </div>
 </div>
+
+@if (ingreso != null)
+{
+    <style>
+        .zoom {
+            border-radius: 3px;
+            transition: transform .2s
+        }
+
+            .zoom:hover {
+                transform: scale(1.05);
+                box-shadow: 1px 8px 20px grey;
+                -webkit-transition: box-shadow .6s ease-in;
+            }
+    </style>
+
+    <div class="d-flex justify-content-center row my-2">
+        <div class="card zoom col-2 mx-2 px-2">
+            <div class="card-body">
+                <b>Efectivo: </b> $@ingreso.Efectivo
+            </div>
+        </div>
+        <div class="card zoom col-2 mx-2 px-2">
+            <div class="card-body">
+                <b>Tarjeta crédito: </b> $@ingreso.TarjetaCredito
+            </div>
+        </div>
+        <div class="card zoom col-2 mx-2 px-2">
+            <div class="card-body">
+                <b>Tarjeta débito: </b> $@ingreso.TarjetaDebito
+            </div>
+        </div>
+        <div class="card zoom col-2 mx-2 px-2">
+            <div class="card-body">
+                <b>Cheque: </b> $@ingreso.Cheque
+            </div>
+        </div>
+        <div class="card zoom col-2 mx-2 px-2">
+            <div class="card-body">
+                <b>Transferencia: </b> $@ingreso.Transferencia
+            </div>
+        </div>
+    </div>
+}
+
 
 <div>
     @if (caja != null)
@@ -42,80 +92,14 @@
     }
 </div>
 
-<hr />
-
 <br />
-<div class="d-flex justify-content-between mb-1">
-    <h4>Salidas de Dinero</h4>
-    <button type="button" class="btn btn-sm btn-primary" @onclick="NuevaSalidaDinero" data-toggle="tooltip" data-placement="bottom" title="Haga click aquí para registrar una nueva salida de dinero.">
-        Registrar Nueva
-    </button>
-</div>
 
-<div>
-    @if (salidas == null)
-    {
-        <div class="vh-100 row m-0 text-center align-items-center justify-content-center">
-            <div class="spinner-grow text-primary" role="status">
-                <span class="sr-only">Cargando...</span>
-            </div>
-        </div>
-    }
-    else if (salidas.Count() == 0)
-    {
-        <p>No se encontraron salidas de dinero para listar.</p>
-    }
-    else
-    {
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Fecha</th>
-                    <th>Descripción</th>
-                    <th>Importe</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var s in salidas)
-                {
-                    <tr>
-                        <td>@s.Id</td>
-                        <td>@s.Caja.Fecha.ToString("dd/MM/yyyy")</td>
-                        <td>@s.Descripcion</td>
-                        <td>$ @s.Importe</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-</div>
+<ModalSalidasDinero caja="caja"></ModalSalidasDinero>
 
-<!-- Modal Nueva SalidaDinero -->
-<div class="modal fade" id="modalNuevaSalida" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title">Salida de Dinero</h6>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="m-3">
-                    <MiAlmacen.Blazor.Pages.SalidasDinero.FormSalida salida="@nuevaSalida" OnValidSubmit="@CrearSalid">
-                    </MiAlmacen.Blazor.Pages.SalidasDinero.FormSalida>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @code {
     private CajaModel caja { get; set; }
-    public IEnumerable<SalidasDineroModel> salidas { get; set; }
-    private SalidasDineroModel nuevaSalida { get; set; } = new SalidasDineroModel();
+    private IngresoModel ingreso { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -127,40 +111,16 @@
         else
         {
             caja = await CajaService.GetUltimo();
-            if (caja.Fecha.Date != DateTime.Now.Date || caja.Cierre != 0)
+            ingreso = await CajaService.GetIngresos();
+            if (caja.Fecha.Date != DateTime.Now.Date || caja.FechaCierre != null)
             {
                 NavigationManager.NavigateTo("/caja/abrir");
             }
-            else
-            {
-                salidas = await SalidaDineroService.GetAll();
-            }
         }
     }
 
-
-    void NuevaSalidaDinero()
+    void ModalListaSalidas()
     {
-        JS.InvokeVoidAsync("levantaModal", "#modalNuevaSalida");
-    }
-
-    async Task CrearSalid()
-    {
-        nuevaSalida.Caja_Id = caja.Id;
-        nuevaSalida.Caja = caja;
-        var altasalida = await SalidaDineroService.Alta(nuevaSalida);
-        caja.Apertura = (caja.Apertura - nuevaSalida.Importe);
-        var editcaja = await CajaService.Editar(caja);
-
-        if (altasalida.IsSuccessStatusCode && editcaja.IsSuccessStatusCode)
-        {
-            var content = await altasalida.Content.ReadAsStringAsync();
-            await JS.InvokeVoidAsync("ocultaModal", "#modalNuevaSalida");
-            salidas = await SalidaDineroService.GetAll();
-            salidas.Select(x => x.Caja.Fecha == DateTime.Now);
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Registro exitoso", "success");
-        }
-        else
-            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)altasalida.StatusCode)}. No se pudo registrar.", "error");
+        JS.InvokeVoidAsync("levantaModal", "#modalSalidasDinero");
     }
 }

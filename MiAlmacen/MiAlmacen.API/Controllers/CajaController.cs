@@ -50,5 +50,11 @@ namespace MiAlmacen.API.Controllers
         {
             return Ok(_repository.Put(id, model));
         }
+
+        [HttpGet("ingresos")]
+        public async Task<IActionResult> GetIngreso()
+        {
+            return Ok(_repository.IngresosXfp());
+        }
     }
 }
