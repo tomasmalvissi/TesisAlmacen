@@ -311,7 +311,12 @@ namespace MiAlmacen.Data.Repositories
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'CHEQUE'
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
-                    AS CH";
+                    AS CH,
+
+                    ISNULL((SELECT SUM(v.Saldo)
+                    FROM Ventas v
+                    WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
+                    AS CC";
 
             Ingreso ingreso = new();
 
@@ -329,6 +334,7 @@ namespace MiAlmacen.Data.Repositories
                     ingreso.TarjetaCredito = Convert.ToDecimal(reader["TC"].ToString());
                     ingreso.Cheque = Convert.ToDecimal(reader["CH"].ToString());
                     ingreso.Transferencia = Convert.ToDecimal(reader["TB"].ToString());
+                    ingreso.CuentaCorriente = Convert.ToDecimal(reader["CC"].ToString());
                 }
             }
             catch (Exception ex)

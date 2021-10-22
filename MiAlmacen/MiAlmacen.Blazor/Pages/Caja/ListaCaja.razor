@@ -26,8 +26,9 @@
 {
     <style>
         .zoom {
-            border-radius: 3px;
-            transition: transform .2s
+            border-radius: 1rem;
+            transition: transform .2s;
+            border-color: #B6374A
         }
 
             .zoom:hover {
@@ -37,40 +38,43 @@
             }
     </style>
 
-    <div class="d-flex justify-content-center row my-2">
-        <div class="card zoom col-2 mx-2 px-2">
+    <div class="card-deck my-3">
+        <div class="card zoom">
             <div class="card-body">
-                <b>Efectivo: </b> $@ingreso.Efectivo
+                <b style="font-size: x-large">Efectivo: $@ingreso.Efectivo</b>
             </div>
         </div>
-        <div class="card zoom col-2 mx-2 px-2">
+        <div class="card p-2 zoom">
             <div class="card-body">
-                <b>Tarjeta crédito: </b> $@ingreso.TarjetaCredito
+                <b style="font-size: x-large ">Tarjeta crédito: $@ingreso.TarjetaCredito</b>
             </div>
         </div>
-        <div class="card zoom col-2 mx-2 px-2">
+        <div class="card zoom">
             <div class="card-body">
-                <b>Tarjeta débito: </b> $@ingreso.TarjetaDebito
+                <b style="font-size: x-large ">Tarjeta débito: $@ingreso.TarjetaDebito</b>
             </div>
         </div>
-        <div class="card zoom col-2 mx-2 px-2">
+    </div>
+    <div class="card-deck my-3">
+        <div class="card p-2 zoom">
             <div class="card-body">
-                <b>Cheque: </b> $@ingreso.Cheque
+                <b style="font-size: x-large ">Cheque: $@ingreso.Cheque</b>
             </div>
         </div>
-        <div class="card zoom col-2 mx-2 px-2">
+        <div class="card zoom">
             <div class="card-body">
-                <b>Transferencia: </b> $@ingreso.Transferencia
+                <b style="font-size: x-large ">Transferencia: $@ingreso.Transferencia</b>
+            </div>
+        </div>
+        <div class="card p-2 zoom">
+            <div class="card-body">
+                <b style="font-size: x-large ">Cuentas corrientes: $@ingreso.CuentaCorriente</b>
             </div>
         </div>
     </div>
 }
 
-<br />
-<br />
-
-
-<div>
+<div class="mt-2">
     @if (caja != null)
     {
         <table class="table table-hover">
