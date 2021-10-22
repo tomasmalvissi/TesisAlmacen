@@ -265,6 +265,18 @@ namespace MiAlmacen.Data.Repositories
                             sqlcmd.ExecuteNonQuery();
                             sqlcmd.Parameters.Clear();
                         }
+                        else
+                        {
+                            orden = @"UPDATE Caja
+                                    SET Otros = Otros + @Otros
+                                    WHERE Id = (SELECT TOP 1 ID FROM Caja)";
+
+                            sqlcmd.CommandText = orden;
+                            sqlcmd.Parameters.AddWithValue("@Otros", fpago.Importe);
+
+                            sqlcmd.ExecuteNonQuery();
+                            sqlcmd.Parameters.Clear();
+                        }
                     }
 
                     foreach (var detalle in venta.Detalle)
@@ -373,6 +385,18 @@ namespace MiAlmacen.Data.Repositories
                             sqlcmd.ExecuteNonQuery();
                             sqlcmd.Parameters.Clear();
                         }
+                        else
+                        {
+                            orden = @"UPDATE Caja
+                                    SET Otros = Otros + @Otros
+                                    WHERE Id = (SELECT TOP 1 ID FROM Caja)";
+
+                            sqlcmd.CommandText = orden;
+                            sqlcmd.Parameters.AddWithValue("@Otros", fpago.Importe);
+
+                            sqlcmd.ExecuteNonQuery();
+                            sqlcmd.Parameters.Clear();
+                        }
                     }
 
                     transaction.Commit();
@@ -452,6 +476,18 @@ namespace MiAlmacen.Data.Repositories
 
                                 sqlcmd.CommandText = orden;
                                 sqlcmd.Parameters.AddWithValue("@Actual", fpago.Importe);
+
+                                sqlcmd.ExecuteNonQuery();
+                                sqlcmd.Parameters.Clear();
+                            }
+                            else
+                            {
+                                orden = @"UPDATE Caja
+                                    SET Otros = Otros - @Otros
+                                    WHERE Id = (SELECT TOP 1 ID FROM Caja)";
+
+                                sqlcmd.CommandText = orden;
+                                sqlcmd.Parameters.AddWithValue("@Otros", fpago.Importe);
 
                                 sqlcmd.ExecuteNonQuery();
                                 sqlcmd.Parameters.Clear();
