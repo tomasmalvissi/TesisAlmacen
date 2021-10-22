@@ -17,6 +17,14 @@
 </div>
 
 
+<div class="input-group d-flex justify-content-between mb-1">
+    <input class="form-control form-control-sm" type="date" @bind="@FechaFiltro" @oninput="FiltroFecha" />
+    <input class="form-control form-control-sm" type="text" placeholder="Buscar por empleado" @oninput="FiltroEmpleado" />
+</div>
+<div class="input-group d-flex justify-content-between mb-1">
+    <button class="btn btn-primary btn-block btn-sm" @onclick="@(() => GetCajas())"> Todas</button>
+</div>
+
 
 @if (cajas == null)
 {
@@ -28,7 +36,7 @@
 }
 else if (cajas.Count() == 0)
 {
-    <p>No se encontraron clientes.</p>
+    <p>No se encontraron cajas para listar.</p>
 }
 else
 {
@@ -85,6 +93,10 @@ else
 
     public int registros { get; set; }
 
+    public string empleadoFiltro { get; set; } = string.Empty;
+
+    public DateTime FechaFiltro { get; set; } = DateTime.Now;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,9 +118,23 @@ else
         cajasTemp = cajas;
     }
 
+    async Task FiltroEmpleado(ChangeEventArgs e)
+    {
+        empleadoFiltro = e.Value.ToString();
+        cajas = await Task.FromResult(cajas.Where(x => x.Empleado.Nombre.ToUpper().Contains(empleadoFiltro.ToUpper())));
+        await Paginar(false);
+    }
+
+
+    async Task FiltroFecha(ChangeEventArgs e)
+    {
+        FechaFiltro = Convert.ToDateTime(e.Value.ToString());
+        cajas = await Task.FromResult(cajas.Where(x => x.Fecha.Date == FechaFiltro.Date));
+        await Paginar(false);
+    }
+
     async Task Paginar(bool next)
     {
-        //await Filtrar();
 
         int cantidadPorPagina = 10;
         registros = cajas.Count();
