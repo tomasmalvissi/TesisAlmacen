@@ -52,12 +52,12 @@
         </div>
 
         <div class="form-group col-md-2">
-            <label>Precio Mayorista</label>
+            <label>Precio de Compra</label>
             <input type="number" @bind="precioMayor" class="form-control" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Ingrese precio" data-toggle="tooltip" data-placement="bottom" title="Precio que pagó por producto al proveedor" />
         </div>
 
         <div class="form-group col-md-2">
-            <label>Precio Unitario</label>
+            <label>Precio de Venta</label>
             <input type="number" @bind="precioUnit" class="form-control" placeholder="Ingrese precio" data-toggle="tooltip" data-placement="bottom" title="Precio al que venderá el producto" />
         </div>
 
@@ -113,8 +113,8 @@
             <tr>
                 <th>#</th>
                 <th>Articulo</th>
-                <th>Precio Mayorista</th>
-                <th>Precio Unitario</th>
+                <th>Precio de Compra</th>
+                <th>Precio de Venta</th>
                 <th>Cantidad</th>
                 <th>Subtotal</th>
                 <th></th>

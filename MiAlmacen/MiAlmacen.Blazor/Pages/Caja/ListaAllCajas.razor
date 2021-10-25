@@ -51,6 +51,7 @@ else
                     <th>Monto Otras Forma de Pago</th>
                     <th>Monto Cuenta Corriente</th>
                     <th>Monto Cierre</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
@@ -64,6 +65,16 @@ else
                         <td>$@caja.Otros</td>
                         <td>$@caja.CtaCorriente</td>
                         <td>$@caja.Cierre</td>
+                        <td>
+                            @if (caja.FechaCierre == null)
+                            {
+                                <i class="oi oi-arrow-thick-top" style="color:green"></i>
+                            }
+                            else
+                            {
+                                <i class="oi oi-arrow-thick-bottom" style="color:red"></i>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -134,6 +145,7 @@ else
         cajas = await Task.FromResult(cajas.Where(x => x.Fecha.Date == FechaFiltro.Date));
         await Paginar(false);
     }
+
 
     async Task Paginar(bool next)
     {
