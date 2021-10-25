@@ -16,6 +16,7 @@ namespace MiAlmacen.Model.Models
         public decimal Apertura { get; set; }
         public decimal Actual { get; set; }
         public decimal Otros { get; set; }
+        public decimal CtaCorriente { get; set; }
         public decimal Cierre { get; set; }
         public DateTime? FechaCierre { get; set; }
         public UsuarioModel Empleado { get; set; }

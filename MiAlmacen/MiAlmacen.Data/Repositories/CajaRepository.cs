@@ -19,10 +19,11 @@ namespace MiAlmacen.Data.Repositories
             ca.Fecha = model.Fecha;
             ca.Empleado_Id = model.Empleado_Id;
             ca.Apertura = model.Apertura;
+            ca.Actual = model.Actual;
             ca.Otros = model.Otros;
+            ca.CtaCorriente = model.CtaCorriente;
             ca.Cierre = model.Cierre;
             ca.FechaCierre = model.FechaCierre;
-            ca.Actual = model.Actual;
             Usuarios emp = new();
             emp.Id = model.Empleado.Id;
             emp.Nombre = model.Empleado.Nombre;
@@ -54,6 +55,7 @@ namespace MiAlmacen.Data.Repositories
                     ca.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
                     ca.Actual = Convert.ToDecimal(reader["Actual"].ToString());
                     ca.Otros = Convert.ToDecimal(reader["Otros"].ToString());
+                    ca.CtaCorriente = Convert.ToDecimal(reader["CtaCorriente"].ToString());
                     ca.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
                     ca.FechaCierre = !string.IsNullOrEmpty(reader["FechaCierre"].ToString()) ? Convert.ToDateTime(reader["FechaCierre"].ToString()) : null;
 
@@ -97,6 +99,7 @@ namespace MiAlmacen.Data.Repositories
                     caja.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
                     caja.Actual = Convert.ToDecimal(reader["Actual"].ToString());
                     caja.Otros = Convert.ToDecimal(reader["Otros"].ToString());
+                    caja.CtaCorriente = Convert.ToDecimal(reader["CtaCorriente"].ToString());
                     caja.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
                     caja.FechaCierre = !string.IsNullOrEmpty(reader["FechaCierre"].ToString()) ? Convert.ToDateTime(reader["FechaCierre"].ToString()) : null;
 
@@ -139,6 +142,7 @@ namespace MiAlmacen.Data.Repositories
                     caja.Apertura = Convert.ToDecimal(reader["Apertura"].ToString());
                     caja.Actual = Convert.ToDecimal(reader["Actual"].ToString());
                     caja.Otros = Convert.ToDecimal(reader["Otros"].ToString());
+                    caja.CtaCorriente = Convert.ToDecimal(reader["CtaCorriente"].ToString());
                     caja.Cierre = Convert.ToDecimal(reader["Cierre"].ToString());
                     caja.FechaCierre = !string.IsNullOrEmpty(reader["FechaCierre"].ToString()) ? Convert.ToDateTime(reader["FechaCierre"].ToString()) : null;
 
@@ -175,23 +179,30 @@ namespace MiAlmacen.Data.Repositories
                 SqlTransaction transaction;
                 transaction = conexion.BeginTransaction();
                 SqlCommand sqlcmd = new(orden, conexion, transaction);
+
                 Caja caja = IniciarObjeto(model);
+                caja.Fecha = DateTime.Now;
+                caja.Actual = caja.Apertura; //El monto de apertura es el monto actual al momento de crear
+                caja.Otros = 0;
+                caja.CtaCorriente = 0;
+                caja.Cierre = 0;
 
                 try
                 {
                     sqlcmd.Connection = conexion;
                     sqlcmd.Transaction = transaction;
 
-                    orden = @"INSERT INTO Caja (Fecha, Empleado_Id, Apertura, Cierre, Actual, Otros)
-                            VALUES (@Fecha, @Empleado_Id, @Apertura, @Cierre, @Actual, @Otros) ";
+                    orden = @"INSERT INTO Caja (Fecha, Empleado_Id, Apertura, Actual, CtaCorriente, Otros, Cierre)
+                            VALUES (@Fecha, @Empleado_Id, @Apertura, @Actual, @CtaCorriente, @Otros, @Cierre) ";
 
                     sqlcmd.CommandText = orden;
-                    sqlcmd.Parameters.AddWithValue("@Fecha", DateTime.Now);
+                    sqlcmd.Parameters.AddWithValue("@Fecha", caja.Fecha);
                     sqlcmd.Parameters.AddWithValue("@Empleado_Id", caja.Empleado_Id);
                     sqlcmd.Parameters.AddWithValue("@Apertura", caja.Apertura);
-                    sqlcmd.Parameters.AddWithValue("@Actual", caja.Apertura); //El monto de apertura es el monto actual al momento de crear
-                    sqlcmd.Parameters.AddWithValue("@Otros", 0);
-                    sqlcmd.Parameters.AddWithValue("@Cierre", 0);
+                    sqlcmd.Parameters.AddWithValue("@Actual", caja.Actual); 
+                    sqlcmd.Parameters.AddWithValue("@Otros", caja.Otros);
+                    sqlcmd.Parameters.AddWithValue("@CtaCorriente", caja.CtaCorriente);
+                    sqlcmd.Parameters.AddWithValue("@Cierre", caja.Cierre);
 
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
