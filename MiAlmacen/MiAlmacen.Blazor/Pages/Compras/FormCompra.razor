@@ -15,9 +15,12 @@
 }
 
 <div id="header" class="form-row">
-    <div class="form-group col-md-4">
-        <label>Fecha</label>
-        <input type="date" @bind="@compra.Fecha" class="form-control" />
+    <div id="buscador-proveedores" class="form-group col-md-5">
+        <label>Proveedor</label>
+        <BlazoredTypeahead SearchMethod="BuscarProveedores" @bind-Value="proveedorSeleccionado" placeholder="Seleccione proveedor" class="form-control">
+            <SelectedTemplate>@context.Nombre</SelectedTemplate>
+            <ResultTemplate>@context.Nombre | @context.CUIL</ResultTemplate>
+        </BlazoredTypeahead>
     </div>
 
     <div class="form-group col-md-4">
@@ -25,40 +28,43 @@
         <input type="number" @bind="@compra.NroRecibo" class="form-control" />
     </div>
 
-    <div id="buscador-proveedores" class="form-group col-md-4">
-        <label>Proveedor</label>
-        <BlazoredTypeahead SearchMethod="BuscarProveedores" @bind-Value="proveedorSeleccionado" placeholder="Seleccione proveedor" class="form-control">
-            <SelectedTemplate>@context.Nombre</SelectedTemplate>
-            <ResultTemplate>@context.Nombre | @context.CUIL</ResultTemplate>
-        </BlazoredTypeahead>
+    <div class="form-group col-md-3">
+        <label>Fecha</label>
+        <div class="m-1"><b style="font-size:large">@compra.Fecha.Date.ToString($"dddd dd MMMM yyyy")</b></div>
+        <input type="date" @bind="@compra.Fecha" class="form-control" hidden />
     </div>
 </div>
 
 <hr />
 
+<div id="buscador-articulos" class="form-group col-md-12">
+    <label>Producto | Precio Actual Compra | Precio Actual Venta </label>
+    <BlazoredTypeahead SearchMethod="BuscarArticulos" @bind-Value="articuloSeleccionado" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Seleccione producto" class="form-control">
+        <SelectedTemplate>@context.Nombre | @context.Precio_Mayor | @context.Precio_Unit</SelectedTemplate>
+        <ResultTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act</ResultTemplate>
+    </BlazoredTypeahead>
+</div>
+
 <div class="mb-1" id="detalle">
     <div class="form-row p-2">
-        <div id="buscador-articulos" class="form-group col-md-4">
-            <label>Producto</label>
-            <BlazoredTypeahead SearchMethod="BuscarArticulos" @bind-Value="articuloSeleccionado" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Seleccione producto" class="form-control">
-                <SelectedTemplate>@context.Nombre</SelectedTemplate>
-                <ResultTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act</ResultTemplate>
-            </BlazoredTypeahead>
-        </div>
-
-        <div class="form-group col-md-2">
-            <label>Cantidad</label>
-            <input type="number" @bind="@cantidad" class="form-control" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Ingrese cantidad" />
-        </div>
-
-        <div class="form-group col-md-2">
+        <div class="form-group col-md-3">
             <label>Precio de Compra</label>
             <input type="number" @bind="precioMayor" class="form-control" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Ingrese precio" data-toggle="tooltip" data-placement="bottom" title="Precio que pagó por producto al proveedor" />
         </div>
 
         <div class="form-group col-md-2">
+            <label>Ganancia %</label>
+            <input type="number" @bind="@ganancia" class="form-control" @onfocusout="CalcularGanancia" @onfocusin="CalcularGanancia" placeholder="Ingrese % ganancia" />
+        </div>
+
+        <div class="form-group col-md-3">
             <label>Precio de Venta</label>
             <input type="number" @bind="precioUnit" class="form-control" placeholder="Ingrese precio" data-toggle="tooltip" data-placement="bottom" title="Precio al que venderá el producto" />
+        </div>
+
+        <div class="form-group col-md-2">
+            <label>Cantidad</label>
+            <input type="number" @bind="cantidad" class="form-control" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Ingrese cantidad" />
         </div>
 
         <div class="form-group col-md-2">
@@ -265,6 +271,7 @@
 
     #region Detalle
     private int cantidad { get; set; }
+    private int ganancia { get; set; }
     private decimal precioMayor { get; set; }
     private decimal precioUnit { get; set; }
     private decimal subtotal { get; set; }
@@ -291,6 +298,7 @@
             articulos = await ArticuloService.GetAll();
             await JS.InvokeVoidAsync("ocultaModal", "#modalNuevoProducto");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El producto {objDeserealizado.Nombre} fue creado", "success");
+            nuevoArticulo = new();
         }
         else
             await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear producto.", "error");
@@ -309,6 +317,12 @@
         }
     }
 
+    void CalcularGanancia()
+    {
+        precioUnit = precioMayor + (precioMayor * ganancia / 100);
+    }
+
+
     void AgregarDetalle()
     {
         ValidacionDetalle();
@@ -323,6 +337,7 @@
             detalle.SubTotal = subtotal;
             compra.Detalle.Add(detalle);
             compra.Total = CalcularTotal();
+            precioMayor = 0; precioUnit = 0; ganancia = 0; cantidad = 0; subtotal = 0;
         }
     }
 

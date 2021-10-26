@@ -113,8 +113,14 @@
         caja = await CajaService.GetUltimo();
         if (caja.FechaCierre == null)
         {
-            await JS.InvokeVoidAsync("simple", "Error", $"Primero debe cerrar la caja actual antes de finalizar la sesión!", "error");
-            NavigationManager.NavigateTo($"/caja/cerrar/{caja.Id}");
+            var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Confirmar",
+            $"Primero debe cerrar la caja actual antes de finalizar la sesión! ¿Seguro desea cerrar caja?", "warning");
+            if (confirmacion)
+            {
+                var respuesta = await CajaService.Editar(caja);
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Sesión finalizada correctamente. Caja cerrada.", "success");
+                NavigationManager.NavigateTo("/caja/abrir");
+            }
         }
         else
         {

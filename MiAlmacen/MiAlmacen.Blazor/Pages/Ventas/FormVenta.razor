@@ -15,12 +15,7 @@
 }
 
 <div id="header" class="form-row">
-    <div class="form-group col-md-5">
-        <label>Fecha</label>
-        <input type="date" @bind="@venta.Fecha" class="form-control" readonly/>
-    </div>
-
-    <div id="buscador-clientes" class="form-group col-md-5">
+    <div id="buscador-clientes" class="form-group col-md-7">
         <label>Cliente</label>
         <BlazoredTypeahead SearchMethod="BuscarClientes" @bind-Value="clienteSeleccionado" placeholder="Seleccione cliente" class="form-control">
             <SelectedTemplate>@context.Nombre</SelectedTemplate>
@@ -29,12 +24,18 @@
     </div>
 
     <div class="form-group col-md-2">
-        <label>Nuevo Cliente</label>
+        <label>Agregar</label>
         <div>
             <button type="button" class="btn btn-primary" @onclick="NuevoCliente" data-toggle="tooltip" data-placement="bottom" title="Si el cliente no aparece en la lista haga click aqui para darlo de alta">
                 Nuevo Cliente
             </button>
         </div>
+    </div>
+
+    <div class="form-group col-md-3">
+        <label>Fecha</label>
+        <div class="m-1"><b style="font-size:large">@venta.Fecha.Date.ToString($"dddd dd MMMM yyyy")</b></div>
+        <input type="date" @bind="@venta.Fecha" class="form-control" hidden />
     </div>
 </div>
 
@@ -42,11 +43,11 @@
 
 <div class="mb-1" id="detalle">
     <div class="form-row p-2">
-        <div id="buscador-articulos" class="form-group col-md-3">
-            <label>Producto</label>
+        <div id="buscador-articulos" class="form-group col-md-6">
+            <label>Producto | Precio</label>
             <BlazoredTypeahead SearchMethod="BuscarArticulos" @bind-Value="articuloSeleccionado" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Seleccione producto" class="form-control">
-                <SelectedTemplate>@context.Nombre</SelectedTemplate>
-                <ResultTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act</ResultTemplate>
+                <SelectedTemplate>@context.Nombre | $@context.Precio_Unit</SelectedTemplate>
+                <ResultTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act un</ResultTemplate>
             </BlazoredTypeahead>
         </div>
 
@@ -56,13 +57,8 @@
         </div>
 
         <div class="form-group col-md-3">
-            <label>Precio</label>
-            <input type="number" @bind="precio" class="form-control" placeholder="Ingrese precio" readonly="readonly" />
-        </div>
-
-        <div class="form-group col-md-3">
             <label>SubTotal</label>
-            <input type="number" @bind="subtotal" class="form-control" placeholder="Subtotal" />
+            <div class="m-1"><b style="font-size:large">$@subtotal</b></div>
         </div>
     </div>
 
@@ -292,6 +288,7 @@
             detalle.SubTotal = subtotal;
             venta.Detalle.Add(detalle);
             venta.Total = CalcularTotal();
+            precio = 0; cantidad = 0; subtotal = 0; 
         }
     }
 
@@ -333,6 +330,7 @@
             clientes = await ClienteService.GetAllClientes();
             await JS.InvokeVoidAsync("ocultaModal", "#modalNuevoCliente");
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El cliente {objDeserealizado.Nombre} fue creado con éxito", "success");
+            nuevoCliente = new();
         }
         else
             await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear cliente.", "error");
@@ -361,7 +359,6 @@
             {
                 venta.Saldo -= venta.FormasPago[i].Importe;
             }
-
         }
         return venta.Saldo;
     }

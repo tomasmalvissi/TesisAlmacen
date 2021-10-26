@@ -199,7 +199,7 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.Parameters.AddWithValue("@Fecha", caja.Fecha);
                     sqlcmd.Parameters.AddWithValue("@Empleado_Id", caja.Empleado_Id);
                     sqlcmd.Parameters.AddWithValue("@Apertura", caja.Apertura);
-                    sqlcmd.Parameters.AddWithValue("@Actual", caja.Actual); 
+                    sqlcmd.Parameters.AddWithValue("@Actual", caja.Actual);
                     sqlcmd.Parameters.AddWithValue("@Otros", caja.Otros);
                     sqlcmd.Parameters.AddWithValue("@CtaCorriente", caja.CtaCorriente);
                     sqlcmd.Parameters.AddWithValue("@Cierre", caja.Cierre);
@@ -243,7 +243,7 @@ namespace MiAlmacen.Data.Repositories
 
                     sqlcmd.CommandText = orden;
                     sqlcmd.Parameters.AddWithValue("@Id", id);
-                    sqlcmd.Parameters.AddWithValue("@Cierre", caja.Cierre);
+                    sqlcmd.Parameters.AddWithValue("@Cierre", caja.Actual);
                     sqlcmd.Parameters.AddWithValue("@FechaCierre", DateTime.Now);
 
                     sqlcmd.ExecuteNonQuery();
@@ -268,11 +268,13 @@ namespace MiAlmacen.Data.Repositories
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE 'EFECTIVO'
+                    INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'EFECTIVO'
+                    INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
                     AS EFT,
 
@@ -280,11 +282,13 @@ namespace MiAlmacen.Data.Repositories
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE '%DEBITO'
+					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE '%DEBITO'
+					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
                     AS TD,
 
@@ -292,11 +296,13 @@ namespace MiAlmacen.Data.Repositories
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE '%CREDITO'
+					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE '%CREDITO'
+					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
                     AS TC,
 
@@ -304,11 +310,13 @@ namespace MiAlmacen.Data.Repositories
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE 'TRANSFERENCIA%'
+					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'TRANSFERENCIA%'
+					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
                     AS TB,
 
@@ -316,18 +324,15 @@ namespace MiAlmacen.Data.Repositories
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE 'CHEQUE'
+					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'CHEQUE'
+					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
-                    AS CH,
-
-                    ISNULL((SELECT SUM(v.Saldo)
-                    FROM Ventas v
-                    WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
-                    AS CC";
+                    AS CH";
 
             Ingreso ingreso = new();
 
@@ -345,7 +350,6 @@ namespace MiAlmacen.Data.Repositories
                     ingreso.TarjetaCredito = Convert.ToDecimal(reader["TC"].ToString());
                     ingreso.Cheque = Convert.ToDecimal(reader["CH"].ToString());
                     ingreso.Transferencia = Convert.ToDecimal(reader["TB"].ToString());
-                    ingreso.CuentaCorriente = Convert.ToDecimal(reader["CC"].ToString());
                 }
             }
             catch (Exception ex)

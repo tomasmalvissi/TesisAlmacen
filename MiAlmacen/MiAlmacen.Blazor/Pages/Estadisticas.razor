@@ -62,7 +62,7 @@ else
     private IEnumerable<PeriodoModel> ventas { get; set; }
     private IEnumerable<TopModel> clientes { get; set; }
     private IEnumerable<TopModel> productos { get; set; }
-    private IEnumerable<TopModel> ventasXdia { get; set; }
+    private IEnumerable<PeriodoModel> ventasXdia { get; set; }
 
     private BarConfig _productosConfig;
     private BarConfig _clientesConfig;
@@ -134,11 +134,11 @@ else
         {
             BackgroundColor = new[]
             {
-            ColorUtil.ColorHexString(182, 55, 74),
-            ColorUtil.ColorHexString(162, 188, 197),
-            ColorUtil.ColorHexString(37, 74, 113),
-            ColorUtil.ColorHexString(108, 188, 197),
-            ColorUtil.ColorHexString(180, 180, 180),
+                ColorUtil.RandomColorString(),
+                ColorUtil.RandomColorString(),
+                ColorUtil.RandomColorString(),
+                ColorUtil.RandomColorString(),
+                ColorUtil.RandomColorString(),
             }
         };
 
@@ -190,11 +190,11 @@ else
         {
             BackgroundColor = new[]
             {
-            ColorUtil.ColorHexString(182, 55, 74),
-            ColorUtil.ColorHexString(37, 74, 113),
-            ColorUtil.ColorHexString(162, 188, 197),
-            ColorUtil.ColorHexString(108, 188, 197),
-            ColorUtil.ColorHexString(180, 180, 180),
+                ColorUtil.RandomColorString(),
+                ColorUtil.RandomColorString(),
+                ColorUtil.RandomColorString(),
+                ColorUtil.RandomColorString(),
+                ColorUtil.RandomColorString(),
             }
         };
 
@@ -231,7 +231,7 @@ else
 
         LineDataset<decimal> dsVentas = new LineDataset<decimal>(montosVentas)
         {
-            BorderColor = ColorUtil.ColorHexString(37, 74, 113)
+            BorderColor = ColorUtil.RandomColorString()
         };
 
         List<decimal> montosCompras = new List<decimal>();
@@ -243,7 +243,7 @@ else
 
         LineDataset<decimal> dsCompras = new LineDataset<decimal>(montosCompras)
         {
-            BorderColor = ColorUtil.ColorHexString(182, 55, 74),
+            BorderColor = ColorUtil.RandomColorString()
         };
 
 
@@ -266,17 +266,17 @@ else
 
         foreach (var venta in ventasXdia)
         {
-            _diasConfig.Data.Labels.Add(venta.Clave);
+            _diasConfig.Data.Labels.Add(venta.Mes);
         }
 
-        List<int> diasCantidad = new List<int>();
+        List<decimal> diasMonto = new List<decimal>();
 
         foreach (var item in ventasXdia)
         {
-            diasCantidad.Add(item.Valor);
+            diasMonto.Add(item.Monto);
         }
 
-        PieDataset<int> dsDias = new PieDataset<int>(diasCantidad)
+        PieDataset<decimal> dsDias = new PieDataset<decimal>(diasMonto)
         {
             BackgroundColor = new[]
             {

@@ -38,37 +38,30 @@
             }
     </style>
 
-    <div class="card-deck my-3">
-        <div class="card zoom">
-            <div class="card-body">
-                <b style="font-size: x-large">Efectivo: $@ingreso.Efectivo</b>
+    <div class="row d-flex justify-content-center my-3">
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Efectivo: $@ingreso.Efectivo</b>
             </div>
         </div>
-        <div class="card p-2 zoom">
-            <div class="card-body">
-                <b style="font-size: x-large ">Tarjeta crédito: $@ingreso.TarjetaCredito</b>
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Tarjeta crédito: $@ingreso.TarjetaCredito</b>
             </div>
         </div>
-        <div class="card zoom">
-            <div class="card-body">
-                <b style="font-size: x-large ">Tarjeta débito: $@ingreso.TarjetaDebito</b>
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Tarjeta débito: $@ingreso.TarjetaDebito</b>
             </div>
         </div>
-    </div>
-    <div class="card-deck my-3">
-        <div class="card p-2 zoom">
-            <div class="card-body">
-                <b style="font-size: x-large ">Cheque: $@ingreso.Cheque</b>
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Cheque: $@ingreso.Cheque</b>
             </div>
         </div>
-        <div class="card zoom">
-            <div class="card-body">
-                <b style="font-size: x-large ">Transferencia: $@ingreso.Transferencia</b>
-            </div>
-        </div>
-        <div class="card p-2 zoom">
-            <div class="card-body">
-                <b style="font-size: x-large ">Cuentas corrientes: $@ingreso.CuentaCorriente</b>
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Transferencia: $@ingreso.Transferencia</b>
             </div>
         </div>
     </div>
@@ -100,7 +93,7 @@
                     <td>$@caja.CtaCorriente</td>
                     <td>$@caja.Cierre</td>
                     <td>
-                        <a class="btn btn-sm btn-outline-danger" href="caja/cerrar/@caja.Id"><i class="oi oi-x"></i></a>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="CerrarCaja"><i class="oi oi-x"></i></button>
                     </td>
                 </tr>
             </tbody>
@@ -134,6 +127,19 @@
             }
         }
     }
+
+    async Task CerrarCaja()
+    {
+        var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Confirmar",
+        $"¿Seguro desea cerrar caja? Monto actual: ${caja.Actual} Luego debera abrir una nueva", "warning");
+        if (confirmacion)
+        {
+            var respuesta = await CajaService.Editar(caja);
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Caja cerrada correctamente.", "success");
+            NavigationManager.NavigateTo("/caja/abrir");
+        }
+    }
+
 
     void ModalListaSalidas()
     {

@@ -39,10 +39,10 @@ namespace MiAlmacen.Blazor.Services
             return JsonConvert.DeserializeObject<IEnumerable<TopModel>>(await respuesta);
         }
 
-        public async Task<IEnumerable<TopModel>> GetVentasXDia()
+        public async Task<IEnumerable<PeriodoModel>> GetVentasXDia()
         {
             var respuesta = _httpClient.GetStringAsync($"api/estadisticas/ventasxdia");
-            return JsonConvert.DeserializeObject<IEnumerable<TopModel>>(await respuesta);
+            return JsonConvert.DeserializeObject<IEnumerable<PeriodoModel>>(await respuesta);
         }
     }
 }

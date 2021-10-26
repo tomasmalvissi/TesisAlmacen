@@ -13,6 +13,5 @@ namespace MiAlmacen.Data.Entities
         public decimal TarjetaCredito { get; set; }
         public decimal Cheque { get; set; }
         public decimal Transferencia { get; set; }
-        public decimal CuentaCorriente { get; set; }
     }
 }

@@ -165,15 +165,15 @@ namespace MiAlmacen.Data.Repositories
             return tops;
         }
 
-        public List<Top> GetVentasXDia()
+        public List<Periodo> GetVentasXDia()
         {
-            orden = @"SELECT DATENAME(WEEKDAY, Fecha) AS Dia, COUNT(Id) AS VentasDia
+            orden = @"SELECT DATENAME(WEEKDAY, Fecha) AS Dia, SUM(Total - Saldo) AS Monto
                         FROM Ventas 
-                        WHERE DATEPART(WEEK,Fecha) = DATEPART(WEEK,GETDATE())
+                        WHERE DATEPART(WEEK,Fecha) = DATEPART(WEEK,GETDATE()) AND FechaBaja IS NULL
                         GROUP BY DATENAME(WEEKDAY, Fecha)
                         ORDER BY DATENAME(WEEKDAY, Fecha);";
 
-            List<Top> tops = new();
+            List<Periodo> periodos = new();
 
             SqlCommand sqlcmd = new(orden, conexion);
             try
@@ -184,10 +184,10 @@ namespace MiAlmacen.Data.Repositories
 
                 while (reader.Read())
                 {
-                    Top top = new();
-                    top.Clave = Convert.ToString(reader["Dia"].ToString());
-                    top.Valor = Convert.ToInt32(reader["VentasDia"].ToString());
-                    tops.Add(top);
+                    Periodo periodo = new();
+                    periodo.Mes = Convert.ToString(reader["Dia"].ToString());
+                    periodo.Monto = Convert.ToDecimal(reader["Monto"].ToString());
+                    periodos.Add(periodo);
                 }
             }
             catch (Exception e)
@@ -199,7 +199,7 @@ namespace MiAlmacen.Data.Repositories
                 CerrarConex();
                 sqlcmd.Dispose();
             }
-            return tops;
+            return periodos;
         }
     }
 }
