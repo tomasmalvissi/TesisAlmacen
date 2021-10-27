@@ -23,6 +23,13 @@
         </BlazoredTypeahead>
     </div>
 
+
+    <div class="form-group col-md-3">
+        <label>Fecha</label>
+        <div class="m-1"><b style="font-size:large">@venta.Fecha.Date.ToString($"dddd dd MMMM yyyy")</b></div>
+        <input type="date" @bind="@venta.Fecha" class="form-control" hidden />
+    </div>
+
     <div class="form-group col-md-2">
         <label>Agregar</label>
         <div>
@@ -30,12 +37,6 @@
                 Nuevo Cliente
             </button>
         </div>
-    </div>
-
-    <div class="form-group col-md-3">
-        <label>Fecha</label>
-        <div class="m-1"><b style="font-size:large">@venta.Fecha.Date.ToString($"dddd dd MMMM yyyy")</b></div>
-        <input type="date" @bind="@venta.Fecha" class="form-control" hidden />
     </div>
 </div>
 

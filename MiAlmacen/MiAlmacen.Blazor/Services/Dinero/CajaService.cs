@@ -32,9 +32,9 @@ namespace MiAlmacen.Blazor.Services
             return JsonConvert.DeserializeObject<CajaModel>(await respuesta);
         }
 
-        public async Task<CajaModel> GetUltimo()
+        public async Task<CajaModel> GetUltimo(int id)
         {
-            var respuesta = _httpClient.GetStringAsync("api/caja/");
+            var respuesta = _httpClient.GetStringAsync($"api/caja/last/{id}");
             return JsonConvert.DeserializeObject<CajaModel>(await respuesta);
         }
 

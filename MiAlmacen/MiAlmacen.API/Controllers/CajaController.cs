@@ -25,10 +25,10 @@ namespace MiAlmacen.API.Controllers
             return Ok(cajas);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetLast()
+        [HttpGet("last/{id}")]
+        public async Task<IActionResult> GetLast(int id)
         {
-            var caja = _repository.GetLast();
+            var caja = _repository.GetLast(id);
             return Ok(caja);
         }
 

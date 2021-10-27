@@ -243,11 +243,14 @@ namespace MiAlmacen.Data.Repositories
                     if (venta.Saldo > 0)
                     {
                         orden = @"UPDATE Caja
-                                      SET CtaCorriente = (SELECT TOP 1 CtaCorriente FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC) + @CtaCorriente
-                                      WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC)";
+                                            SET CtaCorriente = (SELECT TOP 1 CtaCorriente FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC) + @CtaCorriente
+                                            WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC)";
 
                         sqlcmd.CommandText = orden;
                         sqlcmd.Parameters.AddWithValue("@CtaCorriente", venta.Saldo);
+                        sqlcmd.Parameters.AddWithValue("@Empleado", venta.Empleado_Id);
 
                         sqlcmd.ExecuteNonQuery();
                         sqlcmd.Parameters.Clear();
@@ -269,11 +272,14 @@ namespace MiAlmacen.Data.Repositories
                         if (fpago.FormaPago.Descripcion.Equals("Efectivo"))
                         {
                             orden = @"UPDATE Caja
-                                      SET Actual = (SELECT TOP 1 Actual FROM Caja ORDER BY Id DESC) + @Actual
-                                      WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC)";
+                                            SET Actual = (SELECT TOP 1 Actual FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC) + @Actual
+                                            WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC)";
 
                             sqlcmd.CommandText = orden;
                             sqlcmd.Parameters.AddWithValue("@Actual", fpago.Importe);
+                            sqlcmd.Parameters.AddWithValue("@Empleado", venta.Empleado_Id);
 
                             sqlcmd.ExecuteNonQuery();
                             sqlcmd.Parameters.Clear();
@@ -281,11 +287,14 @@ namespace MiAlmacen.Data.Repositories
                         else
                         {
                             orden = @"UPDATE Caja
-                                    SET Otros = Otros + @Otros
-                                    WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC)";
+                                            SET Otros = (SELECT TOP 1 Otros FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC) + @Otros
+                                            WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC)";
 
                             sqlcmd.CommandText = orden;
                             sqlcmd.Parameters.AddWithValue("@Otros", fpago.Importe);
+                            sqlcmd.Parameters.AddWithValue("@Empleado", venta.Empleado_Id);
 
                             sqlcmd.ExecuteNonQuery();
                             sqlcmd.Parameters.Clear();
@@ -389,11 +398,14 @@ namespace MiAlmacen.Data.Repositories
                         if (fpago.FormaPago.Descripcion.Equals("Efectivo"))
                         {
                             orden = @"UPDATE Caja
-                                      SET Actual = (SELECT TOP 1 Actual FROM Caja ORDER BY Id DESC) + @Actual
-                                      WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC)";
+                                            SET Actual = (SELECT TOP 1 Actual FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC) + @Actual
+                                            WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC)";
 
                             sqlcmd.CommandText = orden;
                             sqlcmd.Parameters.AddWithValue("@Actual", fpago.Importe);
+                            sqlcmd.Parameters.AddWithValue("@Empleado", venta.Empleado);
 
                             sqlcmd.ExecuteNonQuery();
                             sqlcmd.Parameters.Clear();
@@ -401,11 +413,14 @@ namespace MiAlmacen.Data.Repositories
                         else
                         {
                             orden = @"UPDATE Caja
-                                    SET Otros = Otros + @Otros
-                                    WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC)";
+                                            SET Otros = (SELECT TOP 1 Otros FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC) + @Otros
+                                            WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC)";
 
                             sqlcmd.CommandText = orden;
                             sqlcmd.Parameters.AddWithValue("@Otros", fpago.Importe);
+                            sqlcmd.Parameters.AddWithValue("@Empleado", venta.Empleado);
 
                             sqlcmd.ExecuteNonQuery();
                             sqlcmd.Parameters.Clear();
@@ -455,11 +470,14 @@ namespace MiAlmacen.Data.Repositories
                     if (venta.Saldo > 0)
                     {
                         orden = @"UPDATE Caja
-                                      SET CtaCorriente = (SELECT TOP 1 CtaCorriente FROM Caja ORDER BY Id DESC) - @CtaCorriente
-                                      WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC)";
+                                            SET CtaCorriente = (SELECT TOP 1 CtaCorriente FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC) - @CtaCorriente
+                                            WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC)";
 
                         sqlcmd.CommandText = orden;
                         sqlcmd.Parameters.AddWithValue("@CtaCorriente", venta.Saldo);
+                        sqlcmd.Parameters.AddWithValue("@Empleado", venta.Empleado_Id);
 
                         sqlcmd.ExecuteNonQuery();
                         sqlcmd.Parameters.Clear();
@@ -497,11 +515,14 @@ namespace MiAlmacen.Data.Repositories
                             if (fpago.FormaPago.Descripcion.Equals("Efectivo"))
                             {
                                 orden = @"UPDATE Caja
-                                      SET Actual = (SELECT TOP 1 Actual FROM Caja ORDER BY Id DESC) - @Actual
-                                      WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC)";
+                                            SET Actual = (SELECT TOP 1 Actual FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC) - @Actual
+                                            WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC)";
 
                                 sqlcmd.CommandText = orden;
                                 sqlcmd.Parameters.AddWithValue("@Actual", fpago.Importe);
+                                sqlcmd.Parameters.AddWithValue("@Empleado", venta.Empleado_Id);
 
                                 sqlcmd.ExecuteNonQuery();
                                 sqlcmd.Parameters.Clear();
@@ -509,11 +530,14 @@ namespace MiAlmacen.Data.Repositories
                             else
                             {
                                 orden = @"UPDATE Caja
-                                    SET Otros = Otros - @Otros
-                                    WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE FechaCierre IS NULL ORDER BY Id DESC)";
+                                            SET Otros = (SELECT TOP 1 Otros FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC) - @Otros
+                                            WHERE Id = (SELECT TOP 1 ID FROM Caja WHERE 
+                                            FechaCierre IS NULL AND Empleado_Id = @Empleado ORDER BY Id DESC)";
 
                                 sqlcmd.CommandText = orden;
                                 sqlcmd.Parameters.AddWithValue("@Otros", fpago.Importe);
+                                sqlcmd.Parameters.AddWithValue("@Empleado", venta.Empleado_Id);
 
                                 sqlcmd.ExecuteNonQuery();
                                 sqlcmd.Parameters.Clear();

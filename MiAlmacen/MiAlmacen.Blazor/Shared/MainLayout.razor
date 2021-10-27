@@ -93,7 +93,7 @@
         }
         else
         {
-            caja = await CajaService.GetUltimo();
+            caja = await CajaService.GetUltimo(UsuarioLogueado.Id);
 
             OcultaModal();
 
@@ -110,7 +110,7 @@
 
     async Task Logout()
     {
-        caja = await CajaService.GetUltimo();
+        caja = await CajaService.GetUltimo(UsuarioLogueado.Id);
         if (caja.FechaCierre == null)
         {
             var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Confirmar",

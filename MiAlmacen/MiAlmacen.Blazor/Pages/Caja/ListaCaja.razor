@@ -119,7 +119,7 @@
         }
         else
         {
-            caja = await CajaService.GetUltimo();
+            caja = await CajaService.GetUltimo(result.Id);
             ingreso = await CajaService.GetIngresos();
             if (caja.Fecha.Date != DateTime.Now.Date || caja.FechaCierre != null)
             {

@@ -79,16 +79,19 @@ namespace MiAlmacen.Data.Repositories
             return cajas;
         }
 
-        public Caja GetLast()
+        public Caja GetLast(int id)
         {
             orden = @$"SELECT TOP 1 * FROM Caja
+                        WHERE Empleado_Id = @Id
                         ORDER BY Fecha DESC";
+
             SqlCommand sqlcmd = new(orden, conexion);
             Caja caja = new();
             try
             {
                 AbrirConex();
                 sqlcmd.CommandText = orden;
+                sqlcmd.Parameters.AddWithValue("@Id", id);
                 SqlDataReader reader = sqlcmd.ExecuteReader();
 
                 while (reader.Read())
