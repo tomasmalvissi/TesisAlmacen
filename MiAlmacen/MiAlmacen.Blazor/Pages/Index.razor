@@ -1,17 +1,117 @@
 ﻿@page "/"
-@inject UsuarioService UsuarioService 
-@inject CajaService CajaService 
+@inject UsuarioService UsuarioService
+@inject CajaService CajaService
 @inject NavigationManager NavigationManager
-<h1>Mi Almacen</h1>
 
-Bienvenido a su aplicación!
+@if (userlog != null)
+{
+    <h1 style="text-align:center">Mi Almacen Web</h1>
+    <br>
+    <br>
+    <div class="center-screen">
+        <div class="row">
+            <div class="col-xl-6 col-9 zoom">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="media d-flex">
+                                <div class="media-body text-left">
+                                    <NavLink class="nav-link" href="ventas">
+                                        <h3>Ventas</h3>
+                                    </NavLink>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="icon-pencil primary font-large-2 float-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-9 zoom">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="media d-flex">
+                                <div class="align-self-center">
+                                    <i class="icon-pie-chart warning font-large-2 float-left"></i>
+                                </div>
+                                <div class="media-body text-right">
+                                    <NavLink class="nav-link" href="estadisticas">
+                                        <h3 class="warning">Estadisticas</h3>
+                                    </NavLink>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-6 col-9 zoom">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="media d-flex">
+                                <div class="media-body text-left">
+                                    <NavLink class="nav-link" href="clientes">
+                                        <h3 class="success">Clientes</h3>
+                                    </NavLink>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="icon-user success font-large-2 float-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-9 zoom">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="media d-flex">
+                                <div class="align-self-center">
+                                    <i class="icon-book-open primary font-large-2 float-left"></i>
+                                </div>
+                                <div class="media-body text-right">
+                                    <NavLink class="nav-link" href="productos">
+                                        <h3 class="primary">Productos</h3>
+                                    </NavLink>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        
+        .zoom {
+            transition: transform .2s;
+        }
+
+            .zoom:hover {
+                transform: scale(1.1);
+            }
+    </style>
+    <link rel="stylesheet" type="text/css" href="https://pixinvent.com/stack-responsive-bootstrap-4-admin-template/app-assets/css/bootstrap-extended.min.css">
+    <link rel="stylesheet" type="text/css" href="https://pixinvent.com/stack-responsive-bootstrap-4-admin-template/app-assets/fonts/simple-line-icons/style.min.css">
+}
 
 @code{
 
+    UsuarioModel userlog = new UsuarioModel();
+
     protected override async Task OnInitializedAsync()
     {
-        var result = await UsuarioService.GetSesion();
-        if (result == null)
+        userlog = await UsuarioService.GetSesion();
+        if (userlog == null)
         {
             NavigationManager.NavigateTo("/");
         }

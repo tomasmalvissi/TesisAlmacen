@@ -6,7 +6,7 @@
 @inject IJSRuntime JS
 
 <div class="d-flex justify-content-between mb-1" id="header">
-    <h3>Caja del día</h3>
+    <h3>Caja Abierta</h3>
     <div>
         <div class="btn-group">
             <a href="getcajas" class="btn btn-sm btn-primary">
@@ -22,50 +22,6 @@
     </div>
 </div>
 
-@if (ingreso != null)
-{
-    <style>
-        .zoom {
-            border-radius: 1rem;
-            transition: transform .2s;
-            border-color: #B6374A
-        }
-
-            .zoom:hover {
-                transform: scale(1.05);
-                box-shadow: 1px 8px 20px grey;
-                -webkit-transition: box-shadow .6s ease-in;
-            }
-    </style>
-
-    <div class="row d-flex justify-content-center my-3">
-        <div class="card col-2 m-2 zoom">
-            <div class="text-center m-2">
-                <b>Efectivo: $@ingreso.Efectivo</b>
-            </div>
-        </div>
-        <div class="card col-2 m-2 zoom">
-            <div class="text-center m-2">
-                <b>Tarjeta crédito: $@ingreso.TarjetaCredito</b>
-            </div>
-        </div>
-        <div class="card col-2 m-2 zoom">
-            <div class="text-center m-2">
-                <b>Tarjeta débito: $@ingreso.TarjetaDebito</b>
-            </div>
-        </div>
-        <div class="card col-2 m-2 zoom">
-            <div class="text-center m-2">
-                <b>Cheque: $@ingreso.Cheque</b>
-            </div>
-        </div>
-        <div class="card col-2 m-2 zoom">
-            <div class="text-center m-2">
-                <b>Transferencia: $@ingreso.Transferencia</b>
-            </div>
-        </div>
-    </div>
-}
 
 <div class="mt-2">
     @if (caja != null)
@@ -103,6 +59,51 @@
 
 <br />
 
+@if (ingreso != null)
+{
+    <style>
+        .zoom {
+            border-radius: 1rem;
+            transition: transform .2s;
+            border-color: #B6374A
+        }
+
+            .zoom:hover {
+                transform: scale(1.05);
+                box-shadow: 1px 8px 20px grey;
+                -webkit-transition: box-shadow .6s ease-in;
+            }
+    </style>
+
+    <h3>Balance Diario</h3>
+    <div class="row d-flex justify-content-center my-3">
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Efectivo: $@ingreso.Efectivo</b>
+            </div>
+        </div>
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Tarjeta crédito: $@ingreso.TarjetaCredito</b>
+            </div>
+        </div>
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Tarjeta débito: $@ingreso.TarjetaDebito</b>
+            </div>
+        </div>
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Cheque: $@ingreso.Cheque</b>
+            </div>
+        </div>
+        <div class="card col-2 m-2 zoom">
+            <div class="text-center m-2">
+                <b>Transferencia: $@ingreso.Transferencia</b>
+            </div>
+        </div>
+    </div>
+}
 <ModalSalidasDinero caja="caja"></ModalSalidasDinero>
 
 
