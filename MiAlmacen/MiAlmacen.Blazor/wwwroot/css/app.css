@@ -52,6 +52,10 @@ h1, h2, h3, h4, h5, h6 {
         vertical-align: middle;
     }
 
+    .table th, modal-body table th {
+        font-size:small
+    }
+
 .table-hover tbody tr:hover, .modal-body .table-hover tbody tr:hover {
     background-color: rgb(182,55,74,0.2);
     color: #B6374A;
