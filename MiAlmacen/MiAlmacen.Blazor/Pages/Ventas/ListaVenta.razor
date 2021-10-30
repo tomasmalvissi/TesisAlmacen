@@ -282,6 +282,7 @@ else
     {
         ventaSeleccionada = await VentaService.GetUn(id);
         saldoVenta = ventaSeleccionada.Saldo;
+        erroresModal = string.Empty;
         await JS.InvokeVoidAsync("levantaModal", "#modalSaldo");
     }
 
@@ -452,20 +453,19 @@ else
     private string erroresModal { get; set; }
     void ValidacionModal()
     {
+        bool flag = false;
         erroresModal = string.Empty;
         if (ventaSeleccionada.FormasPago.Count > 0)
         {
             @for (int i = 0; i < ventaSeleccionada.FormasPago.Count; i++)
             {
-                if (ventaSeleccionada.FormasPago[i].Importe > ventaSeleccionada.Total)
+                if ((ventaSeleccionada.FormasPago[i].Importe > ventaSeleccionada.Total || ventaSeleccionada.Saldo < 0) && !flag)
                 {
                     erroresModal += "El importe del pago no puede ser superior al de la venta. \r\n";
+                    flag = true;
                 }
             }
-
         }
-        if (ventaSeleccionada.Saldo < 0)
-            erroresModal += "El importe del pago no puede ser superior al de la venta. \r\n";
     }
     #endregion
 }
