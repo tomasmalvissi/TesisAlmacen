@@ -265,19 +265,19 @@ namespace MiAlmacen.Data.Repositories
             }
         }
 
-        public Ingreso IngresosXfp()
+        public Ingreso IngresosXfp(int idcaja)
         {
             orden = @"SELECT ISNULL((SELECT SUM(fv.Importe)
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE 'EFECTIVO'
-                    INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
+                        INNER JOIN Caja cj ON cj.Empleado_Id = v.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'EFECTIVO'
-                    INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
+                    INNER JOIN Caja cj ON cj.Empleado_Id = c.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
                     AS EFT,
 
@@ -285,13 +285,13 @@ namespace MiAlmacen.Data.Repositories
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE '%DEBITO'
-					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
+					INNER JOIN Caja cj ON cj.Empleado_Id = v.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE '%DEBITO'
-					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
+					INNER JOIN Caja cj ON cj.Empleado_Id = c.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
                     AS TD,
 
@@ -299,13 +299,13 @@ namespace MiAlmacen.Data.Repositories
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE '%CREDITO'
-					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
+					INNER JOIN Caja cj ON cj.Empleado_Id = v.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE '%CREDITO'
-					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
+					INNER JOIN Caja cj ON cj.Empleado_Id = c.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
                     AS TC,
 
@@ -313,13 +313,13 @@ namespace MiAlmacen.Data.Repositories
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE 'TRANSFERENCIA%'
-					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
+					INNER JOIN Caja cj ON cj.Empleado_Id = v.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'TRANSFERENCIA%'
-					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
+					INNER JOIN Caja cj ON cj.Empleado_Id = c.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
                     AS TB,
 
@@ -327,13 +327,13 @@ namespace MiAlmacen.Data.Repositories
                     FROM Ventas v
                     INNER JOIN FormasPagoVentas fv ON fv.Venta_Id = v.Id
                     INNER JOIN FormasPago fpv ON fv.FormaPago_Id = fpv.Id and fpv.Descripcion LIKE 'CHEQUE'
-					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = v.Empleado_Id
+					INNER JOIN Caja cj ON cj.Empleado_Id = v.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE v.FechaBaja IS NULL AND DAY(v.Fecha) = DAY(GetDate())), 0 ) 
                     - ISNULL((SELECT SUM(fc.Importe)
                     FROM Compras c 
                     INNER JOIN FormasPagoCompras fc ON fc.Compra_Id = c.Id
                     INNER JOIN FormasPago fpc ON fc.FormaPago_Id = fpc.Id and fpc.Descripcion LIKE 'CHEQUE'
-					INNER JOIN (SELECT TOP 1 Empleado_Id FROM Caja) cj ON cj.Empleado_Id = c.Empleado_Id
+					INNER JOIN Caja cj ON cj.Empleado_Id = c.Empleado_Id AND cj.Id = @Id_Caja
                     WHERE c.FechaBaja IS NULL AND DAY(c.Fecha) = DAY(GetDate())), 0 ) 
                     AS CH";
 
@@ -344,6 +344,7 @@ namespace MiAlmacen.Data.Repositories
             {
                 AbrirConex();
                 sqlcmd.CommandText = orden;
+                sqlcmd.Parameters.AddWithValue("@Id_Caja", idcaja);
                 SqlDataReader reader = sqlcmd.ExecuteReader();
 
                 while (reader.Read())

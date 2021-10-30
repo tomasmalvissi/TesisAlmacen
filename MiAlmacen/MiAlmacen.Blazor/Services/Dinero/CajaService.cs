@@ -54,9 +54,9 @@ namespace MiAlmacen.Blazor.Services
             return respuesta;
         }
 
-        public async Task<IngresoModel> GetIngresos()
+        public async Task<IngresoModel> GetIngresos(int idcaja)
         {
-            var respuesta = _httpClient.GetStringAsync($"api/caja/ingresos");
+            var respuesta = _httpClient.GetStringAsync($"api/caja/ingresos/{idcaja}");
             return JsonConvert.DeserializeObject<IngresoModel>(await respuesta);
         }
     }

@@ -39,10 +39,10 @@ namespace MiAlmacen.API.Controllers
             return Ok(caja);
         }
 
-        [HttpGet("ingresos")]
-        public async Task<IActionResult> GetIngreso()
+        [HttpGet("ingresos/{idcaja}")]
+        public async Task<IActionResult> GetIngreso(int idcaja)
         {
-            return Ok(_repository.IngresosXfp());
+            return Ok(_repository.IngresosXfp(idcaja));
         }
 
         [HttpPost]
