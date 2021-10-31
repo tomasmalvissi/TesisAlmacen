@@ -99,7 +99,7 @@
         }
         else
         {
-            salidas = await SalidaDineroService.GetAll();
+            salidas = await SalidaDineroService.GetAll(caja.Id);
         }
     }
 
@@ -118,7 +118,7 @@
         if (altasalida.IsSuccessStatusCode)
         {
             await JS.InvokeVoidAsync("ocultaModal", "#modalNuevaSalida");
-            salidas = await SalidaDineroService.GetAll();
+            salidas = await SalidaDineroService.GetAll(caja.Id);
             await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Registro exitoso", "success");
         }
         else

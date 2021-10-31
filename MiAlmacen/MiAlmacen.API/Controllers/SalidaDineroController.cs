@@ -18,10 +18,10 @@ namespace MiAlmacen.API.Controllers
             _repository = repository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("{idcaja}")]
+        public async Task<IActionResult> GetAll(int idcaja)
         {
-            var salidas = _repository.GetAll();
+            var salidas = _repository.GetAll(idcaja);
             return Ok(salidas);
         }
 

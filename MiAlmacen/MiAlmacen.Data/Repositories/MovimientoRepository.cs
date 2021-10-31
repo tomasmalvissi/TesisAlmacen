@@ -23,8 +23,8 @@ namespace MiAlmacen.Data.Repositories
                     (SELECT u.Nombre FROM Usuarios u WHERE u.Id = v.Empleado_Id) AS Empleado, 
                     Total AS Importe
                     FROM Ventas v 
-					WHERE DAY(Fecha) = DAY(GetDate())
-                    UNION
+					WHERE CONVERT(DATE ,v.Fecha) = CONVERT(DATE, GETDATE())
+                        UNION
                     SELECT 'Compra' AS Movimiento, 
                     Id, 
                     Fecha, 
@@ -32,8 +32,18 @@ namespace MiAlmacen.Data.Repositories
                     (SELECT u.Nombre FROM Usuarios u WHERE u.Id = cmp.Empleado_Id) AS Empleado, 
                     -Total AS Importe
                     FROM Compras cmp
-					WHERE DAY(Fecha) = DAY(GetDate())
-                    ORDER BY Fecha DESC";
+					WHERE CONVERT(DATE ,cmp.Fecha) = CONVERT(DATE, GETDATE())
+	                	UNION
+                    SELECT 'Salida Dinero' AS Movimiento, 
+                    s.Id, 
+                    cj.Fecha, 
+                    s.Descripcion AS RazonSocial,
+                    (SELECT Nombre FROM Usuarios u WHERE cj.Empleado_Id = u.Id) AS Empleado, 
+                    -s.Importe AS Importe
+                    FROM SalidasDinero s
+					INNER JOIN Caja cj ON CONVERT(DATE ,cj.Fecha) = CONVERT(DATE, GETDATE())
+					AND cj.Id = s.Caja_Id
+			            ORDER BY Fecha DESC";
 
             List<MovimientosCajaModel> movimientos = new();
 

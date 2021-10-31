@@ -16,10 +16,19 @@
 
 <div id="header" class="form-row">
     <div id="buscador-clientes" class="form-group col-md-7">
-        <label>Cliente</label>
+        <label>Cliente | Estado</label>
         <BlazoredTypeahead SearchMethod="BuscarClientes" @bind-Value="clienteSeleccionado" placeholder="Seleccione cliente" class="form-control">
-            <SelectedTemplate>@context.Nombre</SelectedTemplate>
-            <ResultTemplate>@context.Nombre | @context.DNI</ResultTemplate>
+            <SelectedTemplate>
+                @context.Nombre | @if (context.FechaBaja == null)
+                {
+                    <text>Activo</text>
+                }
+                else
+                {
+                    <text>Inactivo</text>
+                }
+            </SelectedTemplate>
+            <ResultTemplate>@context.Nombre | DNI: @context.DNI</ResultTemplate>
         </BlazoredTypeahead>
     </div>
 
@@ -262,6 +271,7 @@
     protected override async Task OnInitializedAsync()
     {
         articulos = await ArticuloService.GetAll();
+        articulos = articulos.Where(x => x.FechaBaja == null);
         clientes = await ClienteService.GetAllClientes();
         formasPago = await FormasPagoService.GetAll();
         venta.Fecha = DateTime.Now;
@@ -289,7 +299,7 @@
             detalle.SubTotal = subtotal;
             venta.Detalle.Add(detalle);
             venta.Total = CalcularTotal();
-            precio = 0; cantidad = 0; subtotal = 0; 
+            precio = 0; cantidad = 0; subtotal = 0;
         }
     }
 

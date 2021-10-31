@@ -383,8 +383,8 @@ else
         if (!string.IsNullOrEmpty(empleadoFiltro))
             ventas = await Task.FromResult(ventas.Where(x => x.Empleado.Nombre.ToUpper().Contains(empleadoFiltro.ToUpper())));
 
-        ventas = await Task.FromResult(ventas.Where(x => x.Fecha > FechaDesde));
-        ventas = await Task.FromResult(ventas.Where(x => x.Fecha < FechaHasta));
+        ventas = await Task.FromResult(ventas.Where(x => x.Fecha.Date >= FechaDesde.Date));
+        ventas = await Task.FromResult(ventas.Where(x => x.Fecha.Date <= FechaHasta.Date));
     }
 
     async Task FiltroEmpleado(ChangeEventArgs e)

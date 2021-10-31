@@ -17,9 +17,9 @@ namespace MiAlmacen.Blazor.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<SalidasDineroModel>> GetAll()
+        public async Task<IEnumerable<SalidasDineroModel>> GetAll(int idcaja)
         {
-            var respuesta = _httpClient.GetStringAsync($"api/salida-dinero/");
+            var respuesta = _httpClient.GetStringAsync($"api/salida-dinero/{idcaja}");
             return JsonConvert.DeserializeObject<IEnumerable<SalidasDineroModel>>(await respuesta);
         }
 

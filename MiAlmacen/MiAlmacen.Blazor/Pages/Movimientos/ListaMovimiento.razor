@@ -51,9 +51,12 @@ else
                     <td>@mov.Empleado</td>
                     <td>$ @mov.Importe</td>
                     <td>
+                        @if (mov.Descripción.Equals("Compra") || mov.Descripción.Equals("Venta"))
+                        {
                         <button class="btn btn-sm btn-outline-primary" @onclick="@(() => VerDetalle(mov))">
                             <i class="oi oi-eye"></i>
                         </button>
+                        }
                     </td>
                 </tr>
             }

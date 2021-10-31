@@ -16,9 +16,18 @@
 
 <div id="header" class="form-row">
     <div id="buscador-proveedores" class="form-group col-md-5">
-        <label>Proveedor</label>
+        <label>Proveedor | Estado</label>
         <BlazoredTypeahead SearchMethod="BuscarProveedores" @bind-Value="proveedorSeleccionado" placeholder="Seleccione proveedor" class="form-control">
-            <SelectedTemplate>@context.Nombre</SelectedTemplate>
+            <SelectedTemplate>
+                @context.Nombre | @if (context.FechaBaja == null)
+                {
+                    <text>Activo</text>
+                }
+                else
+                {
+                    <text>Inactivo</text>
+                }
+            </SelectedTemplate>
             <ResultTemplate>@context.Nombre | @context.CUIL</ResultTemplate>
         </BlazoredTypeahead>
     </div>
@@ -38,10 +47,19 @@
 <hr />
 
 <div id="buscador-articulos" class="form-group col-md-12">
-    <label>Producto | Precio Actual Compra | Precio Actual Venta </label>
+    <label>Producto | Precio Actual Compra | Precio Actual Venta | Estado</label>
     <BlazoredTypeahead SearchMethod="BuscarArticulos" @bind-Value="articuloSeleccionado" @onfocusout="AgregarArticulo" @onfocusin="AgregarArticulo" placeholder="Seleccione producto" class="form-control">
-        <SelectedTemplate>@context.Nombre | @context.Precio_Mayor | @context.Precio_Unit</SelectedTemplate>
-        <ResultTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act</ResultTemplate>
+        <SelectedTemplate>
+            @context.Nombre | $@context.Precio_Mayor | $@context.Precio_Unit | @if (context.FechaBaja == null)
+            {
+                <text>Activo</text>
+            }
+            else
+            {
+                <text>Inactivo</text>
+            }
+        </SelectedTemplate>
+        <ResultTemplate>@context.Nombre | @context.Codigo_Art | @context.Stock_Act un.</ResultTemplate>
     </BlazoredTypeahead>
 </div>
 

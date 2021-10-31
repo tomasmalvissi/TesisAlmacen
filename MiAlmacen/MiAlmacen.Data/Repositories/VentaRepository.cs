@@ -240,6 +240,18 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
 
+
+                    orden = @"UPDATE Clientes
+                               SET FechaBaja = NULL
+                               WHERE Id = @Cliente_Id AND FechaBaja IS NOT NULL";
+
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Cliente_Id", venta.Cliente_Id);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+
+
                     if (venta.Saldo > 0)
                     {
                         orden = @"UPDATE Caja

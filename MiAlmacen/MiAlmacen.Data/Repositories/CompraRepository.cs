@@ -235,6 +235,16 @@ namespace MiAlmacen.Data.Repositories
                     sqlcmd.ExecuteNonQuery();
                     sqlcmd.Parameters.Clear();
 
+                    orden = @"UPDATE Proveedores
+                               SET FechaBaja = NULL
+                               WHERE Id = @Proveedor_Id AND FechaBaja IS NOT NULL";
+
+                    sqlcmd.CommandText = orden;
+                    sqlcmd.Parameters.AddWithValue("@Proveedor_Id", compra.Proveedor_Id);
+
+                    sqlcmd.ExecuteNonQuery();
+                    sqlcmd.Parameters.Clear();
+
                     foreach (var fpago in compra.FormasPago)
                     {
                         orden = @"INSERT INTO FormasPagoCompras (Fecha, Importe, FormaPago_Id, Compra_Id)

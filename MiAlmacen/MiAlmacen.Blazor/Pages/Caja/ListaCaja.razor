@@ -104,7 +104,11 @@
         </div>
     </div>
 }
-<ModalSalidasDinero caja="caja"></ModalSalidasDinero>
+
+@if (caja != null)
+{
+    <ModalSalidasDinero caja="@caja"></ModalSalidasDinero>
+}
 
 
 @code {

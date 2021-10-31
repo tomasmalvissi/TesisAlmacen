@@ -17,8 +17,4 @@
     <ProjectReference Include="..\MiAlmacen.Data\MiAlmacen.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\landing\" />
-  </ItemGroup>
-
 </Project>
