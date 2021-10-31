@@ -88,8 +88,8 @@ $(document).ready(function() {
             speed: 500,
             slidesToShow: 2,
             slidesToScroll: 2,
-            prevArrow: '<div class="l-11-slide-btn slick-prev focus-reset"><img src="./image/l2/long-arrow-left.png" alt=""></div>',
-            nextArrow: '<div class="l-11-slide-btn slick-next focus-reset"><img src="./image/l2/long-arrow-right.png" alt=""></div>',
+            prevArrow: '<div class="l-11-slide-btn slick-prev focus-reset"><img src="landing/image/l2/long-arrow-left.png" alt=""></div>',
+            nextArrow: '<div class="l-11-slide-btn slick-next focus-reset"><img src="landing/image/l2/long-arrow-right.png" alt=""></div>',
             responsive: [{
                 breakpoint: 992,
                 settings: {
