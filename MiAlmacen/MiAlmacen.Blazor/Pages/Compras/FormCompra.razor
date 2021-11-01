@@ -476,7 +476,7 @@
         bool existeRecibo = await CompraService.GetNroRecibo(compra.NroRecibo);
 
         if (existeRecibo)
-            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo cargar compra. El número de Recibo ya se encuentra asociado a una Factura.", "error");
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo cargar la compra. El número de Recibo ya se encuentra asociado a una Factura.", "error");
 
         if (string.IsNullOrEmpty(errores) && string.IsNullOrEmpty(erroresModal) && !existeRecibo)
         {
