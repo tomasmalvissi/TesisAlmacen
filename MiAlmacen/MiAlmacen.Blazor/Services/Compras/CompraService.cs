@@ -28,6 +28,13 @@ namespace MiAlmacen.Blazor.Services
             return JsonConvert.DeserializeObject<CompraModel>(await respuesta);
         }
 
+        public async Task<bool> GetNroRecibo(long nroRecibo)
+        {
+            var respuesta = _httpClient.GetStringAsync($"api/compras/existerecibo/{nroRecibo}");
+            return JsonConvert.DeserializeObject<bool>(await respuesta);
+        }
+
+
         public async Task<HttpResponseMessage> Alta(CompraModel compra)
         {
             string compraSerealizada = JsonConvert.SerializeObject(compra);

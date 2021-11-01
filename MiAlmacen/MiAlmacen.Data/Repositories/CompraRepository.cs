@@ -160,6 +160,38 @@ namespace MiAlmacen.Data.Repositories
             return compra;
         }
 
+        public bool ExisteRecibo(long nroRecibo)
+        {
+            bool existe = false;
+
+            orden = @"SELECT Id FROM Compras WHERE NroRecibo = @NroRecibo";
+
+            SqlCommand sqlcmd = new(orden, conexion);
+            Compras compra = new();
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                sqlcmd.Parameters.AddWithValue("@NroRecibo", nroRecibo);
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                if (reader.HasRows)
+                    existe = true;
+
+                CerrarConex();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return existe;
+        }
+
         public Compras GetDetalle(Compras compra)
         {
             SqlCommand sqlcmd = new(orden, conexion);

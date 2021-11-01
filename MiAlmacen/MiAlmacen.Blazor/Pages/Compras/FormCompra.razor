@@ -473,7 +473,12 @@
 
         ValidacionModal();
 
-        if (string.IsNullOrEmpty(errores) && string.IsNullOrEmpty(erroresModal))
+        bool existeRecibo = await CompraService.GetNroRecibo(compra.NroRecibo);
+
+        if (existeRecibo)
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo cargar compra. El número de Recibo ya se encuentra asociado a una Factura.", "error");
+
+        if (string.IsNullOrEmpty(errores) && string.IsNullOrEmpty(erroresModal) && !existeRecibo)
         {
             var respuesta = await CompraService.Alta(compra);
             if (respuesta.IsSuccessStatusCode)

@@ -31,6 +31,13 @@ namespace MiAlmacen.API.Controllers
             return Ok(compra);
         }
 
+        [HttpGet("existerecibo/{nroRecibo}")]
+        public async Task<IActionResult> Get(long nroRecibo)
+        {
+            var existe = _repository.ExisteRecibo(nroRecibo);
+            return Ok(existe);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(CompraModel compra)
         {
