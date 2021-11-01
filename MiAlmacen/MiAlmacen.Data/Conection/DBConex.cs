@@ -12,13 +12,13 @@ namespace MiAlmacen.Data.Conection
     {
         public SqlConnection conexion;
         //LOCAL
-        readonly string cadenaconex = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog = Almacen; Integrated Security = True; Connect Timeout = 30; Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        //readonly string cadenaconex = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog = Almacen; Integrated Security = True; Connect Timeout = 30; Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
         //AZURE
         //readonly string cadenaconex = "Server=tesis-server.database.windows.net;Initial Catalog=Tesis-DB;Persist Security Info=False;User ID=TomyMauri;Password=TesisCorrea2021;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
         //SOMEE
-        //readonly string cadenaconex = "workstation id = AlmacenDb21.mssql.somee.com; packet size = 4096; user id = Almacen2022_SQLLogin_1; pwd=Almacen2021;data source = AlmacenDb21.mssql.somee.com; persist security info=False;initial catalog = AlmacenDb21";
+        readonly string cadenaconex = "workstation id=AlmacenDBTesis.mssql.somee.com;packet size=4096;user id=Almacen2022_SQLLogin_1;pwd=Almacen2021;data source=AlmacenDBTesis.mssql.somee.com;persist security info=False;initial catalog=AlmacenDBTesis";
         public DBConex()
         {
             conexion = new SqlConnection(cadenaconex);
