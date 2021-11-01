@@ -31,6 +31,13 @@ namespace MiAlmacen.API.Controllers
             return Ok(cliente);
         }
 
+        [HttpGet("deuda/{id}")]
+        public async Task<IActionResult> GetDeuda(int id)
+        {
+            var deuda = _repository.GetDeuda(id);
+            return Ok(deuda);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(ClienteModel model)
         {

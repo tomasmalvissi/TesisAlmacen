@@ -94,6 +94,42 @@ namespace MiAlmacen.Data.Repositories
             }
             return cliente;
         }
+
+        public decimal GetDeuda(int id)
+        {
+            decimal deuda = 0;
+            orden = @"SELECT ISNULL((SELECT SUM(v.Saldo) 
+                      FROM Ventas v
+                      WHERE v.Cliente_Id = @Id), 0) AS Deuda";
+
+            SqlCommand sqlcmd = new SqlCommand(orden, conexion);
+            sqlcmd.Parameters.AddWithValue("@Id", id);
+
+            Clientes cliente = new();
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    deuda = Convert.ToDecimal(reader["Deuda"].ToString());
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return deuda;
+        }
+
         public Clientes Post(ClienteModel model)
         {
             if (model == null)

@@ -17,7 +17,8 @@
 <div id="header" class="form-row">
     <div id="buscador-clientes" class="form-group col-md-7">
         <label>Cliente | Estado</label>
-        <BlazoredTypeahead SearchMethod="BuscarClientes" @bind-Value="clienteSeleccionado" placeholder="Seleccione cliente" class="form-control">
+
+        <BlazoredTypeahead SearchMethod="BuscarClientes"  @bind-Value="clienteSeleccionado" placeholder="Seleccione cliente" class="form-control">
             <SelectedTemplate>
                 @context.Nombre | @if (context.FechaBaja == null)
                 {
@@ -162,6 +163,12 @@
                     <b> Error! </b> @erroresModal
                 </div>
             }
+            @if (clienteSeleccionado != null && deudaCliente > 0)
+            {
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <b> Aviso. </b> El cliente @clienteSeleccionado.Nombre posee una deuda de: $@deudaCliente
+                </div>
+            }
             <div class="modal-body">
                 <div class="form-row">
                     <div class="form-group col-md-4">
@@ -261,6 +268,8 @@
 
     private ClienteModel nuevoCliente { get; set; } = new ClienteModel();
 
+    private decimal deudaCliente { get; set; }
+
     #region Detalle
     private int cantidad { get; set; }
     private decimal precio { get; set; }
@@ -310,6 +319,11 @@
             venta.Cliente = clienteSeleccionado;
             venta.Cliente_Id = clienteSeleccionado.Id;
         }
+    }
+
+    async Task ObtenerDeuda(int id)
+    {
+        deudaCliente = await ClienteService.GetDeuda(id); 
     }
 
     void AsignarFormasPago()
@@ -414,6 +428,7 @@
 
     async Task CrearVenta()
     {
+        erroresModal = string.Empty;
         AsignarCliente();
         CalcularTotal();
         CalcularPago();
@@ -437,13 +452,12 @@
         }
     }
 
-    void LevantaModal()
+    async Task LevantaModal()
     {
         ValidacionVenta();
+        await ObtenerDeuda(clienteSeleccionado.Id);
         if (string.IsNullOrEmpty(errores))
-        {
-            JS.InvokeVoidAsync("levantaModal", "#modalFinalizaVenta");
-        }
+            await JS.InvokeVoidAsync("levantaModal", "#modalFinalizaVenta");
     }
 
 
