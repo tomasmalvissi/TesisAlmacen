@@ -2,14 +2,14 @@
 @inject IJSRuntime JS
 
 <div class="site-wrapper overflow-hidden position-relatived">
-    <!--Site Header Area -->
+    <!--Header-->
     <header class="site-header site-header--menu-left landing-11-menu site-header--absolute site-header--sticky">
         <div class="container">
             <nav class="navbar site-navbar">
-                <!-- Brand Logo-->
-                <div class="brand-logo">
+                <!--Logo-->
+                <div class="brand-logo mr-1">
                     <a href="#">
-                        <img src="ico.png" width="35" height="35" alt="" class="default-logo">
+                        <img src="ico.png" width="90" height="70" alt="" class="default-logo">
                     </a>
                 </div>
                 <div class="menu-block-wrapper">
@@ -23,37 +23,27 @@
                             <div class="mobile-menu-close">&times;</div>
                         </div>
                         <ul class="site-menu-main">
-                            <li class="nav-item nav-item-has-children">
-                                <a href="#" class="nav-link-item drop-trigger">
-                                    Dropdowns <i class="fas fa-angle-down"></i>
-                                </a>
-                                <ul class="sub-menu" id="submenu-9">
-                                    <li class="sub-menu--item">
-                                        <a href="#">Dropdown 01</a>
-                                    </li>
-                                    <li class="sub-menu--item">
-                                        <a href="#">Dropdown 02</a>
-                                    </li>
-                                    <li class="sub-menu--item">
-                                        <a href="#">Dropdown 03</a>
-                                    </li>
-                                    <li class="sub-menu--item">
-                                        <a href="#">Dropdown 04</a>
-                                    </li>
-                                </ul>
+                            <li class="nav-item">
+                                <a onclick="window.location.href='#objetivo'" style="cursor:pointer" class="nav-link-item">Nuestro Objetivo</a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link-item">Blog</a>
+                                <a onclick="window.location.href='#acercade'" style="cursor:pointer" class="nav-link-item">Acerca del Programa</a>
                             </li>
                             <li class="nav-item">
-                                <a href="https://uxtheme.net/product-support/" class="nav-link-item">Support</a>
+                                <a onclick="window.location.href='#elegirnos'" style="cursor:pointer" class="nav-link-item">¿Por qué elegirnos?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a onclick="window.location.href='#nosotros'" style="cursor:pointer" class="nav-link-item">Nosotros</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/tomasmalvissi/TesisAlmacen" class="nav-link-item">Código Fuente</a>
                             </li>
                         </ul>
                     </nav>
                 </div>
                 <div class="header-btns header-btn-l11 ms-auto d-none d-xs-inline-flex align-items-center">
-                    <button @onclick="LevantaModal" class="btn btn-outline-primary" href="#">
-                        Log in
+                    <button @onclick="LevantaModal" class="btn btn-primary" href="#">
+                        Iniciá Sesión
                     </button>
                 </div>
                 <!-- mobile menu trigger -->
@@ -65,9 +55,8 @@
         </div>
     </header>
 
-    <!-- PEGAR EN BLAZOR DESDE ACA -->
-    <!-- navbar- -->
-    <!-- Hero Area -->
+    <!-- Termina NavBar- -->
+    <!-- Area Principal -->
     <div class="hero-area-l11 position-relative z-index-1 overflow-hidden">
         <div class="container position-relative">
             <div class="row position-relative justify-content-center">
@@ -82,7 +71,7 @@
                                 </p>
                             </div>
                             <div class="col-lg-4 col-md-4 col-sm-6 flex-y-center ">
-                                <a class="btn btn-primary" href="#">Registrate y conocenos.</a>
+                                <a class="btn btn-secondary" href="/usuarios/registrar">Registrate y comenzá a usarlo.</a>
                             </div>
                         </div>
                     </div>
@@ -100,8 +89,8 @@
         </div>
     </div>
 
-    <!-- Content Area-1 -->
-    <div class="content-area-l-11-1">
+    <!-- Area Objetivos -->
+    <div class="content-area-l-11-1" id="objetivo">
         <div class="container">
             <div class="row align-items-center justify-content-lg-start justify-content-center">
                 <div class="col-xl-6 col-md-5 col-md-10" data-aos="fade-right" data-aos-duration="800" data-aos-once="true">
@@ -114,14 +103,14 @@
                         <h2>
                             Hacé crecer tu negocio.
                         </h2>
-                        <p>Potencia tus ventas con nuestro Sistema de Gestión, teniendo un control de tus productos, clientes, proveedores y más.</p>
+                        <p>Potenciá tus ventas con nuestro Sistema de Gestión, teniendo un control de tus productos, clientes, proveedores y más.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Content Area-2  -->
-    <div class="content-area-l-11-2">
+    <!-- Area Acerca De  -->
+    <div class="content-area-l-11-2" id="acercade">
         <div class="container">
             <div class="row align-items-center justify-content-lg-between justify-content-center">
                 <div class="col-xxl-4 col-xl-5 col-lg-6 col-md-9 order-lg-1 order-1" data-aos="fade-right" data-aos-duration="800" data-aos-once="true">
@@ -146,7 +135,7 @@
                             </svg>
                             <div class="content-body">
                                 <h5>Efectivo:</h5>
-                                <p>Sacá el máximo provecho con la sección de estadisticas.</p>
+                                <p>Sacá el máximo provecho con la sección de estadísticas.</p>
                             </div>
                         </div>
                         <div class="d-flex content-l-11-3-card">
@@ -166,8 +155,8 @@
             </div>
         </div>
     </div>
-    <!-- Feature Area -->
-    <div class="feature-l-11">
+    <!-- Area Descripcion -->
+    <div class="feature-l-11" id="elegirnos">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-xl-9 px-lg-12 col-md-12">
@@ -188,7 +177,7 @@
                                     <i class="icon icon-pen-01"></i>
                                 </div>
                                 <div class="content-body">
-                                    <h5>Facil de Usar</h5>
+                                    <h5>Fácil de Usar</h5>
                                     <p>La interfaz otorga una experiencia de usuario agradable gracias al diseño moderno.</p>
                                 </div>
                             </div>
@@ -221,7 +210,7 @@
                                     <i class="icon icon-settings-gear-64-2"></i>
                                 </div>
                                 <div class="content-body">
-                                    <h5>Sin instalacion</h5>
+                                    <h5>Sin instalación</h5>
                                     <p>Nuestro Sistema es una plataforma Web, por lo que podrás acceder de cualquier dispositivo con conexión a internet.</p>
                                 </div>
                             </div>
@@ -231,8 +220,8 @@
             </div>
         </div>
     </div>
-    <!-- Testimonial Section -->
-    <div class="testimonial-area-l-11">
+    <!-- Seccion Comentarios -->
+    <div class="testimonial-area-l-11" id="nosotros">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-xl-7 col-lg-9" data-aos="fade-down" data-aos-duration="800" data-aos-once="true">
@@ -283,7 +272,7 @@
             </div>
         </div>
     </div>
-    <!-- Footer Area -->
+    <!-- Footer -->
     <footer class="footer-l-11 text-center text-md-start">
         <div class="copyright-area-l-11">
             <div class="container">
