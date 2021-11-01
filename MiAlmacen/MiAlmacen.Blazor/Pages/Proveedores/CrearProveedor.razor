@@ -35,17 +35,24 @@
 
     async Task CrearProv()
     {
-        var respuesta = await ProveedorService.Alta(proveedor);
+        var existeProveedor = await ProveedorService.ExisteProveedor(proveedor.CUIL);
 
-        if (respuesta.IsSuccessStatusCode)
-        {
-            var content = await respuesta.Content.ReadAsStringAsync();
-            var objDeserealizado = JsonConvert.DeserializeObject<ProveedorModel>(content);
-            NavigationManager.NavigateTo("/proveedores");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El proveedor {objDeserealizado.Nombre} fue creado con éxito.", "success");
-        }
+        if (existeProveedor)
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo cargar el proveedor. El número de CUIT ya se encuentra asociado a un Proveedor.", "error");
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear proveedor.", "error");
+        {
+            var respuesta = await ProveedorService.Alta(proveedor);
+
+            if (respuesta.IsSuccessStatusCode)
+            {
+                var content = await respuesta.Content.ReadAsStringAsync();
+                var objDeserealizado = JsonConvert.DeserializeObject<ProveedorModel>(content);
+                NavigationManager.NavigateTo("/proveedores");
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El proveedor {objDeserealizado.Nombre} fue creado con éxito.", "success");
+            }
+            else
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear proveedor.", "error");
+        }
     }
 
     private void Volver()

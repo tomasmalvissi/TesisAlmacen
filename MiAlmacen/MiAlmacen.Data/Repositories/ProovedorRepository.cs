@@ -91,6 +91,39 @@ namespace MiAlmacen.Data.Repositories
             }
             return proveedor;
         }
+
+        public bool ExisteProveedor(long nroCUIT)
+        {
+            bool existe = false;
+
+            orden = @"SELECT Id FROM Proveedores WHERE CUIL = @NroCUIT";
+
+            SqlCommand sqlcmd = new(orden, conexion);
+            Compras compra = new();
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                sqlcmd.Parameters.AddWithValue("@NroCUIT", nroCUIT);
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                if (reader.HasRows)
+                    existe = true;
+
+                CerrarConex();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return existe;
+        }
+
         public Proveedores Post(ProveedorModel model)
         {
             if (model == null)

@@ -31,6 +31,13 @@ namespace MiAlmacen.API.Controllers
             return Ok(proveedor);
         }
 
+        [HttpGet("existe/{cuit}")]
+        public async Task<IActionResult> ExisteProveedor(long cuit)
+        {
+            var existe = _repository.ExisteProveedor(cuit);
+            return Ok(existe);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post(ProveedorModel model)
         {

@@ -26,6 +26,12 @@ namespace MiAlmacen.Blazor.Services
             return await _httpClient.GetFromJsonAsync<ProveedorModel>($"api/proveedores/{id}");
         }
 
+        public async Task<bool> ExisteProveedor(long cuit)
+        {
+            var respuesta = _httpClient.GetStringAsync($"api/proveedores/existe/{cuit}");
+            return JsonConvert.DeserializeObject<bool>(await respuesta);
+        }
+
         public async Task<HttpResponseMessage> Alta(ProveedorModel proveedor)
         {
             string provSerealizado = JsonConvert.SerializeObject(proveedor);
