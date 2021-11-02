@@ -169,7 +169,8 @@ namespace MiAlmacen.Data.Repositories
         {
             orden = @"SELECT DATENAME(WEEKDAY, Fecha) AS Dia, SUM(Total - Saldo) AS Monto
                         FROM Ventas 
-                        WHERE DATEPART(WEEK,Fecha) = DATEPART(WEEK,GETDATE()) AND FechaBaja IS NULL
+                        WHERE Fecha > DATEADD(DAY,-7, GETDATE()) 
+						AND Fecha <= GETDATE() AND FechaBaja IS NULL
                         GROUP BY DATENAME(WEEKDAY, Fecha)
                         ORDER BY DATENAME(WEEKDAY, Fecha);";
 
