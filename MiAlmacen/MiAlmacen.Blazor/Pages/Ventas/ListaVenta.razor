@@ -75,38 +75,47 @@ else
         <tbody>
             @foreach (var item in ventas)
             {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>@item.Fecha</td>
-                    <td>@item.Cliente.Nombre</td>
-                    <td>@item.Empleado.Nombre</td>
-                    <td>$@item.Total</td>
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Fecha</td>
+                <td>@item.Cliente.Nombre</td>
+                <td>@item.Empleado.Nombre</td>
+                <td>$@item.Total</td>
+
+                @if (item.Saldo > 0)
+                {
+                    <td style="color:darkred">$@item.Saldo</td>
+                }
+                else
+                {
                     <td>$@item.Saldo</td>
-                    <td>
-                        @if (item.Fecha_Baja == null)
-                        {
-                            <i class="oi oi-arrow-thick-top" style="color:green"></i>
-                        }
-                        else
-                        {
-                            <i class="oi oi-arrow-thick-bottom" style="color:red"></i>
-                        }
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-outline-primary m-1" @onclick="@(() => LevantaModalDetalle(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Ver detalle">
-                            <i class="oi oi-eye"></i>
+                }
+
+                <td>
+                    @if (item.Fecha_Baja == null)
+                    {
+                        <i class="oi oi-arrow-thick-top" style="color:green"></i>
+                    }
+                    else
+                    {
+                        <i class="oi oi-arrow-thick-bottom" style="color:red"></i>
+                    }
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-outline-primary m-1" @onclick="@(() => LevantaModalDetalle(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Ver detalle">
+                        <i class="oi oi-eye"></i>
+                    </button>
+                    @if (item.Fecha_Baja == null)
+                    {
+                        <button @onclick="@(() => Borrar(item.Id))" class="btn btn-sm btn-outline-danger m-1" data-toggle="tooltip" data-placement="bottom" title="Anular">
+                            <i class="oi oi-trash"></i>
                         </button>
-                        @if (item.Fecha_Baja == null)
-                        {
-                            <button @onclick="@(() => Borrar(item.Id))" class="btn btn-sm btn-outline-danger m-1" data-toggle="tooltip" data-placement="bottom" title="Anular">
-                                <i class="oi oi-trash"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-warning m-1" @onclick="@(() => LevantaModalSaldo(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Modificar saldo">
-                                <i class="oi oi-pencil"></i>
-                            </button>
-                        }
-                    </td>
-                </tr>
+                        <button type="button" class="btn btn-sm btn-outline-warning m-1" @onclick="@(() => LevantaModalSaldo(item.Id))" data-toggle="tooltip" data-placement="bottom" title="Modificar saldo">
+                            <i class="oi oi-pencil"></i>
+                        </button>
+                    }
+                </td>
+            </tr>
             }
         </tbody>
     </table>

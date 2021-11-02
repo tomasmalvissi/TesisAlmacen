@@ -58,7 +58,16 @@ else
                     <td>@art.Codigo_Art</td>
                     <td>$@art.Precio_Unit</td>
                     <td>$@art.Precio_Mayor</td>
-                    <td>@art.Stock_Act</td>
+
+                    @if (art.Stock_Act > 0)
+                    {
+                        <td style="color:green">@art.Stock_Act</td>
+                    }
+                    else
+                    {
+                        <td style="color:darkred">@art.Stock_Act</td>
+                    }
+
                     <td>@art.Ultima_Modif</td>
                     <td>
                         @if (art.FechaBaja == null)
