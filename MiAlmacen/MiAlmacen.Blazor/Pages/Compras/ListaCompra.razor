@@ -59,7 +59,6 @@ else
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>#</th>
                 <th>Nro. Recibo</th>
                 <th>Fecha</th>
                 <th>Proveedor</th>
@@ -73,7 +72,6 @@ else
             @foreach (var item in compras)
             {
                 <tr>
-                    <td>@item.Id</td>
                     <td>@item.NroRecibo</td>
                     <td>@item.Fecha</td>
                     <td>@item.Proveedor.Nombre</td>

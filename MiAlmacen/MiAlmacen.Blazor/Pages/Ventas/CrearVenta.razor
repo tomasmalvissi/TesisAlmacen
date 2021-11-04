@@ -2,6 +2,7 @@
 @inject NavigationManager NavigationManager
 @inject VentaService VentaService
 @inject UsuarioService UsuarioService 
+@inject CajaService CajaService
 @inject IJSRuntime JS
 
 <div class="d-flex justify-content-between mb-3">
@@ -19,13 +20,22 @@
 
 @code {
     public VentaModel venta = new VentaModel();
+    private CajaModel caja { get; set; }
+    private UsuarioModel UsuarioLogueado { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await UsuarioService.GetSesion();
-        if (result == null)
+        var UsuarioLogueado = await UsuarioService.GetSesion();
+        if (UsuarioLogueado == null)
         {
             NavigationManager.NavigateTo("/");
+        }
+
+        caja = await CajaService.GetUltimo(UsuarioLogueado.Id);
+
+        if (caja.Fecha.Date != DateTime.Now.Date || caja.FechaCierre != null)
+        {
+            NavigationManager.NavigateTo("/caja/abrir");
         }
     }
 
