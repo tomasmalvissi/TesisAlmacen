@@ -99,12 +99,15 @@
             {
                 var respuesta = await CajaService.Editar(caja);
                 await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Sesión finalizada correctamente. Caja cerrada.", "success");
-                NavigationManager.NavigateTo("/caja/abrir");
+                await UsuarioService.Logout();
+                UsuarioLogueado = await UsuarioService.GetSesion();
+                NavigationManager.NavigateTo("/");
             }
         }
         else
         {
             await UsuarioService.Logout();
+            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"Sesión finalizada correctamente.", "success");
             UsuarioLogueado = await UsuarioService.GetSesion();
             NavigationManager.NavigateTo("/");
         }
