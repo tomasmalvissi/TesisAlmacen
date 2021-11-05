@@ -132,6 +132,7 @@ else
 
         BarDataset<int> dsProductos = new BarDataset<int>(productosCantidad, horizontal: true)
         {
+            Label = "Producto con más ventas",
             BackgroundColor = new[]
             {
                 ColorUtil.RandomColorString(),
@@ -188,6 +189,7 @@ else
 
         BarDataset<int> dsClientes = new BarDataset<int>(clientesCantidad)
         {
+            Label = "Cliente con más ventas",
             BackgroundColor = new[]
             {
                 ColorUtil.RandomColorString(),
@@ -231,6 +233,7 @@ else
 
         LineDataset<decimal> dsVentas = new LineDataset<decimal>(montosVentas)
         {
+            Label = "Ventas",
             BorderColor = ColorUtil.RandomColorString()
         };
 
@@ -243,6 +246,7 @@ else
 
         LineDataset<decimal> dsCompras = new LineDataset<decimal>(montosCompras)
         {
+            Label = "Compras",
             BorderColor = ColorUtil.RandomColorString()
         };
 
