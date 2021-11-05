@@ -127,10 +127,10 @@ else
 
     private async Task BorrarProv(int id)
     {
-        var cliente = await ProveedorService.GetUn(id);
+        var proveedor = await ProveedorService.GetUn(id);
 
         var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
-            $"¿Desea eliminar proveedor?", "warning");
+            $"¿Desea eliminar proveedor {proveedor.Nombre}?", "warning");
         if (confirmacion)
         {
             var respuesta = await ProveedorService.Eliminar(id);

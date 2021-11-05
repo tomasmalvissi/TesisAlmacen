@@ -131,7 +131,7 @@ else
         var cliente = await ClienteService.GetUnCliente(id);
 
         var confirmacion = await JS.InvokeAsync<bool>("confirmar", "Eliminar",
-            $"¿Desea eliminar cliente?", "warning");
+            $"¿Desea eliminar cliente {cliente.Nombre}?", "warning");
         if (confirmacion)
         {
             var respuesta = await ClienteService.Eliminar(id);
