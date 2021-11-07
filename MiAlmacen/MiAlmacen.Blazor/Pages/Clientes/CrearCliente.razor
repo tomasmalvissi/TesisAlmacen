@@ -35,17 +35,24 @@
 
     async Task CrearClient()
     {
-        var respuesta = await ClienteService.Alta(cliente);
+        var existeCliente = await ClienteService.ExisteCliente(cliente.DNI);
 
-        if (respuesta.IsSuccessStatusCode)
-        {
-            var content = await respuesta.Content.ReadAsStringAsync();
-            var objDeserealizado = JsonConvert.DeserializeObject<ClienteModel>(content);
-            NavigationManager.NavigateTo("/clientes");
-            await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El cliente {objDeserealizado.Nombre} fue creado con éxito", "success");
-        }
+        if (existeCliente)
+            await JS.InvokeVoidAsync("simple", "Error", $"No se pudo cargar el cliente. El número de DNI ya se encuentra asociado a un Cliente.", "error");
         else
-            await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear cliente.", "error");
+        {
+            var respuesta = await ClienteService.Alta(cliente);
+
+            if (respuesta.IsSuccessStatusCode)
+            {
+                var content = await respuesta.Content.ReadAsStringAsync();
+                var objDeserealizado = JsonConvert.DeserializeObject<ClienteModel>(content);
+                NavigationManager.NavigateTo("/clientes");
+                await JS.InvokeVoidAsync("simple", "¡Éxito!", $"El cliente {objDeserealizado.Nombre} fue creado con éxito", "success");
+            }
+            else
+                await JS.InvokeVoidAsync("simple", "Error", $"Error {((decimal)respuesta.StatusCode)}. No se pudo crear cliente.", "error");
+        }
     }
 
     private void Volver()

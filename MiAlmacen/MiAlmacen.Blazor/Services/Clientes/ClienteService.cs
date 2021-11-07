@@ -26,6 +26,12 @@ namespace MiAlmacen.Blazor.Services
             return await _httpClient.GetFromJsonAsync<ClienteModel>($"api/clientes/{id}");
         }
 
+        public async Task<bool> ExisteCliente(long dni)
+        {
+            var respuesta = _httpClient.GetStringAsync($"api/clientes/existe/{dni}");
+            return JsonConvert.DeserializeObject<bool>(await respuesta);
+        }
+
         public async Task<decimal> GetDeuda(int id)
         {
             var respuesta = _httpClient.GetStringAsync($"api/clientes/deuda/{id}");

@@ -95,6 +95,38 @@ namespace MiAlmacen.Data.Repositories
             return cliente;
         }
 
+        public bool ExisteCliente(long dni)
+        {
+            bool existe = false;
+
+            orden = @"SELECT Id FROM Clientes WHERE DNI = @DNI";
+
+            SqlCommand sqlcmd = new(orden, conexion);
+            Compras compra = new();
+            try
+            {
+                AbrirConex();
+                sqlcmd.CommandText = orden;
+                sqlcmd.Parameters.AddWithValue("@DNI", dni);
+                SqlDataReader reader = sqlcmd.ExecuteReader();
+
+                if (reader.HasRows)
+                    existe = true;
+
+                CerrarConex();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al tratar de ejecutar la operación " + e.Message);
+            }
+            finally
+            {
+                CerrarConex();
+                sqlcmd.Dispose();
+            }
+            return existe;
+        }
+
         public decimal GetDeuda(int id)
         {
             decimal deuda = 0;

@@ -31,6 +31,13 @@ namespace MiAlmacen.API.Controllers
             return Ok(cliente);
         }
 
+        [HttpGet("existe/{dni}")]
+        public async Task<IActionResult> ExisteCliente(long dni)
+        {
+            var existe = _repository.ExisteCliente(dni);
+            return Ok(existe);
+        }
+
         [HttpGet("deuda/{id}")]
         public async Task<IActionResult> GetDeuda(int id)
         {
